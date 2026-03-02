@@ -1,0 +1,24 @@
+---
+id: "BJJ-041"
+concept: "Always Protect Yourself"
+category: "Training"
+axis_self_opponent: 0.4
+axis_mental_physical: 0.58
+color: "#00CED1"
+short_description: "Don’t Put Yourself at the Mercy of Others.  In training, relying solely on your partner’s control, restraint, or decision-making to avoid injury can be reckless. A single mistake can result in sudden, serious injury.  Position before trust.  Your safety is your responsibility.  Don't outsource control.  \n\nAvoid hanging in an inverted position where their weight might drop on you suddenly and spike your spine.\n\nDon't be **too loose, loads of slack in, say, your arm while trying to escape and you miss the sudden bridging pressure and can't tap in time.\n\nBad heel hook defense trying to tough it out.\n\nWait until you feel pain beefore tapping."
+tags: []
+related: []
+---
+
+Don’t Put Yourself at the Mercy of Others.  In training, relying solely on your partner’s control, restraint, or decision-making to avoid injury can be reckless. A single mistake can result in sudden, serious injury.  Position before trust.  Your safety is your responsibility.  Don't outsource control.  
+
+Avoid hanging in an inverted position where their weight might drop on you suddenly and spike your spine.
+
+Don't be **too loose, loads of slack in, say, your arm while trying to escape and you miss the sudden bridging pressure and can't tap in time.
+
+Bad heel hook defense trying to tough it out.
+
+Wait until you feel pain beefore tapping.
+
+---
+Category: [[Training]]

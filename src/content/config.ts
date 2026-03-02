@@ -1,0 +1,34 @@
+import { defineCollection, z } from 'astro:content';
+
+// ── Concepts ──────────────────────────────────────────────────────────────────
+// Each .md file in src/content/concepts/ is one grappling concept.
+// Frontmatter fields are validated here; the .md body is the full description.
+const concepts = defineCollection({
+  type: 'content',
+  schema: z.object({
+    id: z.string(),                              // e.g. "BJJ-042"
+    concept: z.string(),                         // display name
+    category: z.string(),                        // category name
+    axis_self_opponent: z.number().min(-1).max(1),  // -1=Opponent  +1=Self
+    axis_mental_physical: z.number().min(-1).max(1), // -1=Physical  +1=Mental
+    color: z.string().optional(),               // hex colour from category
+    short_description: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    related: z.array(z.string()).default([]),    // wikilink slugs
+  }),
+});
+
+// ── Categories ────────────────────────────────────────────────────────────────
+// Each .md file in src/content/categories/ defines one category.
+const categories = defineCollection({
+  type: 'content',
+  schema: z.object({
+    id: z.string(),          // e.g. "cat-grappling-primitives"
+    name: z.string(),        // display name
+    color: z.string(),       // hex colour
+    xAxis: z.object({ left: z.string(), right: z.string() }).optional(),
+    yAxis: z.object({ bottom: z.string(), top: z.string() }).optional(),
+  }),
+});
+
+export const collections = { concepts, categories };

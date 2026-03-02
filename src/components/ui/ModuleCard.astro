@@ -1,0 +1,53 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  status?: 'live' | 'wip' | 'soon';
+  tag?: string;
+}
+
+const { title, description, href, status = 'live', tag } = Astro.props;
+
+const statusLabel: Record<string, string> = {
+  live:  'LIVE',
+  wip:   'IN PROGRESS',
+  soon:  'COMING SOON',
+};
+const statusColor: Record<string, string> = {
+  live:  'text-accent border-accent/30',
+  wip:   'text-accent-soft border-accent-soft/30',
+  soon:  'text-text-dim border-border',
+};
+---
+
+<a
+  href={status === 'live' ? href : '#'}
+  class:list={[
+    'block p-5 border border-border bg-surface rounded-sm',
+    'hover:border-accent/40 hover:bg-[#0E1014] transition-all duration-200',
+    'group relative overflow-hidden fade-up',
+    status !== 'live' && 'opacity-50 pointer-events-none',
+  ]}
+>
+  <!-- subtle left accent bar -->
+  <div class="absolute left-0 top-0 bottom-0 w-[2px] bg-accent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+  <div class="flex items-start justify-between gap-3 mb-2">
+    <h3 class="text-sm font-bold tracking-wide text-text-primary group-hover:text-accent transition-colors">
+      {title}
+    </h3>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      {tag && (
+        <span class="text-[9px] tracking-[2px] text-text-dim border border-border px-1.5 py-0.5">
+          {tag}
+        </span>
+      )}
+      <span class:list={['text-[9px] tracking-[2px] border px-1.5 py-0.5', statusColor[status]]}>
+        {statusLabel[status]}
+      </span>
+    </div>
+  </div>
+
+  <p class="text-xs text-text-muted leading-relaxed">{description}</p>
+</a>

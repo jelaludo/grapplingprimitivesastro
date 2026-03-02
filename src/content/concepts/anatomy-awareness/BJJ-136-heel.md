@@ -1,0 +1,18 @@
+---
+id: "BJJ-136"
+concept: "Heel"
+category: "Anatomy Awareness"
+axis_self_opponent: 0.64
+axis_mental_physical: 0.3
+color: "#848a94"
+short_description: "Heel as an anchor and pressure tool.  Set-it close to their hips to reduce movement, or in their neck or ribs, back heel, hook.\n\nJust bringing attention to the idea that whereas its obvious you have heels, start to recognize it as an active tool."
+tags: []
+related: []
+---
+
+Heel as an anchor and pressure tool.  Set-it close to their hips to reduce movement, or in their neck or ribs, back heel, hook.
+
+Just bringing attention to the idea that whereas its obvious you have heels, start to recognize it as an active tool.
+
+---
+Category: [[Anatomy Awareness]]

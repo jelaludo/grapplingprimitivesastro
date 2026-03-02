@@ -1,0 +1,672 @@
+---
+// ConceptMatrix.astro — Canvas-based QuadTree visualization
+// Data is serialized at BUILD TIME by Astro; the canvas script runs entirely on the client.
+
+interface Concept {
+  id: string;
+  concept: string;
+  category: string;
+  x: number;   // axis_self_opponent   [-1, 1]  left=Opponent, right=Self
+  y: number;   // axis_mental_physical [-1, 1]  bottom=Physical, top=Mental
+  color: string;
+  desc: string;
+  short: string;
+}
+
+interface Category {
+  name: string;
+  color: string;
+  xAxis?: { left: string; right: string };
+  yAxis?: { bottom: string; top: string };
+}
+
+interface Props {
+  concepts: Concept[];
+  categories: Category[];
+}
+
+const { concepts, categories } = Astro.props;
+---
+
+<!-- ── Layout ─────────────────────────────────────────────────────────────── -->
+<div id="matrix-root" class="relative w-full bg-bg overflow-hidden" style="height: calc(100vh - 40px)">
+
+  <!-- Toolbar -->
+  <div id="toolbar" class="absolute top-0 left-0 right-0 z-20 h-9 bg-bg/95 border-b border-border flex items-center gap-3 px-3 backdrop-blur-sm">
+    <span class="text-[9px] tracking-[3px] text-text-dim uppercase whitespace-nowrap select-none">Concept Map</span>
+    <span class="text-border">|</span>
+
+    <!-- Search -->
+    <input
+      id="search-input"
+      type="text"
+      placeholder="Search concepts..."
+      class="flex-1 max-w-xs h-6 bg-transparent border border-border text-xs text-text-primary placeholder-text-dim px-2 focus:outline-none focus:border-accent font-mono"
+    />
+    <span id="search-count" class="text-[9px] tracking-[2px] text-text-dim whitespace-nowrap hidden"></span>
+
+    <span class="flex-1"></span>
+
+    <!-- Category filter toggle -->
+    <button id="filter-toggle" class="text-[9px] tracking-[2px] text-text-dim border border-border px-2 h-6 hover:border-accent/50 hover:text-accent transition-all uppercase">
+      Filter
+    </button>
+
+    <!-- Back button (zoom-out) -->
+    <button id="back-btn" class="hidden text-[9px] tracking-[2px] text-accent border border-accent/40 px-2 h-6 hover:bg-accent/10 transition-all uppercase">
+      ← All
+    </button>
+
+    <!-- Reset camera -->
+    <button id="reset-btn" class="text-[9px] tracking-[2px] text-text-dim border border-border px-2 h-6 hover:border-accent/50 hover:text-accent transition-all uppercase">
+      Reset
+    </button>
+  </div>
+
+  <!-- Category filter panel -->
+  <div id="filter-panel" class="hidden absolute top-9 left-0 right-0 z-20 bg-bg/97 border-b border-border px-3 py-2 flex flex-wrap gap-1.5 backdrop-blur-sm">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Canvas -->
+  <canvas
+    id="matrix-canvas"
+    class="absolute top-9 left-0"
+    style="cursor: crosshair; touch-action: none;"
+  ></canvas>
+
+  <!-- Tooltip -->
+  <div id="tooltip" class="pointer-events-none fixed z-30 hidden" style="max-width: min(340px, 90vw)">
+    <div class="bg-bg border border-border p-3" style="box-shadow: 0 0 20px rgba(76,141,255,0.12)">
+      <div id="tip-title"  class="text-sm font-bold text-text-primary mb-1"></div>
+      <div id="tip-cat"    class="text-[9px] tracking-[2px] uppercase mb-2"></div>
+      <div id="tip-desc"   class="text-xs text-text-muted leading-relaxed"></div>
+      <div id="tip-hint"   class="text-[9px] text-text-dim mt-2 text-right">CLICK FOR MORE →</div>
+    </div>
+  </div>
+
+  <!-- Detail modal -->
+  <div id="card-modal" class="hidden fixed inset-0 z-40 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="card-inner" class="bg-bg border border-border w-full flex flex-col font-mono"
+         style="max-width: min(640px, 98vw); max-height: 88vh; box-shadow: 0 0 40px rgba(76,141,255,0.15)">
+      <div class="flex items-start justify-between gap-3 p-5 border-b border-border">
+        <div>
+          <div id="card-title" class="text-base font-bold text-text-primary mb-1"></div>
+          <div id="card-cat"   class="text-[9px] tracking-[2px] uppercase"></div>
+        </div>
+        <button id="card-close" class="text-text-dim hover:text-text-primary text-xl leading-none flex-shrink-0 mt-0.5">×</button>
+      </div>
+      <div id="card-body" class="flex-1 overflow-y-auto p-5 text-sm text-text-muted leading-relaxed whitespace-pre-wrap"></div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ── Canvas Script ──────────────────────────────────────────────────────── -->
+<script define:vars={{ concepts, categories }}>
+'use strict';
+
+// ── Constants ────────────────────────────────────────────────────────────────
+const DPR       = Math.min(window.devicePixelRatio || 1, 2);
+const MARGIN    = 48;   // px around the plot area
+const DOT_R     = 4;    // base dot radius (CSS px)
+const FONT      = '"Courier New", monospace';
+const C_BG      = '#050509';
+const C_GRID    = 'rgba(28,31,38,0.9)';
+const C_AXIS    = 'rgba(76,141,255,0.25)';
+const C_AXIS_HL = 'rgba(76,141,255,0.5)';
+const C_LABEL   = '#6B7280';
+const C_QLABEL  = 'rgba(76,141,255,0.06)';  // quadrant bg tint
+const TICK      = 0.25;  // grid every 0.25 concept units
+
+// ── State ────────────────────────────────────────────────────────────────────
+let W = 0, H = 0;          // canvas CSS size
+const cam = { x: 0, y: 0, z: 1 };
+
+let activeCategories = new Set();   // empty = show all
+let searchQuery      = '';
+let filteredIds      = null;        // Set<string> | null
+
+let hoveredNode  = null;
+let selectedNode = null;
+let zoomedCat    = null;            // string | null
+
+let layoutNodes  = [];              // { node, cx, cy } in canvas px (for hit test)
+
+// pan state
+let drag = null;          // { sx, sy, cx, cy, cz }
+// pinch state
+let pinch = null;         // { dist, midX, midY }
+
+// dirty flag — only redraw when needed
+let dirty = true;
+const markDirty = () => { if (!dirty) { dirty = true; requestAnimationFrame(drawLoop); } };
+
+// ── DOM refs ─────────────────────────────────────────────────────────────────
+const root         = document.getElementById('matrix-root');
+const canvas       = document.getElementById('matrix-canvas');
+const ctx          = canvas.getContext('2d');
+const tooltip      = document.getElementById('tooltip');
+const tipTitle     = document.getElementById('tip-title');
+const tipCat       = document.getElementById('tip-cat');
+const tipDesc      = document.getElementById('tip-desc');
+const tipHint      = document.getElementById('tip-hint');
+const cardModal    = document.getElementById('card-modal');
+const cardTitle    = document.getElementById('card-title');
+const cardCat      = document.getElementById('card-cat');
+const cardBody     = document.getElementById('card-body');
+const cardClose    = document.getElementById('card-close');
+const backBtn      = document.getElementById('back-btn');
+const resetBtn     = document.getElementById('reset-btn');
+const searchInput  = document.getElementById('search-input');
+const searchCount  = document.getElementById('search-count');
+const filterToggle = document.getElementById('filter-toggle');
+const filterPanel  = document.getElementById('filter-panel');
+
+// Category colour lookup
+const catColorMap = new Map(categories.map(c => [c.name, c.color]));
+function nodeColor(n) { return n.color || catColorMap.get(n.category) || '#6B7280'; }
+
+// ── Canvas resize ────────────────────────────────────────────────────────────
+function resize() {
+  const rect = root.getBoundingClientRect();
+  W = rect.width;
+  H = rect.height - 36; // minus toolbar height
+  canvas.width  = W * DPR;
+  canvas.height = H * DPR;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(DPR, DPR);
+  resetCamera();
+  markDirty();
+}
+window.addEventListener('resize', resize);
+
+// ── Camera helpers ───────────────────────────────────────────────────────────
+function baseScale() {
+  return Math.min(W - MARGIN * 2, H - MARGIN * 2) * 0.5;
+}
+
+// Concept coords → canvas px
+function c2px(cx, cy) {
+  const s = baseScale() * cam.z;
+  return {
+    x: W / 2 + (cx - cam.x) * s,
+    y: H / 2 - (cy - cam.y) * s,   // Y flipped: +cy = up
+  };
+}
+
+// Canvas px → concept coords
+function px2c(sx, sy) {
+  const s = baseScale() * cam.z;
+  return {
+    x: (sx - W / 2) / s + cam.x,
+    y: -(sy - H / 2) / s + cam.y,
+  };
+}
+
+function resetCamera() {
+  cam.x = 0; cam.y = 0; cam.z = 1;
+}
+
+function zoomAt(sx, sy, factor) {
+  const wBefore = px2c(sx, sy);
+  cam.z = Math.max(0.4, Math.min(8, cam.z * factor));
+  const wAfter = px2c(sx, sy);
+  cam.x -= wBefore.x - wAfter.x;
+  cam.y -= wBefore.y - wAfter.y;
+}
+
+// ── Filtering helpers ─────────────────────────────────────────────────────────
+function visibleConcepts() {
+  let list = concepts;
+
+  // Category filter
+  if (activeCategories.size > 0) {
+    list = list.filter(n => activeCategories.has(n.category));
+  }
+
+  // Zoomed category
+  if (zoomedCat) {
+    list = list.filter(n => n.category === zoomedCat);
+  }
+
+  // Search
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filteredIds = new Set(
+      list.filter(n =>
+        n.concept.toLowerCase().includes(q) ||
+        n.desc.toLowerCase().includes(q) ||
+        n.category.toLowerCase().includes(q)
+      ).map(n => n.id)
+    );
+    // Update count
+    searchCount.textContent = filteredIds.size + ' / ' + list.length;
+    searchCount.classList.remove('hidden');
+  } else {
+    filteredIds = null;
+    searchCount.classList.add('hidden');
+  }
+
+  return list;
+}
+
+function isDimmed(n) {
+  return filteredIds !== null && !filteredIds.has(n.id);
+}
+
+// ── Drawing ───────────────────────────────────────────────────────────────────
+function drawLoop() {
+  if (!dirty) return;
+  dirty = false;
+  draw();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = C_BG;
+  ctx.fillRect(0, 0, W, H);
+
+  // Plot area bounds in px (at current zoom, the [-1,1] square edges)
+  const { x: x0, y: y0 } = c2px(-1,  1);  // top-left
+  const { x: x1, y: y1 } = c2px( 1, -1);  // bottom-right
+
+  // ── Quadrant tints ───────────────────────────────────────────────────
+  const mx = (x0 + x1) / 2;
+  const my = (y0 + y1) / 2;
+  const tints = [
+    { x: x0, y: y0, w: mx - x0, h: my - y0, col: 'rgba(169,112,255,0.025)' }, // Mental/Opponent
+    { x: mx, y: y0, w: x1 - mx, h: my - y0, col: 'rgba(76,141,255,0.025)'  }, // Mental/Self
+    { x: x0, y: my, w: mx - x0, h: y1 - my, col: 'rgba(28,31,38,0.0)'      }, // Physical/Opponent
+    { x: mx, y: my, w: x1 - mx, h: y1 - my, col: 'rgba(0,206,209,0.015)'   }, // Physical/Self
+  ];
+  tints.forEach(t => {
+    ctx.fillStyle = t.col;
+    ctx.fillRect(t.x, t.y, t.w, t.h);
+  });
+
+  // ── Grid lines ───────────────────────────────────────────────────────
+  ctx.strokeStyle = C_GRID;
+  ctx.lineWidth = 0.5;
+  for (let v = -1; v <= 1.01; v += TICK) {
+    if (Math.abs(v) < 0.001) continue; // skip center (drawn separately)
+    const { x: gx } = c2px(v, 0);
+    const { y: gy } = c2px(0, v);
+    ctx.beginPath(); ctx.moveTo(gx, y0); ctx.lineTo(gx, y1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0, gy); ctx.lineTo(x1, gy); ctx.stroke();
+  }
+
+  // ── Axis lines ───────────────────────────────────────────────────────
+  const { x: axX } = c2px(0, 0);
+  const { y: axY } = c2px(0, 0);
+
+  ctx.strokeStyle = C_AXIS_HL;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, axY); ctx.lineTo(x1, axY); ctx.stroke(); // X axis
+  ctx.beginPath(); ctx.moveTo(axX, y0); ctx.lineTo(axX, y1); ctx.stroke(); // Y axis
+
+  // ── Axis labels ──────────────────────────────────────────────────────
+  const fontSize = Math.max(9, Math.min(11, W / 80));
+  ctx.font = `${fontSize}px ${FONT}`;
+  ctx.fillStyle = C_LABEL;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Top / bottom (Mental / Physical)
+  ctx.fillText('MENTAL',   axX, y0 - 14);
+  ctx.fillText('PHYSICAL', axX, y1 + 14);
+
+  // Left / right (Opponent / Self)
+  ctx.save();
+  ctx.translate(x0 - 14, axY);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('OPPONENT', 0, 0);
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(x1 + 14, axY);
+  ctx.rotate(Math.PI / 2);
+  ctx.fillText('SELF', 0, 0);
+  ctx.restore();
+
+  // Corner quadrant labels (faint)
+  const qLabels = [
+    { cx: -0.55, cy:  0.55, t: 'Mental\nOpponent' },
+    { cx:  0.55, cy:  0.55, t: 'Mental\nSelf'     },
+    { cx: -0.55, cy: -0.55, t: 'Physical\nOpponent'},
+    { cx:  0.55, cy: -0.55, t: 'Physical\nSelf'   },
+  ];
+  ctx.font = `${Math.max(8, fontSize - 1)}px ${FONT}`;
+  ctx.fillStyle = 'rgba(76,141,255,0.18)';
+  ctx.textAlign = 'center';
+  qLabels.forEach(({ cx, cy, t }) => {
+    const { x, y } = c2px(cx, cy);
+    const lines = t.split('\n');
+    lines.forEach((line, i) => {
+      ctx.fillText(line.toUpperCase(), x, y + (i - 0.5) * (fontSize + 2));
+    });
+  });
+
+  // ── Concept dots ─────────────────────────────────────────────────────
+  const visible = visibleConcepts();
+  layoutNodes = [];
+  const r = DOT_R;
+
+  // Draw dimmed nodes first, bright nodes on top
+  const normal = visible.filter(n => !isDimmed(n) && n !== hoveredNode);
+  const dimmed  = visible.filter(n =>  isDimmed(n));
+  const last    = hoveredNode && visible.includes(hoveredNode) ? [hoveredNode] : [];
+
+  function drawDot(n, alpha) {
+    const { x, y } = c2px(n.x, n.y);
+    const color = nodeColor(n);
+    layoutNodes.push({ node: n, x, y });
+
+    ctx.globalAlpha = alpha;
+
+    // Halo
+    if (n === hoveredNode) {
+      ctx.beginPath();
+      ctx.arc(x, y, r * 2.6, 0, Math.PI * 2);
+      ctx.fillStyle = color + '22';
+      ctx.fill();
+    }
+
+    // Dot
+    ctx.beginPath();
+    ctx.arc(x, y, n === hoveredNode ? r * 1.6 : r, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+
+    // Label (hovered only)
+    if (n === hoveredNode) {
+      ctx.font = `bold ${Math.max(10, fontSize)}px ${FONT}`;
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(n.concept, x, y - r * 2);
+    }
+  }
+
+  dimmed.forEach(n => drawDot(n, 0.12));
+  normal.forEach(n => drawDot(n, 0.75));
+  last.forEach(n   => drawDot(n, 1.0));
+}
+
+// ── Hit testing ───────────────────────────────────────────────────────────────
+function hitTest(sx, sy) {
+  let best = null, bestD = 16 / cam.z; // 16px radius in concept space
+  layoutNodes.forEach(({ node, x, y }) => {
+    const d = Math.hypot(x - sx, y - sy);
+    if (d < bestD) { bestD = d; best = node; }
+  });
+  return best;
+}
+
+// ── Tooltip ───────────────────────────────────────────────────────────────────
+function showTooltip(node, screenX, screenY) {
+  const color = nodeColor(node);
+  tipTitle.textContent = node.concept;
+  tipCat.textContent   = node.category;
+  tipCat.style.color   = color;
+  const preview = node.desc ? node.desc.slice(0, 200) + (node.desc.length > 200 ? '…' : '') : '';
+  tipDesc.textContent  = preview;
+  tipHint.style.display = node.desc && node.desc.length > 3 ? '' : 'none';
+
+  tooltip.style.display = 'block';
+
+  // Position: right of cursor, flip if near edge
+  const tw = 340;
+  const th = 140;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const left = screenX + 18 + tw > vw ? screenX - tw - 12 : screenX + 18;
+  const top  = Math.max(48, Math.min(screenY - 20, vh - th - 8));
+  tooltip.style.left = left + 'px';
+  tooltip.style.top  = top  + 'px';
+}
+
+function hideTooltip() {
+  tooltip.style.display = 'none';
+}
+
+// ── Card modal ────────────────────────────────────────────────────────────────
+function openCard(node) {
+  const color = nodeColor(node);
+  cardTitle.textContent = node.concept;
+  cardCat.textContent   = node.category;
+  cardCat.style.color   = color;
+  document.getElementById('card-inner').style.borderColor = color + '66';
+  cardBody.textContent  = node.desc || node.short || '—';
+  cardModal.classList.remove('hidden');
+  hideTooltip();
+}
+
+cardClose.addEventListener('click', () => cardModal.classList.add('hidden'));
+cardModal.addEventListener('click', e => {
+  if (e.target === cardModal) cardModal.classList.add('hidden');
+});
+
+// ── Zoom into category ────────────────────────────────────────────────────────
+function zoomIntoCategory(name) {
+  zoomedCat = name;
+  layoutNodes = [];
+  hoveredNode = null;
+
+  // Fit camera to the concepts in this category
+  const nodes = concepts.filter(n => n.category === name);
+  if (nodes.length) {
+    const xs = nodes.map(n => n.x);
+    const ys = nodes.map(n => n.y);
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const minY = Math.min(...ys), maxY = Math.max(...ys);
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const span = Math.max(maxX - minX, maxY - minY, 0.2) + 0.3;
+    cam.x = cx;
+    cam.y = cy;
+    cam.z = 1.8 / span;
+  }
+
+  backBtn.classList.remove('hidden');
+  markDirty();
+}
+
+function zoomOut() {
+  zoomedCat = null;
+  hoveredNode = null;
+  layoutNodes = [];
+  resetCamera();
+  backBtn.classList.add('hidden');
+  markDirty();
+}
+
+backBtn.addEventListener('click', zoomOut);
+resetBtn.addEventListener('click', () => { resetCamera(); markDirty(); });
+
+// ── Category filter panel ─────────────────────────────────────────────────────
+function buildFilterPanel() {
+  filterPanel.innerHTML = '';
+
+  // "All" pill
+  const allBtn = document.createElement('button');
+  allBtn.className = 'text-[9px] tracking-[2px] border px-2 py-0.5 transition-all ' +
+    (activeCategories.size === 0
+      ? 'border-accent text-accent'
+      : 'border-border text-text-dim hover:border-accent/50');
+  allBtn.textContent = 'ALL';
+  allBtn.addEventListener('click', () => {
+    activeCategories.clear();
+    buildFilterPanel();
+    markDirty();
+  });
+  filterPanel.appendChild(allBtn);
+
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    const active = activeCategories.has(cat.name);
+    btn.className = 'text-[9px] tracking-[1px] border px-2 py-0.5 transition-all ' +
+      (active
+        ? 'text-bg'
+        : 'border-border text-text-dim hover:border-accent/50 hover:text-text-muted');
+    btn.textContent = cat.name;
+    if (active) {
+      btn.style.background   = cat.color;
+      btn.style.borderColor  = cat.color;
+      btn.style.color        = '#000';
+    }
+    btn.addEventListener('click', () => {
+      if (activeCategories.has(cat.name)) {
+        activeCategories.delete(cat.name);
+      } else {
+        activeCategories.add(cat.name);
+      }
+      buildFilterPanel();
+      markDirty();
+    });
+    filterPanel.appendChild(btn);
+  });
+}
+
+filterToggle.addEventListener('click', () => {
+  const hidden = filterPanel.classList.toggle('hidden');
+  filterToggle.style.color = hidden ? '' : 'var(--accent, #4C8DFF)';
+  if (!hidden && filterPanel.children.length === 0) buildFilterPanel();
+  else if (!hidden) buildFilterPanel(); // rebuild to reflect state
+});
+
+// ── Search ─────────────────────────────────────────────────────────────────────
+searchInput.addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  markDirty();
+});
+
+// ── Mouse events ───────────────────────────────────────────────────────────────
+canvas.addEventListener('mousedown', e => {
+  if (e.button !== 0) return;
+  drag = { sx: e.clientX, sy: e.clientY, cx: cam.x, cy: cam.y };
+  canvas.style.cursor = 'grabbing';
+  e.preventDefault();
+});
+
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left;
+  const sy = e.clientY - rect.top;
+
+  if (drag) {
+    const dx = e.clientX - drag.sx;
+    const dy = e.clientY - drag.sy;
+    const s  = baseScale() * cam.z;
+    cam.x = drag.cx - dx / s;
+    cam.y = drag.cy + dy / s;
+    markDirty();
+    return;
+  }
+
+  const hit = hitTest(sx, sy);
+  if (hit !== hoveredNode) {
+    hoveredNode = hit;
+    markDirty();
+  }
+  if (hit) {
+    showTooltip(hit, e.clientX, e.clientY);
+    canvas.style.cursor = 'pointer';
+  } else {
+    hideTooltip();
+    canvas.style.cursor = 'crosshair';
+  }
+});
+
+canvas.addEventListener('mouseup', e => {
+  const moved = drag && (Math.abs(e.clientX - drag.sx) + Math.abs(e.clientY - drag.sy)) > 4;
+  drag = null;
+  canvas.style.cursor = hoveredNode ? 'pointer' : 'crosshair';
+  if (!moved && hoveredNode) openCard(hoveredNode);
+});
+
+canvas.addEventListener('mouseleave', () => {
+  drag = null;
+  hoveredNode = null;
+  hideTooltip();
+  canvas.style.cursor = 'crosshair';
+  markDirty();
+});
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const f = e.deltaY < 0 ? 1.12 : 0.9;
+  zoomAt(e.clientX - rect.left, e.clientY - rect.top, f);
+  markDirty();
+}, { passive: false });
+
+// ── Touch events ───────────────────────────────────────────────────────────────
+let tapTimeout = null;
+
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.touches;
+  if (t.length === 1) {
+    const rect = canvas.getBoundingClientRect();
+    const sx = t[0].clientX - rect.left;
+    const sy = t[0].clientY - rect.top;
+    drag = { sx: t[0].clientX, sy: t[0].clientY, cx: cam.x, cy: cam.y };
+
+    // Tap detection
+    tapTimeout = setTimeout(() => {
+      const hit = hitTest(sx, sy);
+      if (hit) openCard(hit);
+    }, 120);
+  }
+  if (t.length === 2) {
+    clearTimeout(tapTimeout);
+    drag = null;
+    pinch = {
+      dist: Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY),
+      midX: (t[0].clientX + t[1].clientX) / 2,
+      midY: (t[0].clientY + t[1].clientY) / 2,
+    };
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const t = e.touches;
+  if (t.length === 1 && drag) {
+    clearTimeout(tapTimeout);
+    const dx = t[0].clientX - drag.sx;
+    const dy = t[0].clientY - drag.sy;
+    const s  = baseScale() * cam.z;
+    cam.x = drag.cx - dx / s;
+    cam.y = drag.cy + dy / s;
+    markDirty();
+  }
+  if (t.length === 2 && pinch) {
+    const dist = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    const rect = canvas.getBoundingClientRect();
+    const midX = (t[0].clientX + t[1].clientX) / 2 - rect.left;
+    const midY = (t[0].clientY + t[1].clientY) / 2 - rect.top;
+    zoomAt(midX, midY, dist / pinch.dist);
+    pinch.dist = dist;
+    markDirty();
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  if (e.touches.length === 0) {
+    drag  = null;
+    pinch = null;
+  }
+}, { passive: false });
+
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+resize();
+requestAnimationFrame(drawLoop);
+</script>

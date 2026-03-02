@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background-color: #050509;
+    color: #E5E7EB;
+    font-family: "Courier New", Courier, monospace;
+  }
+
+  /* Thin scrollbars everywhere */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #0E1014; }
+  ::-webkit-scrollbar-thumb { background: #1C1F26; border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4C8DFF44; }
+
+  /* Selection colour */
+  ::selection { background: #4C8DFF33; color: #fff; }
+}
+
+@layer utilities {
+  /* Glow effects */
+  .glow-blue  { text-shadow: 0 0 12px #4C8DFF88; }
+  .glow-cyan  { text-shadow: 0 0 12px #00FFFF88; }
+  .glow-soft  { text-shadow: 0 0 8px #A970FF66; }
+
+  /* Subtle scan-line overlay for the terminal feel */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.06) 2px,
+      rgba(0,0,0,0.06) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Fade in */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0);   }
+  }
+  .fade-up { animation: fadeUp 0.4s ease-out both; }
+}

@@ -1,0 +1,105 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ModuleCard from '@/components/ui/ModuleCard.astro';
+
+const modules = [
+  {
+    title: 'Concept Matrix',
+    description: 'All grappling concepts mapped on a 2×2 grid (Self↔Opponent × Mental↔Physical). Hover, click into categories, zoom.',
+    href: '/modules/matrix',
+    status: 'live' as const,
+    tag: 'INTERACTIVE',
+  },
+  {
+    title: 'Flash Cards',
+    description: 'Study and review all 277 concepts with Anki-style flash cards. Filter by category, flip, stage for later.',
+    href: '/modules/cards',
+    status: 'wip' as const,
+    tag: 'STUDY',
+  },
+  {
+    title: 'Skill Assessment',
+    description: 'Test your knowledge of grappling concepts with a self-assessment quiz.',
+    href: '/modules/skill-check',
+    status: 'soon' as const,
+    tag: 'TOOLS',
+  },
+  {
+    title: 'Games Hub',
+    description: 'Gamified drills: memory match, centroid estimation, pressure scenarios.',
+    href: '/modules/games',
+    status: 'soon' as const,
+    tag: 'GAMES',
+  },
+  {
+    title: 'Visual Notes',
+    description: 'Hand-drawn diagrams and sketches collected over years of training.',
+    href: '/modules/visual-notes',
+    status: 'soon' as const,
+    tag: 'MEDIA',
+  },
+  {
+    title: 'GIF Training',
+    description: '10+ years of technique GIFs as dynamic visual reminders.',
+    href: '/modules/gif-training',
+    status: 'soon' as const,
+    tag: 'MEDIA',
+  },
+  {
+    title: 'Belt Dropout',
+    description: 'Visualize belt progression and dropout statistics in BJJ.',
+    href: '/modules/belt-dropout',
+    status: 'soon' as const,
+    tag: 'DATA',
+  },
+  {
+    title: 'Breathing Cycles',
+    description: 'Guided breathing exercises for pre/post training recovery.',
+    href: '/modules/breathing',
+    status: 'soon' as const,
+    tag: 'TOOLS',
+  },
+];
+---
+
+<BaseLayout title="Grappling Primitives">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+
+    <!-- Header -->
+    <div class="mb-12 fade-up">
+      <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">v2.0 — Astro Build</p>
+      <h1 class="text-3xl font-bold tracking-tight text-text-primary mb-3 glow-blue">
+        Grappling Primitives
+      </h1>
+      <p class="text-sm text-text-muted max-w-xl leading-relaxed">
+        An interactive atlas of grappling concepts — structured, visual, and searchable.
+        277 concepts across 23 categories, mapped on a shared framework.
+      </p>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-3 gap-px bg-border mb-12 fade-up">
+      {[
+        { n: '277', label: 'Concepts' },
+        { n: '23',  label: 'Categories' },
+        { n: '2×2', label: 'Framework' },
+      ].map(({ n, label }) => (
+        <div class="bg-surface px-4 py-3 text-center">
+          <div class="text-xl font-bold text-accent">{n}</div>
+          <div class="text-[9px] tracking-[2px] text-text-dim uppercase mt-0.5">{label}</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Module grid -->
+    <div class="mb-4">
+      <p class="text-[9px] tracking-[3px] text-text-dim uppercase mb-4">Modules</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {modules.map((m) => (
+          <ModuleCard {...m} />
+        ))}
+      </div>
+    </div>
+
+  </div>
+</BaseLayout>

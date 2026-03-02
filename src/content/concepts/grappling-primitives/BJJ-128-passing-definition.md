@@ -1,0 +1,20 @@
+---
+id: "BJJ-128"
+concept: "Passing Definition"
+category: "Grappling Primitives"
+axis_self_opponent: 0.35
+axis_mental_physical: 0.5
+color: "#848a94"
+short_description: "Occupying the space between the knee and the armpit.  Regardless of the dozens of passes, they all accomplish some version of doing this; you started with their legs or hands as obstacles between you and the space between their knees/hip and armpit.\n\nIf you've passed the knee but they're still framing with their hands, you haven't really passed.\n\nIf you do some fancy reverse de la worm grip and you've reached the stage where you got above their knee, you've lowkey already passed, essentially. (\"Omae no Gaado ha mou shinderu\")"
+tags: []
+related: []
+---
+
+Occupying the space between the knee and the armpit.  Regardless of the dozens of passes, they all accomplish some version of doing this; you started with their legs or hands as obstacles between you and the space between their knees/hip and armpit.
+
+If you've passed the knee but they're still framing with their hands, you haven't really passed.
+
+If you do some fancy reverse de la worm grip and you've reached the stage where you got above their knee, you've lowkey already passed, essentially. ("Omae no Gaado ha mou shinderu")
+
+---
+Category: [[Grappling Primitives]]

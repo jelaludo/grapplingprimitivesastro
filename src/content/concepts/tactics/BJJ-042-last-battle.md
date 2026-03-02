@@ -1,0 +1,18 @@
+---
+id: "BJJ-042"
+concept: "Last Battle"
+category: "Tactics"
+axis_self_opponent: 0.33
+axis_mental_physical: 0.33
+color: "#8A2BE2"
+short_description: "Do no fight the last battle.   Realize when the game has changed, when the battleground has shifted.   Accept that your defenses have failed and switch to damage mitigation and recovery.\n\nsimilar to Keenan's \"Win small battles then don't realize are happening\" (about passing over the knee in worm guard)"
+tags: []
+related: []
+---
+
+Do no fight the last battle.   Realize when the game has changed, when the battleground has shifted.   Accept that your defenses have failed and switch to damage mitigation and recovery.
+
+similar to Keenan's "Win small battles then don't realize are happening" (about passing over the knee in worm guard)
+
+---
+Category: [[Tactics]]
