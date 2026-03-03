@@ -1,0 +1,805 @@
+---
+// QuadTreeViz.astro — 4-quadrant treemap visualization
+// Data sourced from Astro Content Collections (same concepts as ConceptMatrix).
+// Click a category box to zoom into its scatter plot; pan/zoom in overview.
+
+interface Concept {
+  id: string;
+  concept: string;
+  category: string;
+  x: number;   // axis_self_opponent   [-1, 1]
+  y: number;   // axis_mental_physical [-1, 1]
+  color: string;
+  desc: string;
+  short: string;
+}
+
+interface Category {
+  name: string;
+  color: string;
+  xAxis?: { left: string; right: string };
+  yAxis?: { bottom: string; top: string };
+}
+
+interface Props {
+  concepts: Concept[];
+  categories: Category[];
+}
+
+const { concepts, categories } = Astro.props;
+---
+
+<!-- ── Layout ─────────────────────────────────────────────────────────────── -->
+<div id="qt-root" class="relative w-full bg-bg overflow-hidden" style="height: calc(100vh - 40px)">
+
+  <!-- Toolbar -->
+  <div id="qt-toolbar" class="absolute top-0 left-0 right-0 z-20 h-9 bg-bg/95 border-b border-border flex items-center gap-3 px-3 backdrop-blur-sm">
+    <span class="text-[10px] tracking-[3px] text-text-dim uppercase whitespace-nowrap select-none">Quad Map</span>
+    <span class="text-border">|</span>
+    <input
+      id="qt-search"
+      type="text"
+      placeholder="Search concepts..."
+      class="flex-1 max-w-xs h-6 bg-transparent border border-border text-xs text-text-primary placeholder-text-dim px-2 focus:outline-none focus:border-accent font-mono"
+    />
+    <span id="qt-search-count" class="text-[11px] text-text-dim whitespace-nowrap hidden"></span>
+    <span class="flex-1"></span>
+    <button id="qt-back" class="hidden text-[11px] tracking-[1px] text-accent border border-accent/40 px-2 h-6 hover:bg-accent/10 transition-all uppercase">
+      ← Back
+    </button>
+    <button id="qt-reset" class="text-[11px] tracking-[1px] text-text-dim border border-border px-2 h-6 hover:border-accent/50 hover:text-accent transition-all uppercase">
+      Reset
+    </button>
+  </div>
+
+  <!-- Canvas -->
+  <canvas
+    id="qt-canvas"
+    class="absolute top-9 left-0"
+    style="cursor: crosshair; touch-action: none;"
+  ></canvas>
+
+  <!-- Tooltip -->
+  <div id="qt-tooltip" class="pointer-events-none fixed z-30 hidden" style="max-width: min(340px, 90vw)">
+    <div id="qt-tooltip-inner" class="p-3" style="background: rgba(0,5,12,0.97); border: 1px solid #333; box-shadow: 0 0 24px rgba(0,0,0,0.6)">
+      <div id="qt-tip-title" class="text-sm font-bold text-text-primary mb-1" style="font-family: 'Courier New', monospace"></div>
+      <div id="qt-tip-cat"   class="text-[11px] tracking-[2px] uppercase mb-2" style="font-family: 'Courier New', monospace"></div>
+      <div id="qt-tip-desc"  class="text-xs leading-relaxed"                   style="font-family: 'Courier New', monospace; color: #7ee8f0"></div>
+    </div>
+  </div>
+
+  <!-- Card modal -->
+  <div id="qt-card-modal" class="hidden fixed inset-0 z-40 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="qt-card-inner" class="w-full flex flex-col" style="font-family:'Courier New',monospace; background:#000d18; max-width:min(640px,98vw); max-height:88vh; border:1px solid #333; box-shadow:0 0 40px rgba(0,0,0,0.8)">
+      <div class="flex items-start justify-between gap-3 p-5" style="border-bottom:1px solid rgba(255,255,255,0.08)">
+        <div>
+          <div id="qt-card-title" class="text-base font-bold text-text-primary mb-1"></div>
+          <div id="qt-card-cat"   class="text-[11px] tracking-[2px] uppercase"></div>
+        </div>
+        <button id="qt-card-close" class="text-text-dim hover:text-text-primary text-xl leading-none flex-shrink-0 mt-0.5">×</button>
+      </div>
+      <div id="qt-card-body" class="flex-1 overflow-y-auto p-5 text-sm text-text-muted leading-relaxed whitespace-pre-wrap"></div>
+    </div>
+  </div>
+
+  <!-- HUD bottom bar -->
+  <div id="qt-hud" class="absolute bottom-0 left-0 right-0 h-7 border-t flex items-center px-4 gap-4 z-10 select-none"
+       style="font-family:'Courier New',monospace; font-size:10px; letter-spacing:1px; color:rgba(0,200,230,0.4); background:rgba(0,4,10,0.92); border-color:rgba(0,200,230,0.15)">
+    <span id="qt-hud-total"></span>
+    <span id="qt-hud-cat" class="hidden" style="color:rgba(255,255,255,0.45)"></span>
+    <span class="flex-1"></span>
+    <span id="qt-hud-hint" style="opacity:0.45">CLICK CATEGORY TO ZOOM</span>
+  </div>
+
+</div>
+
+
+<!-- ── Canvas Script ──────────────────────────────────────────────────────── -->
+<script define:vars={{ concepts, categories }}>
+'use strict';
+
+const DPR        = Math.min(window.devicePixelRatio || 1, 2);
+const FONT       = "'Courier New', Consolas, monospace";
+const TOOLBAR_H  = 36;
+const HUD_H      = 28;
+const BOX_PAD    = 3;   // padding between boxes in px
+
+// ── 4-quadrant group definitions ─────────────────────────────────────────────
+// Categories are assigned to groups; any category not listed falls through to
+// a catch-all rendered at the end of THE PATH.
+const GROUPS = [
+  {
+    name: 'THE MAT',  kanji: '地', color: '#00d4ff', col: 0, row: 0,
+    cats: ['Grappling Primitives', 'Physics of Grappling', 'Anatomy Awareness', 'Techniques'],
+  },
+  {
+    name: 'THE MIND', kanji: '天', color: '#ff00cc', col: 1, row: 0,
+    cats: ['Tactics', 'Strategy', '21 Immutable Principles', '32 Principles'],
+  },
+  {
+    name: 'THE DOJO', kanji: '人', color: '#00ff88', col: 0, row: 1,
+    cats: ['Training', 'Coaching', 'Memes', "Why Do We Train?", "Do's & Don'ts", 'Dojos/Clubs Types', 'Player Types'],
+  },
+  {
+    name: 'THE PATH', kanji: '道', color: '#ffaa00', col: 1, row: 1,
+    cats: ['Learning Methods', 'Black Belt Wisdom', 'Competition', 'Internal', 'Resources', 'White Belt Tips', 'Noteworthy Grapplers', 'Test Category'],
+  },
+];
+
+// Build lookup maps from content collection data
+const catColorMap = new Map(categories.map(c => [c.name, c.color]));
+const catAxesMap  = new Map(categories.map(c => [c.name, c]));
+
+function nodeColor(n) { return n.color || catColorMap.get(n.category) || '#6B7280'; }
+function toPlotX(x)   { return (x + 1) / 2; }  // [-1,1] → [0,1]
+function toPlotY(y)   { return (y + 1) / 2; }
+
+function hexToRgba(hex, a) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let W = 0, H = 0;
+const cam = { x: 0, y: 0, z: 1 };
+
+let zoomedCat   = null;
+let layoutNodes = [];
+let catBounds   = {};   // catName → {x,y,w,h} in world coords
+let searchQuery = '';
+let hoveredNode = null;
+let dirty       = true;
+const markDirty = () => { if (!dirty) { dirty = true; requestAnimationFrame(drawLoop); } };
+
+let drag  = null;  // { sx, sy, ox, oy } — sx/sy update each move, ox/oy = origin
+let pinch = null;  // { dist }
+let tapTimeout = null;
+
+// ── DOM refs ─────────────────────────────────────────────────────────────────
+const root        = document.getElementById('qt-root');
+const canvas      = document.getElementById('qt-canvas');
+const ctx         = canvas.getContext('2d');
+const tooltip     = document.getElementById('qt-tooltip');
+const tipInner    = document.getElementById('qt-tooltip-inner');
+const tipTitle    = document.getElementById('qt-tip-title');
+const tipCat      = document.getElementById('qt-tip-cat');
+const tipDesc     = document.getElementById('qt-tip-desc');
+const cardModal   = document.getElementById('qt-card-modal');
+const cardTitle   = document.getElementById('qt-card-title');
+const cardCat     = document.getElementById('qt-card-cat');
+const cardBody    = document.getElementById('qt-card-body');
+const cardClose   = document.getElementById('qt-card-close');
+const backBtn     = document.getElementById('qt-back');
+const resetBtn    = document.getElementById('qt-reset');
+const searchInput = document.getElementById('qt-search');
+const searchCount = document.getElementById('qt-search-count');
+const hudTotal    = document.getElementById('qt-hud-total');
+const hudCat      = document.getElementById('qt-hud-cat');
+const hudHint     = document.getElementById('qt-hud-hint');
+
+// ── Treemap algorithm ─────────────────────────────────────────────────────────
+// Recursively divides a rect proportionally by weight, alternating split axis.
+function treemap(rect, items, weightFn) {
+  if (!items.length) return;
+  if (items.length === 1) { items[0].bounds = { ...rect }; return; }
+
+  const total = items.reduce((s, i) => s + weightFn(i), 0);
+  let sum = 0, split = 1;
+  const half = total / 2;
+  for (let i = 0; i < items.length - 1; i++) {
+    sum += weightFn(items[i]);
+    if (sum >= half) { split = i + 1; break; }
+  }
+
+  const a = items.slice(0, split), b = items.slice(split);
+  const ratio = a.reduce((s, i) => s + weightFn(i), 0) / total;
+  let rA, rB;
+  if (rect.w >= rect.h) {
+    rA = { x: rect.x,                y: rect.y, w: rect.w * ratio,       h: rect.h };
+    rB = { x: rect.x + rect.w*ratio, y: rect.y, w: rect.w * (1 - ratio), h: rect.h };
+  } else {
+    rA = { x: rect.x, y: rect.y,                w: rect.w, h: rect.h * ratio       };
+    rB = { x: rect.x, y: rect.y + rect.h*ratio, w: rect.w, h: rect.h * (1 - ratio) };
+  }
+  treemap(rA, a, weightFn);
+  treemap(rB, b, weightFn);
+}
+
+// ── Hierarchy builder ─────────────────────────────────────────────────────────
+function buildHierarchy() {
+  catBounds = {};
+
+  // Build catMap and initialise group nodes
+  const catMap = {};
+  GROUPS.forEach(g => {
+    g.nodes = [];
+    g.catObjects = g.cats.map(name => {
+      const obj = { name, nodes: [], color: catColorMap.get(name) || '#6B7280' };
+      catMap[name] = obj;
+      return obj;
+    });
+  });
+
+  // Distribute concepts into categories / groups
+  concepts.forEach(n => {
+    const co = catMap[n.category];
+    if (co) {
+      co.nodes.push(n);
+      const grp = GROUPS.find(g => g.cats.includes(n.category));
+      if (grp) grp.nodes.push(n);
+    }
+  });
+
+  // 2×2 quadrant layout
+  const qW = W / 2, qH = H / 2;
+  GROUPS.forEach(g => {
+    g.bounds = { x: g.col * qW, y: g.row * qH, w: qW, h: qH };
+  });
+
+  // Treemap categories within each quadrant
+  GROUPS.forEach(g => {
+    const inner = {
+      x: g.bounds.x + BOX_PAD,
+      y: g.bounds.y + BOX_PAD,
+      w: g.bounds.w - BOX_PAD * 2,
+      h: g.bounds.h - BOX_PAD * 2,
+    };
+    const active = g.catObjects.filter(c => c.nodes.length > 0);
+    if (!active.length) return;
+    treemap(inner, active, c => Math.max(c.nodes.length, 1));
+    active.forEach(c => {
+      c.inner = {
+        x: c.bounds.x + BOX_PAD,
+        y: c.bounds.y + BOX_PAD,
+        w: c.bounds.w - BOX_PAD * 2,
+        h: c.bounds.h - BOX_PAD * 2,
+      };
+      catBounds[c.name] = c.bounds;
+    });
+  });
+}
+
+// ── Camera helpers ────────────────────────────────────────────────────────────
+function resetCamera() { cam.x = 0; cam.y = 0; cam.z = 1; }
+
+function clampCam() {
+  cam.z = Math.max(0.5, Math.min(6, cam.z));
+  const mx = W * 0.4, my = H * 0.4;
+  cam.x = Math.max(-mx, Math.min(mx, cam.x));
+  cam.y = Math.max(-my, Math.min(my, cam.y));
+}
+
+// Zoom anchored at screen point (sx, sy)
+function zoomAt(sx, sy, f) {
+  if (zoomedCat) return;
+  // World point under cursor before zoom
+  const wx = (sx - W/2) / cam.z + W/2 - cam.x;
+  const wy = (sy - H/2) / cam.z + H/2 - cam.y;
+  cam.z = Math.max(0.5, Math.min(6, cam.z * f));
+  // Re-anchor: same world point should map back to (sx, sy)
+  cam.x = (sx - W/2) / cam.z + W/2 - wx;
+  cam.y = (sy - H/2) / cam.z + H/2 - wy;
+  clampCam();
+}
+
+// Screen → world coordinate (inverse of drawFull camera transform)
+function screen2world(sx, sy) {
+  return {
+    x: (sx - W/2) / cam.z + W/2 - cam.x,
+    y: (sy - H/2) / cam.z + H/2 - cam.y,
+  };
+}
+
+// ── Resize ────────────────────────────────────────────────────────────────────
+function resize() {
+  const rect = root.getBoundingClientRect();
+  W = rect.width;
+  H = rect.height - TOOLBAR_H - HUD_H;
+  canvas.width  = W * DPR;
+  canvas.height = H * DPR;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  // Reset transform on resize (canvas.width assignment resets it)
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  buildHierarchy();
+  markDirty();
+}
+window.addEventListener('resize', resize);
+
+// ── Draw loop ─────────────────────────────────────────────────────────────────
+function drawLoop() {
+  if (!dirty) return;
+  dirty = false;
+  draw();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#050509';
+  ctx.fillRect(0, 0, W, H);
+  if (zoomedCat) drawZoomed();
+  else           drawFull();
+}
+
+// ── Full overview (4 quadrants, treemap boxes, dots) ─────────────────────────
+function drawFull() {
+  ctx.save();
+  // Apply camera transform: zoom centred on canvas, then pan
+  ctx.translate(W/2, H/2);
+  ctx.scale(cam.z, cam.z);
+  ctx.translate(-W/2 + cam.x, -H/2 + cam.y);
+
+  layoutNodes = [];
+  const q = searchQuery.toLowerCase();
+
+  GROUPS.forEach(g => {
+    if (!g.bounds) return;
+    const b  = g.bounds;
+    const gc = g.color;
+
+    // Quadrant background
+    ctx.fillStyle = hexToRgba(gc, 0.035);
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+
+    // Quadrant border
+    ctx.strokeStyle = hexToRgba(gc, 0.28);
+    ctx.lineWidth   = 1.5;
+    ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h - 1);
+
+    // Corner brackets
+    const cs = 14;
+    ctx.lineWidth   = 2;
+    ctx.strokeStyle = hexToRgba(gc, 0.65);
+    [[b.x, b.y], [b.x + b.w, b.y], [b.x, b.y + b.h], [b.x + b.w, b.y + b.h]].forEach(([cx, cy]) => {
+      const dx = cx === b.x ? 1 : -1, dy = cy === b.y ? 1 : -1;
+      ctx.beginPath();
+      ctx.moveTo(cx + dx * cs, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + dy * cs);
+      ctx.stroke();
+    });
+
+    // Quadrant centre label (very faint background watermark)
+    ctx.font         = `bold 13px ${FONT}`;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle    = hexToRgba(gc, 0.1);
+    ctx.fillText(`${g.name}  ${g.kanji}`, b.x + b.w / 2, b.y + b.h / 2);
+
+    // ── Per-category boxes ─────────────────────────────────────────────────
+    (g.catObjects || []).filter(cat => cat.nodes.length > 0 && cat.bounds).forEach(cat => {
+      const cb = cat.bounds, ci = cat.inner;
+      const cc = cat.color;
+
+      // Category background
+      ctx.fillStyle = hexToRgba(cc, 0.06);
+      ctx.fillRect(cb.x, cb.y, cb.w, cb.h);
+
+      // Category border
+      ctx.strokeStyle = hexToRgba(cc, 0.55);
+      ctx.lineWidth   = 1;
+      ctx.strokeRect(cb.x + 0.5, cb.y + 0.5, cb.w - 1, cb.h - 1);
+
+      // Category name label
+      if (cb.h > 16 && cb.w > 22) {
+        const fs   = Math.min(9, Math.max(6.5, cb.w / 14));
+        const maxC = Math.floor(cb.w / (fs * 0.62));
+        const lbl  = cat.name.length > maxC ? cat.name.slice(0, maxC - 1) + '…' : cat.name;
+        ctx.font         = `${fs}px ${FONT}`;
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle    = hexToRgba(cc, 0.85);
+        ctx.fillText(lbl, cb.x + cb.w / 2, cb.y + 3);
+
+        if (cb.h > 26) {
+          ctx.font      = `6px ${FONT}`;
+          ctx.fillStyle = hexToRgba(cc, 0.38);
+          ctx.fillText(`[${cat.nodes.length}]`, cb.x + cb.w / 2, cb.y + 3 + fs + 2);
+        }
+      }
+
+      // ── Concept dots within the category box ────────────────────────────
+      cat.nodes.forEach(n => {
+        const px = toPlotX(n.x), py = toPlotY(n.y);
+        const nx = ci.x + px * ci.w;
+        const ny = ci.y + (1 - py) * ci.h;   // Y flipped: +y = up
+        const dc = nodeColor(n);
+
+        let matched = false, dimmed = false;
+        if (q) {
+          matched = n.concept.toLowerCase().includes(q) || n.category.toLowerCase().includes(q) || n.desc.toLowerCase().includes(q);
+          dimmed  = !matched;
+        }
+
+        ctx.globalAlpha = dimmed ? 0.1 : (matched ? 1 : 0.72);
+
+        if (matched) {
+          // Search match: white halo + bright dot
+          ctx.beginPath(); ctx.arc(nx, ny, 4, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fill();
+          ctx.beginPath(); ctx.arc(nx, ny, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#fff'; ctx.fill();
+        } else {
+          ctx.beginPath(); ctx.arc(nx, ny, 2, 0, Math.PI * 2);
+          ctx.fillStyle = dc; ctx.fill();
+        }
+
+        ctx.globalAlpha = 1;
+        layoutNodes.push({ node: n, wx: nx, wy: ny, matched, dimmed });
+      });
+    });
+  });
+
+  ctx.restore();
+
+  // Update search count display
+  if (q) {
+    const mc = layoutNodes.filter(l => l.matched).length;
+    searchCount.textContent = `${mc} / ${layoutNodes.length}`;
+    searchCount.classList.remove('hidden');
+  } else {
+    searchCount.classList.add('hidden');
+  }
+
+  hudTotal.textContent = `${concepts.length} CONCEPTS  ·  ${categories.length} CATEGORIES`;
+  hudCat.classList.add('hidden');
+  hudHint.textContent  = 'CLICK CATEGORY TO ZOOM  ·  SCROLL TO ZOOM  ·  DRAG TO PAN';
+}
+
+// ── Zoomed single-category scatter view ──────────────────────────────────────
+function drawZoomed() {
+  const cat = GROUPS.flatMap(g => g.catObjects || []).find(c => c.name === zoomedCat);
+  if (!cat) { zoomOut(); return; }
+
+  const cc    = cat.color;
+  const nodes = cat.nodes;
+  const q     = searchQuery.toLowerCase();
+  layoutNodes = [];
+
+  const Z_PAD  = 44;
+  const titleY = 24;
+
+  // Background + border
+  ctx.fillStyle   = hexToRgba(cc, 0.03);
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = hexToRgba(cc, 0.35);
+  ctx.lineWidth   = 1.5;
+  ctx.strokeRect(2, 2, W - 4, H - 4);
+
+  // Category title
+  ctx.font         = `bold 15px ${FONT}`;
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle    = cc;
+  ctx.fillText(zoomedCat.toUpperCase(), W / 2, titleY);
+
+  ctx.font      = `9px ${FONT}`;
+  ctx.fillStyle = hexToRgba(cc, 0.5);
+  ctx.fillText(`[ ${nodes.length} CONCEPTS ]`, W / 2, titleY + 17);
+
+  // Inner plot area bounds
+  const iX = Z_PAD, iY = titleY + 36;
+  const iW = W - Z_PAD * 2, iH = H - iY - Z_PAD * 0.7;
+
+  // Grid lines
+  ctx.strokeStyle = hexToRgba(cc, 0.06);
+  ctx.lineWidth   = 0.5;
+  for (let gx = iX; gx <= iX + iW; gx += iW / 8) {
+    ctx.beginPath(); ctx.moveTo(gx, iY); ctx.lineTo(gx, iY + iH); ctx.stroke();
+  }
+  for (let gy = iY; gy <= iY + iH; gy += iH / 8) {
+    ctx.beginPath(); ctx.moveTo(iX, gy); ctx.lineTo(iX + iW, gy); ctx.stroke();
+  }
+
+  // Centre axis lines
+  ctx.strokeStyle = hexToRgba(cc, 0.22);
+  ctx.lineWidth   = 1;
+  const axX = iX + iW / 2, axY = iY + iH / 2;
+  ctx.beginPath(); ctx.moveTo(axX, iY);  ctx.lineTo(axX, iY + iH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(iX, axY);  ctx.lineTo(iX + iW, axY); ctx.stroke();
+
+  // Axis labels (category-specific if defined)
+  const catData  = catAxesMap.get(zoomedCat);
+  const topLbl   = (catData?.yAxis?.top    ?? 'Mental').toUpperCase();
+  const botLbl   = (catData?.yAxis?.bottom ?? 'Physical').toUpperCase();
+  const leftLbl  = (catData?.xAxis?.left   ?? 'Opponent').toUpperCase();
+  const rightLbl = (catData?.xAxis?.right  ?? 'Self').toUpperCase();
+
+  ctx.font      = `9px ${FONT}`;
+  ctx.fillStyle = hexToRgba(cc, 0.4);
+
+  ctx.textAlign    = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(topLbl, axX, iY - 4);
+  ctx.textBaseline = 'top';
+  ctx.fillText(botLbl, axX, iY + iH + 5);
+
+  ctx.save();
+  ctx.translate(iX - 8, axY); ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(leftLbl, 0, 0);
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(iX + iW + 8, axY); ctx.rotate(Math.PI / 2);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(rightLbl, 0, 0);
+  ctx.restore();
+
+  // Compute label positions
+  const LH = 11;
+  const positioned = nodes.map(n => {
+    const px = toPlotX(n.x), py = toPlotY(n.y);
+    const nx = iX + px * iW;
+    const ny = iY + (1 - py) * iH;
+    const matched = q ? (n.concept.toLowerCase().includes(q) || n.desc.toLowerCase().includes(q)) : false;
+    const dimmed  = q ? !matched : false;
+    return { n, nx, ny, matched, dimmed, lx: nx, ly: ny - 11 };
+  });
+
+  // Label collision avoidance — 5 passes of push-apart
+  for (let pass = 0; pass < 5; pass++) {
+    for (let i = 0; i < positioned.length; i++) {
+      for (let j = i + 1; j < positioned.length; j++) {
+        const a = positioned[i], b = positioned[j];
+        const dy = Math.abs(a.ly - b.ly);
+        const dx = Math.abs(a.lx - b.lx);
+        const approxW = Math.max(a.n.concept.length, b.n.concept.length) * 5.5;
+        if (dx < approxW && dy < LH + 3) {
+          const push = (LH + 3 - dy) / 2 + 0.5;
+          a.ly -= push; b.ly += push;
+        }
+      }
+    }
+  }
+
+  // Draw nodes + labels
+  positioned.forEach(({ n, nx, ny, matched, dimmed, lx, ly }) => {
+    const dc = nodeColor(n);
+    ctx.globalAlpha = dimmed ? 0.12 : 1;
+    const r = matched ? 5.5 : 3.5;
+
+    // Halo
+    ctx.beginPath(); ctx.arc(nx, ny, r * 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = hexToRgba(dc, 0.13); ctx.fill();
+    // Dot
+    ctx.beginPath(); ctx.arc(nx, ny, r, 0, Math.PI * 2);
+    ctx.fillStyle = dc; ctx.fill();
+
+    // Label
+    ctx.font         = `${matched ? 'bold ' : ''}9px ${FONT}`;
+    ctx.textBaseline = 'bottom';
+    const edge = iW * 0.1;
+    let align = 'center', finalLx = lx;
+    if      (nx - iX    < edge) { align = 'left';  finalLx = nx + 9; }
+    else if (iX + iW - nx < edge) { align = 'right'; finalLx = nx - 9; }
+    ctx.textAlign = align;
+    ctx.fillStyle = dimmed ? hexToRgba(dc, 0.25) : hexToRgba(dc, 0.85);
+    ctx.fillText(n.concept, finalLx, ly);
+
+    ctx.globalAlpha = 1;
+    layoutNodes.push({ node: n, wx: nx, wy: ny });
+  });
+
+  // HUD update
+  hudTotal.textContent = `${nodes.length} CONCEPTS`;
+  hudCat.textContent   = `  ›  ${zoomedCat}`;
+  hudCat.classList.remove('hidden');
+  hudHint.textContent  = '← BACK TO OVERVIEW';
+}
+
+// ── Hit testing ───────────────────────────────────────────────────────────────
+function hitTestNode(sx, sy) {
+  let best = null, bestD;
+  if (zoomedCat) {
+    // Zoomed: screen coords match canvas coords directly
+    bestD = 18;
+    layoutNodes.forEach(({ node, wx, wy }) => {
+      const d = Math.hypot(wx - sx, wy - sy);
+      if (d < bestD) { bestD = d; best = node; }
+    });
+  } else {
+    // Full view: convert screen → world, compare with world coords
+    const { x: wx, y: wy } = screen2world(sx, sy);
+    bestD = 12 / cam.z;
+    layoutNodes.forEach(({ node, wx: nx, wy: ny }) => {
+      const d = Math.hypot(nx - wx, ny - wy);
+      if (d < bestD) { bestD = d; best = node; }
+    });
+  }
+  return best;
+}
+
+function hitTestCategory(sx, sy) {
+  if (zoomedCat) return null;
+  const { x: wx, y: wy } = screen2world(sx, sy);
+  for (const [name, b] of Object.entries(catBounds)) {
+    if (wx >= b.x && wx <= b.x + b.w && wy >= b.y && wy <= b.y + b.h) return name;
+  }
+  return null;
+}
+
+// ── Tooltip ───────────────────────────────────────────────────────────────────
+function showTooltip(node, screenX, screenY) {
+  const color = nodeColor(node);
+  tipTitle.textContent        = node.concept;
+  tipCat.textContent          = node.category;
+  tipCat.style.color          = color;
+  tipInner.style.borderColor  = color + '66';
+  const preview = node.desc ? node.desc.slice(0, 180) + (node.desc.length > 180 ? '…' : '') : (node.short || '');
+  tipDesc.textContent = preview;
+  tooltip.classList.remove('hidden');
+
+  const tw = 340, th = 120;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const left = screenX + 18 + tw > vw ? screenX - tw - 12 : screenX + 18;
+  const top  = Math.max(48, Math.min(screenY - 20, vh - th - 8));
+  tooltip.style.left = left + 'px';
+  tooltip.style.top  = top  + 'px';
+}
+
+function hideTooltip() { tooltip.classList.add('hidden'); }
+
+// ── Card modal ────────────────────────────────────────────────────────────────
+function openCard(node) {
+  const color = nodeColor(node);
+  cardTitle.textContent               = node.concept;
+  cardCat.textContent                 = node.category;
+  cardCat.style.color                 = color;
+  document.getElementById('qt-card-inner').style.borderColor = color + '88';
+  cardBody.textContent = node.desc || node.short || '—';
+  cardModal.classList.remove('hidden');
+  hideTooltip();
+}
+
+cardClose.addEventListener('click', () => cardModal.classList.add('hidden'));
+cardModal.addEventListener('click', e => { if (e.target === cardModal) cardModal.classList.add('hidden'); });
+
+// ── Zoom into / out of category ───────────────────────────────────────────────
+function zoomIntoCategory(name) {
+  zoomedCat   = name;
+  layoutNodes = [];
+  hoveredNode = null;
+  hideTooltip();
+  backBtn.classList.remove('hidden');
+  markDirty();
+}
+
+function zoomOut() {
+  zoomedCat   = null;
+  layoutNodes = [];
+  hoveredNode = null;
+  hideTooltip();
+  backBtn.classList.add('hidden');
+  resetCamera();
+  markDirty();
+}
+
+backBtn.addEventListener('click', zoomOut);
+resetBtn.addEventListener('click', () => { if (!zoomedCat) { resetCamera(); markDirty(); } else zoomOut(); });
+
+// ── Search ────────────────────────────────────────────────────────────────────
+searchInput.addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  markDirty();
+});
+
+// ── Mouse events ──────────────────────────────────────────────────────────────
+canvas.addEventListener('mousedown', e => {
+  if (e.button !== 0) return;
+  drag = { sx: e.clientX, sy: e.clientY, ox: e.clientX, oy: e.clientY };
+  canvas.style.cursor = 'grabbing';
+  e.preventDefault();
+});
+
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left;
+  const sy = e.clientY - rect.top;
+
+  if (drag) {
+    if (!zoomedCat) {
+      cam.x += (e.clientX - drag.sx) / cam.z;
+      cam.y += (e.clientY - drag.sy) / cam.z;
+      clampCam();
+      markDirty();
+    }
+    drag.sx = e.clientX;
+    drag.sy = e.clientY;
+    return;
+  }
+
+  const hit = hitTestNode(sx, sy);
+  if (hit !== hoveredNode) { hoveredNode = hit; markDirty(); }
+
+  if (hit) {
+    showTooltip(hit, e.clientX, e.clientY);
+    canvas.style.cursor = 'pointer';
+  } else {
+    hideTooltip();
+    canvas.style.cursor = hitTestCategory(sx, sy) ? 'pointer' : 'crosshair';
+  }
+});
+
+canvas.addEventListener('mouseup', e => {
+  const moved = drag && (Math.abs(e.clientX - drag.ox) + Math.abs(e.clientY - drag.oy)) > 4;
+  drag = null;
+  canvas.style.cursor = 'crosshair';
+
+  if (!moved) {
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+    const hitNode = hitTestNode(sx, sy);
+    if (hitNode) { openCard(hitNode); return; }
+    const hitCat = hitTestCategory(sx, sy);
+    if (hitCat) zoomIntoCategory(hitCat);
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  drag = null; hoveredNode = null;
+  hideTooltip();
+  canvas.style.cursor = 'crosshair';
+  markDirty();
+});
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (zoomedCat) return;
+  const rect = canvas.getBoundingClientRect();
+  zoomAt(e.clientX - rect.left, e.clientY - rect.top, e.deltaY < 0 ? 1.12 : 0.9);
+  markDirty();
+}, { passive: false });
+
+// ── Touch events ──────────────────────────────────────────────────────────────
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.touches;
+  if (t.length === 1) {
+    drag = { sx: t[0].clientX, sy: t[0].clientY, ox: t[0].clientX, oy: t[0].clientY };
+    const rect = canvas.getBoundingClientRect();
+    const sx = t[0].clientX - rect.left, sy = t[0].clientY - rect.top;
+    tapTimeout = setTimeout(() => {
+      const hit = hitTestNode(sx, sy);
+      if (hit) { openCard(hit); return; }
+      const cat = hitTestCategory(sx, sy);
+      if (cat) zoomIntoCategory(cat);
+    }, 120);
+  }
+  if (t.length === 2) {
+    clearTimeout(tapTimeout); drag = null;
+    pinch = { dist: Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY) };
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const t = e.touches;
+  if (t.length === 1 && drag) {
+    clearTimeout(tapTimeout);
+    if (!zoomedCat) {
+      cam.x += (t[0].clientX - drag.sx) / cam.z;
+      cam.y += (t[0].clientY - drag.sy) / cam.z;
+      clampCam(); markDirty();
+    }
+    drag.sx = t[0].clientX; drag.sy = t[0].clientY;
+  }
+  if (t.length === 2 && pinch) {
+    const dist = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    const rect  = canvas.getBoundingClientRect();
+    zoomAt(
+      (t[0].clientX + t[1].clientX) / 2 - rect.left,
+      (t[0].clientY + t[1].clientY) / 2 - rect.top,
+      dist / pinch.dist
+    );
+    pinch.dist = dist; markDirty();
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  if (e.touches.length === 0) { drag = null; pinch = null; }
+}, { passive: false });
+
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+resize();
+requestAnimationFrame(drawLoop);
+</script>

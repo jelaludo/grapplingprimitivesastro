@@ -1,0 +1,33 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import QuadTreeViz from '@/components/quadtree/QuadTreeViz.astro';
+import { getCollection } from 'astro:content';
+
+// ── Load data at BUILD TIME ────────────────────────────────────────────────────
+const conceptEntries  = await getCollection('concepts');
+const categoryEntries = await getCollection('categories');
+
+// Axis values in .md files are [-1, 1] — use directly.
+// The QuadTree viz maps them to [0,1] internally via toPlotX/toPlotY.
+const concepts = conceptEntries.map(e => ({
+  id:       e.data.id,
+  concept:  e.data.concept,
+  category: e.data.category,
+  x:        e.data.axis_self_opponent,
+  y:        e.data.axis_mental_physical,
+  color:    e.data.color ?? '',
+  desc:     e.body ?? '',
+  short:    e.data.short_description ?? '',
+}));
+
+const categories = categoryEntries.map(e => ({
+  name:  e.data.name,
+  color: e.data.color,
+  xAxis: e.data.xAxis,
+  yAxis: e.data.yAxis,
+}));
+---
+
+<BaseLayout title="QuadTree Map — Grappling Primitives" fullscreen={true}>
+  <QuadTreeViz concepts={concepts} categories={categories} />
+</BaseLayout>
