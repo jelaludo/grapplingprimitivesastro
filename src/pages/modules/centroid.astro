@@ -1,0 +1,564 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Centroid Game — Grappling Primitives" fullscreen={true}>
+
+  <!-- ── Toolbar ──────────────────────────────────────────────────────────── -->
+  <div id="toolbar" style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:12px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
+    <a href="/" style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+    <span style="color:#21262d;">|</span>
+    <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Centroid Game</span>
+    <div style="flex:1;"></div>
+    <!-- HUD (hidden until game starts) -->
+    <span id="hud-round" style="display:none;font-size:10px;letter-spacing:0.1em;color:#6b7280;text-transform:uppercase;">R<span id="hud-r">0</span>/10</span>
+    <span id="hud-diff" style="display:none;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#00ff88;"></span>
+    <span id="hud-timer-wrap" style="display:none;font-size:10px;letter-spacing:0.1em;color:#6b7280;">⏱ <span id="hud-timer" style="color:#00ff88;">0:00</span><span id="hud-penalty" style="color:#ff4444;display:none;"></span></span>
+  </div>
+
+  <!-- ── Main ─────────────────────────────────────────────────────────────── -->
+  <div style="min-height:100vh;padding-top:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:24px;font-family:'Courier New',Consolas,Monaco,monospace;">
+
+    <div style="width:100%;max-width:380px;padding:0 16px;display:flex;flex-direction:column;gap:12px;">
+
+      <!-- Header -->
+      <div style="text-align:center;">
+        <div style="font-size:15px;font-weight:700;letter-spacing:0.08em;color:#c9d1d9;">Centroid (x̄, ȳ) — GRID FAST</div>
+        <div style="font-size:10px;color:#6b7280;letter-spacing:0.05em;margin-top:3px;">10 rounds · lowest score wins</div>
+      </div>
+
+      <!-- Score row (hidden until playing) -->
+      <div id="score-row" style="display:none;justify-content:center;gap:32px;text-align:center;">
+        <div>
+          <div id="disp-total" style="font-size:22px;font-weight:700;color:#00d4ff;">0</div>
+          <div style="font-size:9px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;margin-top:2px;">Total</div>
+        </div>
+      </div>
+
+      <!-- Canvas board (hidden until playing) -->
+      <div id="canvas-wrapper" style="display:none;position:relative;align-self:center;">
+        <canvas id="grid-canvas" style="display:block;border:1px solid #21262d;border-radius:4px;cursor:crosshair;"></canvas>
+        <!-- Points flash -->
+        <div id="pts-flash" style="display:none;position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:34px;font-weight:700;color:#ff6b6b;z-index:10;text-shadow:0 0 16px #ff4444;pointer-events:none;white-space:nowrap;"></div>
+        <!-- Countdown overlay -->
+        <div id="countdown-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;z-index:20;border-radius:4px;">
+          <span id="countdown-text" style="font-size:38px;font-weight:700;color:#c9d1d9;letter-spacing:0.08em;"></span>
+        </div>
+      </div>
+
+      <!-- Idle screen -->
+      <div id="idle-screen">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid #21262d;border-radius:6px;padding:14px;">
+          <div style="font-size:12px;font-weight:600;color:#c9d1d9;margin-bottom:8px;letter-spacing:0.05em;">How it works</div>
+          <p style="font-size:11px;color:#8b949e;line-height:1.65;margin-bottom:12px;">
+            Estimate the <strong style="color:#c9d1d9;">centroid</strong> (center of mass) of the blue squares.<br>
+            Click a cell to place your guess, then press <strong style="color:#c9d1d9;">VALIDATE</strong><br>
+            (or click the same cell again to confirm).<br>
+            Perfect guess = <strong style="color:#66bb6a;">0 points</strong>. Lower is better.
+          </p>
+          <div style="display:flex;gap:14px;align-items:center;">
+            <canvas id="sample-canvas" style="border-radius:4px;flex-shrink:0;"></canvas>
+            <div style="font-size:11px;line-height:2;color:#8b949e;">
+              <div><span style="color:#4d8fcc;">■</span> Dots</div>
+              <div><span style="color:#66bb6a;">■</span> True centroid</div>
+              <div><span style="color:#ff6b6b;">■</span> Your guess</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action button -->
+      <button id="action-btn" style="width:100%;padding:11px 18px;font-family:inherit;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all 0.15s;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;">
+        <div id="btn-label" style="font-weight:600;">START GAME</div>
+        <div style="font-size:9px;color:#6b7280;margin-top:3px;letter-spacing:0.04em;">x̄ = (1/n) Σ xᵢ &nbsp;&nbsp; ȳ = (1/n) Σ yᵢ</div>
+      </button>
+
+      <!-- Hint -->
+      <div id="hint-text" style="font-size:10px;color:#6b7280;text-align:center;letter-spacing:0.05em;min-height:14px;">Click START GAME to begin</div>
+
+    </div>
+  </div>
+
+  <!-- ── Recap Modal ──────────────────────────────────────────────────────── -->
+  <div id="recap-modal" style="display:none;position:fixed;inset:0;z-index:100;">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);"></div>
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(92vw,400px);max-height:82vh;overflow-y:auto;background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:20px;font-family:'Courier New',Consolas,Monaco,monospace;">
+
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:18px;font-weight:700;color:#c9d1d9;letter-spacing:0.08em;">Game Over</div>
+        <div id="recap-msg" style="font-size:11px;color:#8b949e;margin-top:6px;line-height:1.55;"></div>
+      </div>
+
+      <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.03);border-radius:4px;margin-bottom:14px;">
+        <div id="recap-total" style="font-size:26px;font-weight:700;color:#00d4ff;"></div>
+        <div style="font-size:9px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;margin-top:4px;">Total Score</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:14px;font-size:11px;color:#8b949e;">
+        <span>Perfect: <strong id="recap-perfect" style="color:#66bb6a;"></strong></span>
+        <span>Avg score: <strong id="recap-avg" style="color:#c9d1d9;"></strong></span>
+        <span>Avg time: <strong id="recap-time" style="color:#c9d1d9;"></strong>s</span>
+      </div>
+
+      <!-- Round history -->
+      <div id="recap-rounds" style="font-size:11px;color:#8b949e;margin-bottom:14px;"></div>
+
+      <!-- Histogram -->
+      <div style="font-size:9px;letter-spacing:0.15em;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Score Distribution</div>
+      <div id="recap-hist" style="display:flex;align-items:flex-end;gap:3px;height:56px;margin-bottom:18px;"></div>
+
+      <!-- Buttons -->
+      <div style="display:flex;gap:8px;">
+        <button id="btn-play-again" style="flex:1;padding:10px;font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;border-radius:4px;cursor:pointer;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;">Play Again</button>
+        <button id="btn-home" style="flex:1;padding:10px;font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;border-radius:4px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#8b949e;">← Home</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Constants ──────────────────────────────────────────────────────────────
+    const GRID        = 17;
+    const CELL        = 20;   // canvas px per cell
+    const BOARD       = GRID * CELL; // 340px
+    const MAX_ROUNDS  = 10;
+    const PENALTY_AT  = 3;    // seconds before penalty kicks in
+    const DPR         = Math.min(window.devicePixelRatio || 1, 2);
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let S = mkState();
+    function mkState() {
+      return {
+        phase:        'idle', // idle | countdown | playing | downtime | recap
+        round:        0,
+        dots:         [],
+        optimal:      null,  // { x, y } integer centroid
+        guess:        null,  // { x, y } current guess cell
+        showResult:   false,
+        timer:        0,
+        penalty:      0,
+        totalScore:   0,
+        history:      [],    // { round, score, timer, perfect }
+        hover:        null,
+      };
+    }
+
+    let timerInterval = null;
+    const timeouts = [];
+
+    function schedule(fn, ms) {
+      const id = setTimeout(fn, ms);
+      timeouts.push(id);
+    }
+    function clearScheduled() {
+      timeouts.forEach(clearTimeout);
+      timeouts.length = 0;
+    }
+    function stopTimer() {
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    }
+
+    // ── Math ──────────────────────────────────────────────────────────────────
+    function centroid(dots) {
+      const n = dots.length;
+      if (!n) return { x: 0, y: 0 };
+      return {
+        x: dots.reduce((s, d) => s + d.x, 0) / n,
+        y: dots.reduce((s, d) => s + d.y, 0) / n,
+      };
+    }
+    function chebyshev(a, b) {
+      return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+    }
+    function diffFor(round) {
+      if (round <= 3) return { name: 'EASY',   min: 3, max: 8,  color: '#00ff88' };
+      if (round <= 7) return { name: 'MEDIUM', min: 5, max: 10, color: '#ffaa00' };
+      return               { name: 'HARD',   min: 7, max: 12, color: '#ff4444' };
+    }
+
+    // ── Canvas setup ──────────────────────────────────────────────────────────
+    const canvas = document.getElementById('grid-canvas');
+    const ctx    = canvas.getContext('2d');
+
+    canvas.width        = BOARD * DPR;
+    canvas.height       = BOARD * DPR;
+    canvas.style.width  = BOARD + 'px';
+    canvas.style.height = BOARD + 'px';
+    ctx.scale(DPR, DPR);
+
+    // ── Draw ──────────────────────────────────────────────────────────────────
+    function draw() {
+      ctx.clearRect(0, 0, BOARD, BOARD);
+
+      // Background
+      ctx.fillStyle = '#0d1117';
+      ctx.fillRect(0, 0, BOARD, BOARD);
+
+      // Grid lines
+      ctx.strokeStyle = '#21262d';
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i <= GRID; i++) {
+        ctx.beginPath(); ctx.moveTo(i * CELL, 0);     ctx.lineTo(i * CELL, BOARD); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, i * CELL);     ctx.lineTo(BOARD, i * CELL); ctx.stroke();
+      }
+
+      // Hover highlight
+      if (S.phase === 'playing' && !S.showResult && S.hover) {
+        ctx.fillStyle = 'rgba(0,212,255,0.13)';
+        ctx.fillRect(S.hover.x * CELL + 1, S.hover.y * CELL + 1, CELL - 2, CELL - 2);
+      }
+
+      // Dots
+      ctx.fillStyle = '#4d8fcc';
+      for (const d of S.dots) {
+        ctx.fillRect(d.x * CELL + 2, d.y * CELL + 2, CELL - 4, CELL - 4);
+      }
+
+      // Guess cell
+      if (S.guess) {
+        ctx.fillStyle = S.showResult ? '#ff6b6b' : '#f0a040';
+        ctx.fillRect(S.guess.x * CELL + 2, S.guess.y * CELL + 2, CELL - 4, CELL - 4);
+      }
+
+      // Result: vectors + optimal
+      if (S.showResult && S.optimal) {
+        const opt = S.optimal;
+        ctx.strokeStyle = 'rgba(102,187,106,0.6)';
+        ctx.lineWidth = 1.5;
+        for (const d of S.dots) {
+          ctx.beginPath();
+          ctx.moveTo(d.x * CELL + CELL / 2, d.y * CELL + CELL / 2);
+          ctx.lineTo(opt.x * CELL + CELL / 2, opt.y * CELL + CELL / 2);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#66bb6a';
+        ctx.fillRect(opt.x * CELL + 2, opt.y * CELL + 2, CELL - 4, CELL - 4);
+      }
+
+      // Downtime dim
+      if (S.phase === 'downtime') {
+        ctx.fillStyle = 'rgba(0,0,0,0.38)';
+        ctx.fillRect(0, 0, BOARD, BOARD);
+      }
+    }
+
+    // ── Canvas interaction ────────────────────────────────────────────────────
+    function cellAt(e) {
+      const r  = canvas.getBoundingClientRect();
+      const gx = Math.floor((e.clientX - r.left)  / CELL);
+      const gy = Math.floor((e.clientY - r.top)   / CELL);
+      if (gx < 0 || gx >= GRID || gy < 0 || gy >= GRID) return null;
+      return { x: gx, y: gy };
+    }
+
+    canvas.addEventListener('mousemove', e => {
+      if (S.phase !== 'playing' || S.showResult) return;
+      S.hover = cellAt(e);
+      draw();
+    });
+    canvas.addEventListener('mouseleave', () => { S.hover = null; draw(); });
+    canvas.addEventListener('click', e => {
+      if (S.phase !== 'playing' || S.showResult) return;
+      const cell = cellAt(e);
+      if (!cell) return;
+      if (S.guess && S.guess.x === cell.x && S.guess.y === cell.y) {
+        validate();
+      } else {
+        S.guess = cell;
+        updateUI(); draw();
+      }
+    });
+
+    // ── Game logic ────────────────────────────────────────────────────────────
+    function startRound(nr) {
+      const diff = diffFor(nr);
+      const n    = diff.min + Math.floor(Math.random() * (diff.max - diff.min + 1));
+      const used = new Set();
+      const dots = [];
+      while (dots.length < n) {
+        const x = Math.floor(Math.random() * GRID);
+        const y = Math.floor(Math.random() * GRID);
+        const k = `${x},${y}`;
+        if (!used.has(k)) { used.add(k); dots.push({ x, y }); }
+      }
+      const c = centroid(dots);
+
+      S.phase      = 'playing';
+      S.round      = nr;
+      S.dots       = dots;
+      S.optimal    = { x: Math.round(c.x), y: Math.round(c.y) };
+      S.guess      = null;
+      S.showResult = false;
+      S.timer      = 0;
+      S.penalty    = 0;
+      S.hover      = null;
+
+      stopTimer();
+      timerInterval = setInterval(() => {
+        if (S.phase !== 'playing' || S.showResult) return;
+        S.timer++;
+        if (S.timer > PENALTY_AT) S.penalty++;
+        updateUI();
+      }, 1000);
+
+      updateUI(); draw();
+    }
+
+    function validate() {
+      if (!S.guess || !S.optimal || S.showResult) return;
+      stopTimer();
+
+      const dist    = chebyshev(S.guess, S.optimal);
+      const score   = dist + S.penalty;
+      const perfect = dist === 0;
+
+      S.showResult  = true;
+      S.phase       = 'downtime';
+      S.totalScore += score;
+      S.history.push({ round: S.round, score, timer: S.timer, perfect });
+
+      // Points flash
+      const flash = document.getElementById('pts-flash');
+      flash.textContent = score === 0 ? '✨ 0 ✨' : `+${score}`;
+      flash.style.display = 'block';
+
+      updateUI(); draw();
+
+      schedule(() => {
+        flash.style.display = 'none';
+        const next = S.round + 1;
+        if (next <= MAX_ROUNDS) {
+          schedule(() => startRound(next), 180);
+        } else {
+          showRecap();
+        }
+      }, 1000);
+    }
+
+    function hardReset() {
+      clearScheduled();
+      stopTimer();
+      S = mkState();
+    }
+
+    function begin() {
+      hardReset();
+      S.phase = 'countdown';
+      showBoard();
+      updateUI();
+
+      const overlay = document.getElementById('countdown-overlay');
+      const text    = document.getElementById('countdown-text');
+      overlay.style.display = 'flex';
+      text.textContent = 'Ready?';
+      draw();
+
+      schedule(() => { text.textContent = 'GO!'; }, 500);
+      schedule(() => { overlay.style.display = 'none'; startRound(1); }, 1000);
+    }
+
+    // ── Recap ─────────────────────────────────────────────────────────────────
+    const MSGS = {
+      hi:  ["Nice try, but you've got more in you!", "Not bad — now show your best!", "Solid effort, keep pushing!"],
+      mid: ["Amazing! Your spatial reasoning is top-notch!", "Outstanding performance!", "Fantastic — you aced it!"],
+      lo9: ["Single digit! Impressive!", "So close to perfection!", "Excellent intuition."],
+      lo7: ["Unreal! You beat the creator!", "Legendary performance!", "Phenomenal accuracy!"],
+    };
+    function recapMsg(score) {
+      const pool = score > 25 ? MSGS.hi : score >= 10 ? MSGS.mid : score >= 8 ? MSGS.lo9 : MSGS.lo7;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function showRecap() {
+      S.phase = 'recap';
+      const h = S.history;
+      const total = S.totalScore;
+      const avg   = h.length ? (h.reduce((s, r) => s + r.score, 0) / h.length).toFixed(1) : '0.0';
+      const avgT  = h.length ? (h.reduce((s, r) => s + r.timer, 0) / h.length).toFixed(1) : '0.0';
+      const perf  = h.filter(r => r.perfect).length;
+
+      document.getElementById('recap-msg').textContent    = recapMsg(total);
+      document.getElementById('recap-total').textContent  = `${total} points`;
+      document.getElementById('recap-perfect').textContent = perf;
+      document.getElementById('recap-avg').textContent    = avg;
+      document.getElementById('recap-time').textContent   = avgT;
+
+      // Round history
+      const roundsEl = document.getElementById('recap-rounds');
+      roundsEl.innerHTML = h.map(r =>
+        `<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #21262d;">
+           <span>Round ${r.round}</span>
+           <span style="color:${r.score === 0 ? '#66bb6a' : '#c9d1d9'}">${r.score} pts${r.perfect ? ' ✨' : ''}</span>
+         </div>`
+      ).join('');
+
+      // Histogram
+      const buckets   = Array.from({ length: 10 }, (_, i) => h.filter(r => i < 9 ? r.score === i : r.score >= 9).length);
+      const maxBucket = Math.max(...buckets, 1);
+      const histEl    = document.getElementById('recap-hist');
+      histEl.innerHTML = '';
+      buckets.forEach((count, i) => {
+        const col  = document.createElement('div');
+        col.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;';
+        const bar  = document.createElement('div');
+        bar.style.cssText = `width:100%;background:#00d4ff;border-radius:2px 2px 0 0;min-height:1px;height:${Math.round(count / maxBucket * 50)}px;`;
+        const lbl  = document.createElement('span');
+        lbl.style.cssText = 'font-size:9px;color:#6b7280;';
+        lbl.textContent   = i === 9 ? '9+' : String(i);
+        col.appendChild(bar);
+        col.appendChild(lbl);
+        histEl.appendChild(col);
+      });
+
+      document.getElementById('recap-modal').style.display = 'block';
+      updateUI();
+    }
+
+    // ── UI helpers ────────────────────────────────────────────────────────────
+    function showBoard() {
+      document.getElementById('idle-screen').style.display  = 'none';
+      document.getElementById('canvas-wrapper').style.display = 'block';
+      document.getElementById('score-row').style.display    = 'flex';
+      document.getElementById('hud-round').style.display      = 'inline';
+      document.getElementById('hud-diff').style.display       = 'inline';
+      document.getElementById('hud-timer-wrap').style.display = 'inline';
+    }
+
+    function updateUI() {
+      const p = S.phase;
+
+      // HUD
+      if (p === 'playing' || p === 'downtime' || p === 'countdown') {
+        const r = Math.max(S.round, 1);
+        document.getElementById('hud-r').textContent  = Math.min(S.round, MAX_ROUNDS);
+        const diff    = diffFor(r);
+        const diffEl  = document.getElementById('hud-diff');
+        diffEl.textContent  = diff.name;
+        diffEl.style.color  = diff.color;
+
+        const secs     = S.timer;
+        const timerEl  = document.getElementById('hud-timer');
+        timerEl.textContent = `0:${String(secs).padStart(2, '0')}`;
+        timerEl.style.color = secs <= PENALTY_AT ? '#00ff88' : '#ff4444';
+
+        const penEl = document.getElementById('hud-penalty');
+        if (S.penalty > 0) {
+          penEl.style.display = 'inline';
+          penEl.textContent   = ` +${S.penalty}`;
+        } else {
+          penEl.style.display = 'none';
+        }
+      }
+
+      // Score
+      document.getElementById('disp-total').textContent = S.totalScore;
+
+      // Action button
+      const btn   = document.getElementById('action-btn');
+      const label = document.getElementById('btn-label');
+      if (p === 'idle') {
+        btn.disabled       = false;
+        btn.style.opacity  = '1';
+        btn.style.cursor   = 'pointer';
+        btn.style.color    = '#00d4ff';
+        btn.style.borderColor = '#00d4ff';
+        label.textContent  = 'START GAME';
+      } else if (p === 'playing' && S.guess && !S.showResult) {
+        btn.disabled       = false;
+        btn.style.opacity  = '1';
+        btn.style.cursor   = 'pointer';
+        btn.style.color    = '#00ff88';
+        btn.style.borderColor = '#00ff88';
+        label.textContent  = 'VALIDATE';
+      } else {
+        btn.disabled       = true;
+        btn.style.opacity  = '0.45';
+        btn.style.cursor   = 'not-allowed';
+        label.textContent  = p === 'idle' ? 'START GAME' : 'PLACE GUESS';
+      }
+
+      // Hint
+      const hint = document.getElementById('hint-text');
+      if      (p === 'idle')                                hint.textContent = 'Click START GAME to begin';
+      else if (p === 'playing' && !S.guess)                 hint.textContent = 'Click a cell to place your guess';
+      else if (p === 'playing' && S.guess && !S.showResult) hint.textContent = 'Click same cell or VALIDATE to confirm';
+      else                                                  hint.textContent = '';
+    }
+
+    // ── Button events ─────────────────────────────────────────────────────────
+    document.getElementById('action-btn').addEventListener('click', () => {
+      if (S.phase === 'idle')                                     begin();
+      else if (S.phase === 'playing' && S.guess && !S.showResult) validate();
+    });
+
+    document.getElementById('btn-play-again').addEventListener('click', () => {
+      document.getElementById('recap-modal').style.display = 'none';
+      hardReset();
+      // Reset to idle screen
+      document.getElementById('idle-screen').style.display   = 'block';
+      document.getElementById('canvas-wrapper').style.display = 'none';
+      document.getElementById('score-row').style.display     = 'none';
+      document.getElementById('hud-round').style.display       = 'none';
+      document.getElementById('hud-diff').style.display        = 'none';
+      document.getElementById('hud-timer-wrap').style.display  = 'none';
+      updateUI();
+    });
+
+    document.getElementById('btn-home').addEventListener('click', () => {
+      window.location.href = '/';
+    });
+
+    // ── Sample canvas (idle) ──────────────────────────────────────────────────
+    (function drawSample() {
+      const SGRID = 11, SCELL = 14, SPX = SGRID * SCELL;
+      const sc = document.getElementById('sample-canvas');
+      sc.width        = SPX * DPR;
+      sc.height       = SPX * DPR;
+      sc.style.width  = SPX + 'px';
+      sc.style.height = SPX + 'px';
+      const sx = sc.getContext('2d');
+      sx.scale(DPR, DPR);
+
+      const sampleDots = [
+        { x: 2, y: 2 }, { x: 3, y: 7 }, { x: 5, y: 4 },
+        { x: 7, y: 2 }, { x: 8, y: 8 }, { x: 2, y: 9 },
+      ];
+      const sc2  = centroid(sampleDots);
+      const sOpt = { x: Math.round(sc2.x), y: Math.round(sc2.y) };
+      const sGuess = { x: Math.min(SGRID - 1, sOpt.x + 1), y: sOpt.y };
+
+      // BG
+      sx.fillStyle = '#0d1117';
+      sx.fillRect(0, 0, SPX, SPX);
+      // Grid
+      sx.strokeStyle = '#21262d';
+      sx.lineWidth   = 0.5;
+      for (let i = 0; i <= SGRID; i++) {
+        sx.beginPath(); sx.moveTo(i * SCELL, 0);    sx.lineTo(i * SCELL, SPX); sx.stroke();
+        sx.beginPath(); sx.moveTo(0, i * SCELL);    sx.lineTo(SPX, i * SCELL); sx.stroke();
+      }
+      // Vectors
+      sx.strokeStyle = 'rgba(102,187,106,0.6)';
+      sx.lineWidth   = 1.5;
+      for (const d of sampleDots) {
+        sx.beginPath();
+        sx.moveTo(d.x * SCELL + SCELL / 2, d.y * SCELL + SCELL / 2);
+        sx.lineTo(sOpt.x * SCELL + SCELL / 2, sOpt.y * SCELL + SCELL / 2);
+        sx.stroke();
+      }
+      // Dots
+      sx.fillStyle = '#4d8fcc';
+      for (const d of sampleDots) sx.fillRect(d.x * SCELL + 2, d.y * SCELL + 2, SCELL - 4, SCELL - 4);
+      // Guess
+      sx.fillStyle = '#ff6b6b';
+      sx.fillRect(sGuess.x * SCELL + 2, sGuess.y * SCELL + 2, SCELL - 4, SCELL - 4);
+      // Optimal
+      sx.fillStyle = '#66bb6a';
+      sx.fillRect(sOpt.x * SCELL + 2, sOpt.y * SCELL + 2, SCELL - 4, SCELL - 4);
+    })();
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    updateUI();
+  </script>
+
+</BaseLayout>
