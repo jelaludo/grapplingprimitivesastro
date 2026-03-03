@@ -33,7 +33,7 @@ const { concepts, categories } = Astro.props;
 
   <!-- Toolbar -->
   <div id="toolbar" class="absolute top-0 left-0 right-0 z-20 h-9 bg-bg/95 border-b border-border flex items-center gap-3 px-3 backdrop-blur-sm">
-    <span class="text-[9px] tracking-[3px] text-text-dim uppercase whitespace-nowrap select-none">Concept Map</span>
+    <span class="text-[11px] tracking-[2px] text-text-dim uppercase whitespace-nowrap select-none">Concept Map</span>
     <span class="text-border">|</span>
 
     <!-- Search -->
@@ -43,22 +43,22 @@ const { concepts, categories } = Astro.props;
       placeholder="Search concepts..."
       class="flex-1 max-w-xs h-6 bg-transparent border border-border text-xs text-text-primary placeholder-text-dim px-2 focus:outline-none focus:border-accent font-mono"
     />
-    <span id="search-count" class="text-[9px] tracking-[2px] text-text-dim whitespace-nowrap hidden"></span>
+    <span id="search-count" class="text-[11px] tracking-[2px] text-text-dim whitespace-nowrap hidden"></span>
 
     <span class="flex-1"></span>
 
     <!-- Category filter toggle -->
-    <button id="filter-toggle" class="text-[9px] tracking-[2px] text-text-dim border border-border px-2 h-6 hover:border-accent/50 hover:text-accent transition-all uppercase">
+    <button id="filter-toggle" class="text-[11px] tracking-[2px] text-text-dim border border-border px-2 h-6 hover:border-accent/50 hover:text-accent transition-all uppercase">
       Filter
     </button>
 
     <!-- Back button (zoom-out) -->
-    <button id="back-btn" class="hidden text-[9px] tracking-[2px] text-accent border border-accent/40 px-2 h-6 hover:bg-accent/10 transition-all uppercase">
+    <button id="back-btn" class="hidden text-[11px] tracking-[2px] text-accent border border-accent/40 px-2 h-6 hover:bg-accent/10 transition-all uppercase">
       ← All
     </button>
 
     <!-- Reset camera -->
-    <button id="reset-btn" class="text-[9px] tracking-[2px] text-text-dim border border-border px-2 h-6 hover:border-accent/50 hover:text-accent transition-all uppercase">
+    <button id="reset-btn" class="text-[11px] tracking-[2px] text-text-dim border border-border px-2 h-6 hover:border-accent/50 hover:text-accent transition-all uppercase">
       Reset
     </button>
   </div>
@@ -79,9 +79,9 @@ const { concepts, categories } = Astro.props;
   <div id="tooltip" class="pointer-events-none fixed z-30 hidden" style="max-width: min(340px, 90vw)">
     <div class="bg-bg border border-border p-3" style="box-shadow: 0 0 20px rgba(76,141,255,0.12)">
       <div id="tip-title"  class="text-sm font-bold text-text-primary mb-1"></div>
-      <div id="tip-cat"    class="text-[9px] tracking-[2px] uppercase mb-2"></div>
+      <div id="tip-cat"    class="text-[11px] tracking-[2px] uppercase mb-2"></div>
       <div id="tip-desc"   class="text-xs text-text-muted leading-relaxed"></div>
-      <div id="tip-hint"   class="text-[9px] text-text-dim mt-2 text-right">CLICK FOR MORE →</div>
+      <div id="tip-hint"   class="text-[11px] text-text-dim mt-2 text-right">CLICK FOR MORE →</div>
     </div>
   </div>
 
@@ -92,7 +92,7 @@ const { concepts, categories } = Astro.props;
       <div class="flex items-start justify-between gap-3 p-5 border-b border-border">
         <div>
           <div id="card-title" class="text-base font-bold text-text-primary mb-1"></div>
-          <div id="card-cat"   class="text-[9px] tracking-[2px] uppercase"></div>
+          <div id="card-cat"   class="text-[11px] tracking-[2px] uppercase"></div>
         </div>
         <button id="card-close" class="text-text-dim hover:text-text-primary text-xl leading-none flex-shrink-0 mt-0.5">×</button>
       </div>
@@ -111,12 +111,13 @@ const { concepts, categories } = Astro.props;
 const DPR       = Math.min(window.devicePixelRatio || 1, 2);
 const MARGIN    = 48;   // px around the plot area
 const DOT_R     = 4;    // base dot radius (CSS px)
-const FONT      = '"Courier New", monospace';
+// Consolas is ClearType-optimised for Windows screens; much crisper than Courier New at small sizes
+const FONT      = '"Consolas", "Courier New", monospace';
 const C_BG      = '#050509';
 const C_GRID    = 'rgba(28,31,38,0.9)';
 const C_AXIS    = 'rgba(76,141,255,0.25)';
 const C_AXIS_HL = 'rgba(76,141,255,0.5)';
-const C_LABEL   = '#6B7280';
+const C_LABEL   = '#9CA3AF';  // brighter — was #6B7280 which was too dim at small sizes
 const C_QLABEL  = 'rgba(76,141,255,0.06)';  // quadrant bg tint
 const TICK      = 0.25;  // grid every 0.25 concept units
 
@@ -328,8 +329,8 @@ function draw() {
   }
   const axLabels = getAxisLabels();
 
-  const fontSize = Math.max(9, Math.min(11, W / 80));
-  ctx.font = `${fontSize}px ${FONT}`;
+  const fontSize = Math.max(11, Math.min(13, W / 70));
+  ctx.font = `500 ${fontSize}px ${FONT}`;  // weight 500: noticeably bolder at small sizes
   ctx.fillStyle = C_LABEL;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -358,7 +359,7 @@ function draw() {
     { cx: -0.55, cy: -0.55, t: `${axLabels.bottom}\n${axLabels.left}` },
     { cx:  0.55, cy: -0.55, t: `${axLabels.bottom}\n${axLabels.right}`},
   ];
-  ctx.font = `${Math.max(8, fontSize - 1)}px ${FONT}`;
+  ctx.font = `${Math.max(10, fontSize - 1)}px ${FONT}`;
   ctx.fillStyle = 'rgba(76,141,255,0.18)';
   ctx.textAlign = 'center';
   qLabels.forEach(({ cx, cy, t }) => {
@@ -514,7 +515,7 @@ function buildFilterPanel() {
 
   // "All" pill
   const allBtn = document.createElement('button');
-  allBtn.className = 'text-[9px] tracking-[2px] border px-2 py-0.5 transition-all ' +
+  allBtn.className = 'text-[11px] tracking-[2px] border px-2 py-0.5 transition-all ' +
     (activeCategories.size === 0
       ? 'border-accent text-accent'
       : 'border-border text-text-dim hover:border-accent/50');
@@ -529,7 +530,7 @@ function buildFilterPanel() {
   categories.forEach(cat => {
     const btn = document.createElement('button');
     const active = activeCategories.has(cat.name);
-    btn.className = 'text-[9px] tracking-[1px] border px-2 py-0.5 transition-all ' +
+    btn.className = 'text-[11px] tracking-[1px] border px-2 py-0.5 transition-all ' +
       (active
         ? 'text-bg'
         : 'border-border text-text-dim hover:border-accent/50 hover:text-text-muted');
