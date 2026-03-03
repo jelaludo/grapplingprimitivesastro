@@ -6,7 +6,7 @@
   html {
     background-color: #050509;
     color: #E5E7EB;
-    font-family: "Courier New", Courier, monospace;
+    font-family: "Courier New", "Consolas", "Monaco", monospace;
   }
 
   /* Thin scrollbars everywhere */

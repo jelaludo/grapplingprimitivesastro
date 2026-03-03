@@ -63,9 +63,16 @@ const { concepts, categories } = Astro.props;
     </button>
   </div>
 
-  <!-- Category filter panel -->
-  <div id="filter-panel" class="hidden absolute top-9 left-0 right-0 z-20 bg-bg/97 border-b border-border px-3 py-2 flex flex-wrap gap-1.5 backdrop-blur-sm">
-    <!-- Populated by JS -->
+  <!-- Category filter panel — vertical right-side overlay -->
+  <div id="filter-panel" class="hidden absolute top-9 right-0 bottom-0 z-30 w-52 border-l border-border flex flex-col" style="background: rgba(5,5,9,0.97); backdrop-filter: blur(8px); font-family: 'Courier New', Consolas, Monaco, monospace;">
+    <div class="px-3 py-2 border-b border-border flex items-center justify-between flex-shrink-0">
+      <span style="font-size:11px; letter-spacing:0.12em; color:#6b7280; text-transform:uppercase; user-select:none;">Categories</span>
+      <div class="flex items-center gap-2">
+        <button id="filter-clear" class="hidden hover:text-accent transition-all" style="font-size:10px; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em;">Clear</button>
+        <button id="filter-close" class="hover:text-text-primary" style="font-size:16px; line-height:1; color:#6b7280; padding:0 4px;">×</button>
+      </div>
+    </div>
+    <div id="filter-list" class="flex-1 overflow-y-auto py-1"></div>
   </div>
 
   <!-- Canvas -->
@@ -164,6 +171,9 @@ const searchInput  = document.getElementById('search-input');
 const searchCount  = document.getElementById('search-count');
 const filterToggle = document.getElementById('filter-toggle');
 const filterPanel  = document.getElementById('filter-panel');
+const filterList   = document.getElementById('filter-list');
+const filterClear  = document.getElementById('filter-clear');
+const filterClose  = document.getElementById('filter-close');
 
 // Category colour lookup
 const catColorMap = new Map(categories.map(c => [c.name, c.color]));
@@ -511,54 +521,75 @@ resetBtn.addEventListener('click', () => { resetCamera(); markDirty(); });
 
 // ── Category filter panel ─────────────────────────────────────────────────────
 function buildFilterPanel() {
-  filterPanel.innerHTML = '';
+  filterList.innerHTML = '';
 
-  // "All" pill
-  const allBtn = document.createElement('button');
-  allBtn.className = 'text-[11px] tracking-[2px] border px-2 py-0.5 transition-all ' +
-    (activeCategories.size === 0
-      ? 'border-accent text-accent'
-      : 'border-border text-text-dim hover:border-accent/50');
-  allBtn.textContent = 'ALL';
-  allBtn.addEventListener('click', () => {
+  // Show/hide clear button
+  filterClear.classList.toggle('hidden', activeCategories.size === 0);
+
+  // "All" row — 12px, no tracking, Courier New style matching jelaludo metadata table
+  const allActive = activeCategories.size === 0;
+  const allRow = document.createElement('button');
+  allRow.style.cssText = 'width:100%;display:flex;align-items:center;gap:8px;padding:4px 12px;text-align:left;background:none;border:none;cursor:pointer;transition:background 0.15s;' +
+    (allActive ? 'color:#4C8DFF;' : 'color:#8b949e;');
+  allRow.onmouseenter = () => { allRow.style.background = 'rgba(255,255,255,0.04)'; };
+  allRow.onmouseleave = () => { allRow.style.background = 'none'; };
+  allRow.innerHTML =
+    `<span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1.5px solid ${allActive ? '#4C8DFF' : '#30363d'};display:inline-block;"></span>` +
+    `<span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">All</span>` +
+    `<span style="font-size:11px;color:#6b7280;flex-shrink:0;">${concepts.length}</span>`;
+  allRow.addEventListener('click', () => {
     activeCategories.clear();
     buildFilterPanel();
     markDirty();
   });
-  filterPanel.appendChild(allBtn);
+  filterList.appendChild(allRow);
 
+  // Per-category rows — same 12px / no-tracking style as jelaludo .metadata-table td
   categories.forEach(cat => {
-    const btn = document.createElement('button');
+    const count  = concepts.filter(c => c.category === cat.name).length;
     const active = activeCategories.has(cat.name);
-    btn.className = 'text-[11px] tracking-[1px] border px-2 py-0.5 transition-all ' +
-      (active
-        ? 'text-bg'
-        : 'border-border text-text-dim hover:border-accent/50 hover:text-text-muted');
-    btn.textContent = cat.name;
-    if (active) {
-      btn.style.background   = cat.color;
-      btn.style.borderColor  = cat.color;
-      btn.style.color        = '#000';
-    }
-    btn.addEventListener('click', () => {
-      if (activeCategories.has(cat.name)) {
-        activeCategories.delete(cat.name);
-      } else {
-        activeCategories.add(cat.name);
-      }
+    const row = document.createElement('button');
+    row.style.cssText = 'width:100%;display:flex;align-items:center;gap:8px;padding:4px 12px;text-align:left;background:none;border:none;cursor:pointer;transition:background 0.15s;' +
+      (active ? 'color:#c9d1d9;' : 'color:#8b949e;');
+    row.onmouseenter = () => { row.style.background = 'rgba(255,255,255,0.04)'; };
+    row.onmouseleave = () => { row.style.background = 'none'; };
+    row.innerHTML =
+      `<span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${cat.color};opacity:${active ? 1 : 0.5};display:inline-block;"></span>` +
+      `<span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${cat.name}</span>` +
+      `<span style="font-size:11px;color:#6b7280;flex-shrink:0;">${count}</span>`;
+    row.addEventListener('click', () => {
+      if (activeCategories.has(cat.name)) activeCategories.delete(cat.name);
+      else activeCategories.add(cat.name);
       buildFilterPanel();
       markDirty();
     });
-    filterPanel.appendChild(btn);
+    filterList.appendChild(row);
   });
 }
 
+function openFilterPanel() {
+  filterPanel.classList.remove('hidden');
+  filterToggle.style.color = '#4C8DFF';
+  buildFilterPanel();
+}
+
+function closeFilterPanel() {
+  filterPanel.classList.add('hidden');
+  filterToggle.style.color = '';
+}
+
 filterToggle.addEventListener('click', () => {
-  const hidden = filterPanel.classList.toggle('hidden');
-  filterToggle.style.color = hidden ? '' : 'var(--accent, #4C8DFF)';
-  if (!hidden && filterPanel.children.length === 0) buildFilterPanel();
-  else if (!hidden) buildFilterPanel(); // rebuild to reflect state
+  if (filterPanel.classList.contains('hidden')) openFilterPanel();
+  else closeFilterPanel();
 });
+
+filterClear.addEventListener('click', () => {
+  activeCategories.clear();
+  buildFilterPanel();
+  markDirty();
+});
+
+filterClose.addEventListener('click', closeFilterPanel);
 
 // ── Search ─────────────────────────────────────────────────────────────────────
 searchInput.addEventListener('input', e => {
@@ -569,6 +600,8 @@ searchInput.addEventListener('input', e => {
 // ── Mouse events ───────────────────────────────────────────────────────────────
 canvas.addEventListener('mousedown', e => {
   if (e.button !== 0) return;
+  // Close filter panel if open when interacting with canvas
+  if (!filterPanel.classList.contains('hidden')) closeFilterPanel();
   drag = { sx: e.clientX, sy: e.clientY, cx: cam.x, cy: cam.y };
   canvas.style.cursor = 'grabbing';
   e.preventDefault();
