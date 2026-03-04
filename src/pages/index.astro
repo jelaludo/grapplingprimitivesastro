@@ -20,20 +20,6 @@ const modules = [
     tag: 'INTERACTIVE',
   },
   {
-    title: 'Centroid Game',
-    description: 'Estimate the center of mass of a dot cluster. 10 rounds, Chebyshev scoring, timer penalty — lowest score wins.',
-    href: `${base}/modules/centroid`,
-    status: 'live' as const,
-    tag: 'GAMES',
-  },
-  {
-    title: 'Memory Game',
-    description: 'Match technique card pairs from the JJJ image set. 8 pairs, 4×4 grid — study the layout, then find all matches.',
-    href: `${base}/modules/memory`,
-    status: 'live' as const,
-    tag: 'GAMES',
-  },
-  {
     title: 'Flash Cards',
     description: 'Study and review all 277 concepts with Anki-style flash cards. Filter by category, flip, stage for later.',
     href: `${base}/modules/cards`,
@@ -49,9 +35,9 @@ const modules = [
   },
   {
     title: 'Games Hub',
-    description: 'Gamified drills: memory match, centroid estimation, pressure scenarios.',
+    description: 'Gamified drills and decision tools: pressure scenarios, memory match, centroid estimation, and more.',
     href: `${base}/modules/games`,
-    status: 'soon' as const,
+    status: 'live' as const,
     tag: 'GAMES',
   },
   {
@@ -74,13 +60,6 @@ const modules = [
     href: `${base}/modules/belt-dropout`,
     status: 'live' as const,
     tag: 'DATA',
-  },
-  {
-    title: 'Pressure Game',
-    description: 'Steer a ball across a tilting platform toward pressure zones. Timer expires → d20 roll → BJJ technique scenario.',
-    href: `${base}/modules/pressure-game`,
-    status: 'live' as const,
-    tag: 'GAMES',
   },
   {
     title: 'Breathing Cycles',
