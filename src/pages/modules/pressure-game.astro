@@ -1,0 +1,749 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Pressure Game — Grappling Primitives" fullscreen={true}>
+
+  <!-- ── Toolbar ──────────────────────────────────────────────────────────── -->
+  <div style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
+    <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+    <span style="color:#21262d;">|</span>
+    <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Pressure Game</span>
+    <div style="flex:1;"></div>
+    <span id="tb-mode-indicator" style="font-size:9px;letter-spacing:0.15em;color:#6b7280;text-transform:uppercase;"></span>
+  </div>
+
+  <!-- base URL passed to JS -->
+  <meta id="pg-base" content={base} />
+
+  <!-- ── Canvas ─────────────────────────────────────────────────────────── -->
+  <canvas id="game-canvas" style="position:fixed;top:36px;left:0;right:0;bottom:0;width:100%;height:calc(100vh - 36px);display:block;background:#050509;"></canvas>
+
+  <!-- ── Setup Screen ───────────────────────────────────────────────────── -->
+  <div id="setup-screen" style="position:fixed;top:36px;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:center;background:#050509;font-family:'Courier New',Consolas,Monaco,monospace;">
+    <div style="width:400px;max-width:94vw;padding:28px 24px;border:1px solid #21262d;background:#0d1117;border-radius:4px;">
+
+      <div style="font-size:8px;letter-spacing:0.2em;color:#00d4ff;text-transform:uppercase;margin-bottom:4px;">PRESSURE GAME</div>
+      <div style="font-size:18px;font-weight:700;color:#c9d1d9;letter-spacing:0.04em;margin-bottom:20px;">Match Setup</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+        <div>
+          <div style="font-size:8px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Your Belt</div>
+          <select id="sel-player-belt" style="width:100%;background:#050509;border:1px solid #30363d;color:#c9d1d9;font-family:inherit;font-size:11px;padding:6px 8px;border-radius:3px;cursor:pointer;">
+            <option value="white">White</option>
+            <option value="blue" selected>Blue</option>
+            <option value="purple">Purple</option>
+            <option value="brown">Brown</option>
+            <option value="black">Black</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:8px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Opponent Belt</div>
+          <select id="sel-opp-belt" style="width:100%;background:#050509;border:1px solid #30363d;color:#c9d1d9;font-family:inherit;font-size:11px;padding:6px 8px;border-radius:3px;cursor:pointer;">
+            <option value="white">White</option>
+            <option value="blue">Blue</option>
+            <option value="purple" selected>Purple</option>
+            <option value="brown">Brown</option>
+            <option value="black">Black</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:8px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:8px;">Difficulty</div>
+        <div style="display:flex;gap:8px;">
+          <button class="diff-btn" data-diff="easy" style="flex:1;font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:7px 6px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;">Easy</button>
+          <button class="diff-btn" data-diff="medium" style="flex:1;font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:7px 6px;border-radius:3px;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;cursor:pointer;">Medium</button>
+          <button class="diff-btn" data-diff="hard" style="flex:1;font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:7px 6px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;">Hard</button>
+        </div>
+      </div>
+
+      <div id="roll-preview" style="margin-bottom:20px;padding:10px 12px;border:1px solid #1c2230;border-radius:3px;font-size:9px;color:#6b7280;line-height:1.8;">
+        <span style="color:#c9d1d9;">You need:</span> <span id="rp-required" style="color:#fbbf24;">—</span> or higher on d20<br>
+        <span style="color:#8b949e;">Attack +<span id="rp-atk">4</span> vs DC <span id="rp-dc">15</span></span>
+      </div>
+
+      <div style="margin-bottom:20px;padding:9px 12px;border:1px solid #1c2230;border-radius:3px;font-size:9px;color:#6b7280;line-height:1.75;">
+        <span style="color:#8b949e;">WASD</span> / Mouse / Touch joystick → steer ball<br>
+        <span style="color:#8b949e;">Goal:</span> land on red zones when timer runs out
+      </div>
+
+      <button id="btn-begin" style="width:100%;font-family:inherit;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;padding:10px;border-radius:3px;border:1px solid #00d4ff;background:rgba(0,212,255,0.12);color:#00d4ff;cursor:pointer;">▶ BEGIN</button>
+    </div>
+  </div>
+
+  <!-- ── HUD (during play) ──────────────────────────────────────────────── -->
+  <div id="hud" style="position:fixed;top:36px;left:0;right:0;bottom:0;z-index:10;pointer-events:none;display:none;font-family:'Courier New',Consolas,Monaco,monospace;">
+    <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);text-align:center;">
+      <div id="hud-timer" style="font-size:36px;font-weight:700;color:#c9d1d9;letter-spacing:0.05em;text-shadow:0 0 18px rgba(200,210,220,0.3);line-height:1;"></div>
+      <div id="hud-diff-badge" style="font-size:8px;letter-spacing:0.18em;color:#6b7280;text-transform:uppercase;margin-top:3px;"></div>
+    </div>
+    <div style="position:absolute;top:14px;left:12px;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;">
+      <div style="color:#6b7280;margin-bottom:2px;">You</div>
+      <div id="hud-player-belt" style="color:#c9d1d9;font-weight:700;"></div>
+    </div>
+    <div style="position:absolute;top:14px;right:12px;text-align:right;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;">
+      <div style="color:#6b7280;margin-bottom:2px;">Opp</div>
+      <div id="hud-opp-belt" style="color:#c9d1d9;font-weight:700;"></div>
+    </div>
+    <div id="hud-hint" style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:0.18em;color:#6b7280;text-transform:uppercase;white-space:nowrap;transition:opacity 0.6s;">STEER TO RED</div>
+    <div style="position:absolute;bottom:14px;left:14px;">
+      <canvas id="tilt-canvas" width="50" height="50" style="opacity:0.55;"></canvas>
+    </div>
+    <div id="joystick-zone" style="position:absolute;bottom:18px;right:18px;pointer-events:all;touch-action:none;">
+      <canvas id="joystick-canvas" width="100" height="100" style="opacity:0.7;"></canvas>
+    </div>
+  </div>
+
+  <!-- ── Result Screen ──────────────────────────────────────────────────── -->
+  <div id="result-screen" style="position:fixed;top:36px;left:0;right:0;bottom:0;z-index:30;display:none;align-items:center;justify-content:center;overflow-y:auto;background:rgba(5,5,9,0.94);backdrop-filter:blur(4px);font-family:'Courier New',Consolas,Monaco,monospace;">
+    <div style="width:480px;max-width:96vw;padding:24px 22px;border:1px solid #30363d;background:#0d1117;border-radius:4px;text-align:center;margin:auto;">
+
+      <div style="font-size:8px;letter-spacing:0.24em;color:#6b7280;text-transform:uppercase;margin-bottom:10px;">ROLL RESULT</div>
+
+      <!-- D20 -->
+      <div id="res-d20" style="font-size:72px;font-weight:700;color:#fbbf24;letter-spacing:0.02em;line-height:1;margin-bottom:14px;text-shadow:0 0 30px rgba(251,191,36,0.45);"></div>
+
+      <!-- Belt comparison -->
+      <div style="padding:10px 14px;border:1px solid #1c2230;border-radius:3px;font-size:10px;color:#8b949e;margin-bottom:14px;">
+        <span id="res-player-belt-label" style="font-weight:700;"></span> vs <span id="res-opp-belt-label" style="font-weight:700;"></span><br>
+        <span style="font-size:9px;">Required: <span id="res-required" style="color:#c9d1d9;font-weight:700;"></span>+ &nbsp;|&nbsp; Rolled: <span id="res-rolled" style="color:#fbbf24;font-weight:700;"></span></span>
+      </div>
+
+      <!-- Characters + outcome -->
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-bottom:14px;padding:14px 10px;border:1px solid #1c2230;border-radius:3px;">
+        <!-- Player portrait -->
+        <div style="text-align:center;">
+          <img id="res-player-img" src="" alt="You" style="width:90px;height:90px;object-fit:cover;border-radius:4px;border:2px solid #21262d;display:block;margin:0 auto 6px;" />
+          <div style="font-size:8px;letter-spacing:0.12em;color:#6b7280;text-transform:uppercase;">YOU</div>
+        </div>
+
+        <!-- Central outcome -->
+        <div style="text-align:center;">
+          <div id="res-outcome" style="font-size:13px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:8px 10px;border-radius:3px;margin-bottom:10px;white-space:nowrap;"></div>
+          <div id="res-technique-name" style="font-size:11px;font-weight:700;color:#c9d1d9;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;max-width:160px;"></div>
+          <div id="res-technique-desc" style="font-size:9px;color:#8b949e;line-height:1.65;font-style:italic;max-width:160px;"></div>
+        </div>
+
+        <!-- Opponent portrait -->
+        <div style="text-align:center;">
+          <img id="res-opp-img" src="" alt="Opponent" style="width:90px;height:90px;object-fit:cover;border-radius:4px;border:2px solid #21262d;display:block;margin:0 auto 6px;" />
+          <div style="font-size:8px;letter-spacing:0.12em;color:#6b7280;text-transform:uppercase;">OPPONENT</div>
+        </div>
+      </div>
+
+      <!-- Heat info -->
+      <div style="margin-bottom:18px;font-size:9px;letter-spacing:0.12em;color:#6b7280;">
+        Zone pressure: <span id="res-heat" style="color:#c9d1d9;"></span>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button id="btn-next" style="flex:1;font-family:inherit;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:9px;border-radius:3px;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;cursor:pointer;">▶ Next Match</button>
+        <button id="btn-setup" style="flex:1;font-family:inherit;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:9px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;">← Setup</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const IMG_BASE  = (document.getElementById('pg-base')?.content || '') + '/images/memory/webp/';
+    const IMG_COUNT = 100; // 001–100 available
+
+    // ── Constants ──────────────────────────────────────────────────────────
+    const GRAVITY  = 22;    // strong tilt → fast response
+    const FRICTION = 0.975;
+    const BOUNCE   = 0.55;
+    const EDGE     = 0.92;
+    const MAX_DT   = 0.05;
+
+    const BELT_DATA = {
+      white:  { mod: 2,  dc: 10, color: '#f0f0f0' },
+      blue:   { mod: 4,  dc: 13, color: '#4a9eff' },
+      purple: { mod: 6,  dc: 15, color: '#a855f7' },
+      brown:  { mod: 8,  dc: 17, color: '#92400e' },
+      black:  { mod: 10, dc: 20, color: '#c9d1d9' },
+    };
+
+    // chaosWeight = how much chaos adds to player tilt (0 = no chaos, 1 = full chaos)
+    const DIFF_DATA = {
+      easy:   { timer: 10, chaosAmp: 0.45, chaosSpeed: 0.35, chaosWeight: 0.15, driftSpeed: 0.007, peakPow: 0.80 },
+      medium: { timer: 8,  chaosAmp: 0.75, chaosSpeed: 0.65, chaosWeight: 0.32, driftSpeed: 0.013, peakPow: 0.72 },
+      hard:   { timer: 6,  chaosAmp: 1.10, chaosSpeed: 1.05, chaosWeight: 0.55, driftSpeed: 0.024, peakPow: 0.65 },
+    };
+
+    const SCENARIOS_SUCCESS = [
+      { name: 'FRONT HEADLOCK SECURED',      desc: 'You snap them down and wrap the front headlock — chin strap tight, hips back.' },
+      { name: 'SINGLE LEG FINISHED',         desc: 'A driving reap and outside trip dumps them clean. Pure pressure converted.' },
+      { name: 'MOUNT ACHIEVED',              desc: 'You pass guard and ride high — chest on chest, knees pinching. They burn energy.' },
+      { name: 'BACK TAKE SECURED',           desc: 'A hip switch and you slide to the back — hooks in, both arms committed.' },
+      { name: 'ARMBAR FROM GUARD',           desc: 'Hips high, wrist trapped, elbow above navel — they tap before extension loads.' },
+      { name: 'TRIANGLE LOCKED',             desc: 'Angle adjustment, leg over shoulder, hand trapped — the tap is a formality.' },
+      { name: 'KIMURA GRIP OBTAINED',        desc: 'Figure-four on the wrist, shoulder loading — they roll into it.' },
+      { name: 'DOUBLE LEG COMPLETED',        desc: 'Level change, penetration step, drive through the hips — too late to sprawl.' },
+      { name: 'GUARD PASSED — SIDE CONTROL', desc: 'You clear the last knee, chest drops, cross-face loaded. They bridge into nothing.' },
+      { name: 'RNC SUNK DEEP',               desc: 'Blade of forearm across windpipe, hand behind ear — the body slows before the tap.' },
+      { name: 'HEEL HOOK ENTERED',           desc: 'You fall outside, control the knee line, heel seated — they recognize danger late.' },
+      { name: 'BODY LOCK TAKEDOWN',          desc: 'Hands clasped behind their back, you rip downward and turn — belly-down finish.' },
+    ];
+
+    const SCENARIOS_FAILURE = [
+      { name: 'SCRAMBLE — THEY ESCAPE',    desc: 'A sudden bridge-and-roll catches you flat — they reset to neutral and breathe.' },
+      { name: 'GUARD RETAINED',            desc: 'They frame off your shoulder at the last moment, shrimp out, re-establish guard.' },
+      { name: 'SHOOT STUFFED',             desc: 'Their sprawl was early and heavy — chest on your back, hips driving you down.' },
+      { name: 'ARM TRAPPED — DANGER',      desc: 'Your arm got isolated in the scramble. You survive but the position is uncomfortable.' },
+      { name: 'SWEPT FROM GUARD',          desc: 'They read the pressure and the butterfly hook lifts at the perfect moment.' },
+      { name: 'ANKLE PICK REVERSED',       desc: 'They post and spin out — you end up chasing back to standing.' },
+    ];
+
+    // ── Perlin Noise ───────────────────────────────────────────────────────
+    class Perlin {
+      constructor (seed = 0) {
+        const p = new Uint8Array(256);
+        for (let i = 0; i < 256; i++) p[i] = i;
+        let s = (seed * 9301 + 49297) % 233280;
+        for (let i = 255; i > 0; i--) {
+          s = (s * 9301 + 49297) % 233280;
+          const j = Math.floor((s / 233280) * (i + 1));
+          [p[i], p[j]] = [p[j], p[i]];
+        }
+        this.perm = new Uint8Array(512);
+        for (let i = 0; i < 512; i++) this.perm[i] = p[i & 255];
+      }
+      fade (t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+      lerp (a, b, t) { return a + t * (b - a); }
+      grad (h, x, y) {
+        const hh = h & 3, u = hh < 2 ? x : y, v = hh < 2 ? y : x;
+        return ((hh & 1) ? -u : u) + ((hh & 2) ? -v : v);
+      }
+      noise (x, y) {
+        const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+        x -= Math.floor(x); y -= Math.floor(y);
+        const u = this.fade(x), v = this.fade(y);
+        const p = this.perm;
+        const a = p[X] + Y, b = p[X + 1] + Y;
+        return this.lerp(
+          this.lerp(this.grad(p[a],     x,     y),     this.grad(p[b],     x - 1, y),     u),
+          this.lerp(this.grad(p[a + 1], x,     y - 1), this.grad(p[b + 1], x - 1, y - 1), u),
+          v
+        );
+      }
+      fbm (x, y) {
+        let v = 0, amp = 0.5, freq = 1, max = 0;
+        for (let i = 0; i < 4; i++) {
+          v   += this.noise(x * freq, y * freq) * amp;
+          max += amp; amp *= 0.5; freq *= 2.1;
+        }
+        return v / max; // [-1, 1]
+      }
+    }
+
+    // ── State ──────────────────────────────────────────────────────────────
+    let state      = 'setup';
+    let difficulty = 'medium';
+    let playerBelt = 'blue';
+    let oppBelt    = 'purple';
+
+    let bx = 0, by = 0, vx = 0, vy = 0;
+    let ptx = 0, pty = 0;           // accumulated WASD tilt
+    let timeLeft   = 8;
+    let lastTime   = 0;
+    let hintAlpha  = 1;
+    let frameCount = 0;
+    let heatValue  = 0;
+    let perlin     = new Perlin(0);
+    let heatOffset = { x: 0, y: 0 };
+    let heatOffsetT = 0;
+    let chaosT     = 0;
+    let chaosTilt  = { x: 0, y: 0 };
+
+    // Match character images
+    let playerImgIdx = 1, oppImgIdx = 2;
+
+    // Input
+    const keys    = {};
+    let mouseDrag = false, mouseDx = 0, mouseDy = 0;
+    let gyroGranted = false, gyroX = 0, gyroY = 0;
+    let joyActive = false, joyX = 0, joyY = 0;
+
+    // Offscreen heatmap
+    let offCanvas, offCtx;
+    const HEAT_W = 180, HEAT_H = 180;
+
+    // ── DOM ────────────────────────────────────────────────────────────────
+    const canvas      = /** @type {HTMLCanvasElement} */ (document.getElementById('game-canvas'));
+    const ctx         = canvas.getContext('2d');
+    const setupScreen = document.getElementById('setup-screen');
+    const hudEl       = document.getElementById('hud');
+    const resultEl    = document.getElementById('result-screen');
+    const tiltCanvas  = /** @type {HTMLCanvasElement} */ (document.getElementById('tilt-canvas'));
+    const tiltCtx     = tiltCanvas.getContext('2d');
+    const joyCanvas   = /** @type {HTMLCanvasElement} */ (document.getElementById('joystick-canvas'));
+    const joyCtx      = joyCanvas.getContext('2d');
+
+    // ── Setup UI ───────────────────────────────────────────────────────────
+    const selPlayer = /** @type {HTMLSelectElement} */ (document.getElementById('sel-player-belt'));
+    const selOpp    = /** @type {HTMLSelectElement} */ (document.getElementById('sel-opp-belt'));
+
+    function calcRequired (pb, ob) {
+      return Math.max(2, Math.min(20, BELT_DATA[ob].dc - BELT_DATA[pb].mod));
+    }
+    function updateRollPreview () {
+      document.getElementById('rp-required').textContent = calcRequired(playerBelt, oppBelt).toString();
+      document.getElementById('rp-atk').textContent      = BELT_DATA[playerBelt].mod.toString();
+      document.getElementById('rp-dc').textContent       = BELT_DATA[oppBelt].dc.toString();
+    }
+
+    selPlayer.addEventListener('change', e => { playerBelt = e.target.value; updateRollPreview(); });
+    selOpp.addEventListener('change',    e => { oppBelt    = e.target.value; updateRollPreview(); });
+
+    document.querySelectorAll('.diff-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        difficulty = btn.dataset.diff;
+        document.querySelectorAll('.diff-btn').forEach(b => {
+          const on = b.dataset.diff === difficulty;
+          b.style.borderColor = on ? '#00d4ff' : '#21262d';
+          b.style.background  = on ? 'rgba(0,212,255,0.1)' : 'transparent';
+          b.style.color       = on ? '#00d4ff' : '#6b7280';
+        });
+      });
+    });
+
+    document.getElementById('btn-begin').addEventListener('click', () => startGame());
+    document.getElementById('btn-next').addEventListener('click', () => {
+      resultEl.style.display = 'none';
+      startGame();
+    });
+    document.getElementById('btn-setup').addEventListener('click', () => {
+      resultEl.style.display = 'none';
+      state = 'setup';
+      setupScreen.style.display = 'flex';
+      hudEl.style.display = 'none';
+    });
+    updateRollPreview();
+
+    // ── Offscreen canvas ───────────────────────────────────────────────────
+    function initOffscreen () {
+      offCanvas = document.createElement('canvas');
+      offCanvas.width = HEAT_W; offCanvas.height = HEAT_H;
+      offCtx = offCanvas.getContext('2d');
+    }
+
+    // Color scale: more red/orange — bottom 40% is cool, top 60% is warm
+    function heatColor (v) {
+      // v: 0..1 → blue(0)→cyan(0.2)→green(0.38)→yellow(0.52)→orange(0.65)→red(0.78)
+      const stops = [
+        [0.00, [10,  20,  160]],
+        [0.20, [0,   190, 210]],
+        [0.38, [0,   190, 60 ]],
+        [0.52, [210, 215, 0  ]],
+        [0.65, [255, 110, 0  ]],
+        [0.78, [255, 25,  0  ]],
+        [1.00, [255, 0,   0  ]],
+      ];
+      let lo = stops[0], hi = stops[stops.length - 1];
+      for (let i = 0; i < stops.length - 1; i++) {
+        if (v >= stops[i][0] && v <= stops[i + 1][0]) { lo = stops[i]; hi = stops[i + 1]; break; }
+      }
+      const t = hi[0] === lo[0] ? 0 : (v - lo[0]) / (hi[0] - lo[0]);
+      return [
+        Math.round(lo[1][0] + (hi[1][0] - lo[1][0]) * t),
+        Math.round(lo[1][1] + (hi[1][1] - lo[1][1]) * t),
+        Math.round(lo[1][2] + (hi[1][2] - lo[1][2]) * t),
+      ];
+    }
+
+    function buildHeatmap () {
+      const cfg  = DIFF_DATA[difficulty];
+      const imgd = offCtx.createImageData(HEAT_W, HEAT_H);
+      const d    = imgd.data;
+      const cx   = HEAT_W / 2, cy = HEAT_H / 2, maxR = HEAT_W / 2;
+
+      for (let py = 0; py < HEAT_H; py++) {
+        for (let px = 0; px < HEAT_W; px++) {
+          const dx = (px - cx) / maxR, dy = (py - cy) / maxR;
+          const dist2 = dx * dx + dy * dy;
+          const idx = (py * HEAT_W + px) * 4;
+          if (dist2 > 1.0) { d[idx + 3] = 0; continue; }
+
+          const nx = (px / HEAT_W) * 2.8 + heatOffset.x;
+          const ny = (py / HEAT_H) * 2.8 + heatOffset.y;
+          // raw in [-1,1] → normalize to [0,1]
+          let raw = (perlin.fbm(nx, ny) + 1) * 0.5;
+
+          // Boost peaks (pow < 1 spreads distribution toward 1)
+          raw = Math.pow(raw, cfg.peakPow);
+          raw = Math.min(1, raw);
+
+          // Soft vignette
+          const edgeFade = Math.max(0, 1 - dist2 * 1.05);
+          raw *= edgeFade;
+
+          const [r, g, b] = heatColor(raw);
+          d[idx]     = r;
+          d[idx + 1] = g;
+          d[idx + 2] = b;
+          d[idx + 3] = Math.round(215 * edgeFade);
+        }
+      }
+      offCtx.putImageData(imgd, 0, 0);
+    }
+
+    function sampleHeat (normX, normY) {
+      const cfg = DIFF_DATA[difficulty];
+      // Re-sample noise at ball position
+      const px = (normX * 0.5 + 0.5) * HEAT_W;
+      const py = (normY * 0.5 + 0.5) * HEAT_H;
+      const nx = (px / HEAT_W) * 2.8 + heatOffset.x;
+      const ny = (py / HEAT_H) * 2.8 + heatOffset.y;
+      const dx = normX, dy = normY;
+      if (dx * dx + dy * dy > 1) return 0;
+      let raw = (perlin.fbm(nx, ny) + 1) * 0.5;
+      raw = Math.pow(raw, cfg.peakPow);
+      return Math.min(1, raw);
+    }
+
+    // ── Start game ─────────────────────────────────────────────────────────
+    function startGame () {
+      const cfg = DIFF_DATA[difficulty];
+      bx = 0; by = 0; vx = 0; vy = 0;
+      ptx = 0; pty = 0;
+      timeLeft    = cfg.timer;
+      hintAlpha   = 1;
+      frameCount  = 0;
+      chaosT      = Math.random() * 1000;
+      heatOffsetT = Math.random() * 100;
+      heatOffset  = { x: Math.random() * 8, y: Math.random() * 8 };
+      perlin      = new Perlin(Math.floor(Math.random() * 99999));
+
+      // Pick two different character images
+      playerImgIdx = 1 + Math.floor(Math.random() * IMG_COUNT);
+      do { oppImgIdx = 1 + Math.floor(Math.random() * IMG_COUNT); } while (oppImgIdx === playerImgIdx);
+
+      buildHeatmap();
+
+      document.getElementById('hud-timer').textContent       = cfg.timer.toString();
+      document.getElementById('hud-diff-badge').textContent  = difficulty.toUpperCase();
+      document.getElementById('hud-player-belt').textContent = playerBelt.toUpperCase();
+      document.getElementById('hud-opp-belt').textContent    = oppBelt.toUpperCase();
+      document.getElementById('hud-player-belt').style.color = BELT_DATA[playerBelt].color;
+      document.getElementById('hud-opp-belt').style.color    = BELT_DATA[oppBelt].color;
+      document.getElementById('hud-hint').style.opacity      = '1';
+
+      setupScreen.style.display = 'none';
+      hudEl.style.display = 'block';
+      state    = 'playing';
+      lastTime = performance.now();
+      requestGyro();
+      requestAnimationFrame(loop);
+    }
+
+    // ── Game loop ──────────────────────────────────────────────────────────
+    function loop (now) {
+      if (state !== 'playing') return;
+      const dt = Math.min((now - lastTime) / 1000, MAX_DT);
+      lastTime = now;
+      frameCount++;
+
+      const cfg = DIFF_DATA[difficulty];
+      chaosT      += dt;
+      heatOffsetT += dt;
+
+      // Drift heatmap offset
+      heatOffset.x += perlin.noise(heatOffsetT * cfg.driftSpeed,        50.1) * cfg.driftSpeed * 0.5;
+      heatOffset.y += perlin.noise(80.7, heatOffsetT * cfg.driftSpeed)         * cfg.driftSpeed * 0.5;
+      if (frameCount % 4 === 0) buildHeatmap();
+
+      // Chaos tilt (autonomous platform oscillation)
+      chaosTilt.x = perlin.noise(chaosT * cfg.chaosSpeed, 0)  * cfg.chaosAmp;
+      chaosTilt.y = perlin.noise(0, chaosT * cfg.chaosSpeed)  * cfg.chaosAmp;
+
+      // ── Player tilt accumulation (WASD) ────────────────────────────────
+      // Faster accumulation (0.08/frame) + stronger decay = snappy but not twitchy
+      if (keys['w'] || keys['arrowup'])    pty -= 0.08;
+      if (keys['s'] || keys['arrowdown'])  pty += 0.08;
+      if (keys['a'] || keys['arrowleft'])  ptx -= 0.08;
+      if (keys['d'] || keys['arrowright']) ptx += 0.08;
+      ptx *= 0.86; pty *= 0.86;
+      ptx = Math.max(-1, Math.min(1, ptx));
+      pty = Math.max(-1, Math.min(1, pty));
+
+      // Merge all player input sources (priority: gyro > joystick > mouse > WASD)
+      let playerX = ptx, playerY = pty;
+      if (mouseDrag) {
+        playerX = Math.max(-1, Math.min(1, mouseDx));
+        playerY = Math.max(-1, Math.min(1, mouseDy));
+      }
+      if (joyActive) {
+        playerX = Math.max(-1, Math.min(1, joyX));
+        playerY = Math.max(-1, Math.min(1, joyY));
+      }
+      if (gyroGranted) {
+        playerX = Math.max(-1, Math.min(1, gyroX));
+        playerY = Math.max(-1, Math.min(1, gyroY));
+      }
+
+      // Final tilt: player is dominant, chaos is weighted perturbation
+      const tiltX = playerX + chaosTilt.x * cfg.chaosWeight;
+      const tiltY = playerY + chaosTilt.y * cfg.chaosWeight;
+
+      // ── Ball physics ───────────────────────────────────────────────────
+      vx = vx * FRICTION + tiltX * GRAVITY * dt;
+      vy = vy * FRICTION + tiltY * GRAVITY * dt;
+      bx += vx * dt;
+      by += vy * dt;
+
+      const bdist = Math.sqrt(bx * bx + by * by);
+      if (bdist > EDGE) {
+        const nx = bx / bdist, ny = by / bdist;
+        const dot = vx * nx + vy * ny;
+        vx = (vx - 2 * dot * nx) * BOUNCE;
+        vy = (vy - 2 * dot * ny) * BOUNCE;
+        bx = nx * EDGE; by = ny * EDGE;
+      }
+
+      // ── Timer ──────────────────────────────────────────────────────────
+      timeLeft -= dt;
+      const timerEl = document.getElementById('hud-timer');
+      if (timeLeft <= 0) { timerEl.textContent = '0'; endGame(); return; }
+      timerEl.textContent    = Math.ceil(timeLeft).toString();
+      timerEl.style.color    = timeLeft <= 3 ? '#ff4444' : '#c9d1d9';
+      timerEl.style.textShadow = timeLeft <= 3 ? '0 0 18px rgba(255,68,68,0.5)' : '0 0 18px rgba(200,210,220,0.3)';
+
+      const elapsed = (DIFF_DATA[difficulty].timer - timeLeft);
+      if (elapsed > 3) hintAlpha = Math.max(0, hintAlpha - dt * 0.5);
+      document.getElementById('hud-hint').style.opacity = hintAlpha.toString();
+
+      drawFrame(tiltX, tiltY, playerX, playerY);
+      drawTiltIndicator(playerX, playerY);
+      drawJoystick();
+      requestAnimationFrame(loop);
+    }
+
+    function drawFrame (tiltX, tiltY, playerX, playerY) {
+      const W = canvas.width, H = canvas.height;
+      const cx = W / 2, cy = H / 2;
+      const pr = Math.min(W, H) * 0.42;
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#050509';
+      ctx.fillRect(0, 0, W, H);
+
+      // Platform (clipped circle)
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, pr, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.fillStyle = '#0d1117';
+      ctx.fill();
+      if (offCanvas) ctx.drawImage(offCanvas, cx - pr, cy - pr, pr * 2, pr * 2);
+      ctx.restore();
+
+      // Platform border
+      ctx.beginPath();
+      ctx.arc(cx, cy, pr, 0, Math.PI * 2);
+      ctx.strokeStyle = '#30363d';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Subtle tilt shadow (chaos perspective hint)
+      const sx = tiltX * 5, sy = tiltY * 5;
+      ctx.beginPath();
+      ctx.arc(cx + sx, cy + sy, pr + 5, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(0,80,160,0.1)';
+      ctx.lineWidth = 7;
+      ctx.stroke();
+
+      // Ball glow
+      const ballX = cx + bx * pr, ballY = cy + by * pr;
+      const grd = ctx.createRadialGradient(ballX, ballY, 0, ballX, ballY, 16);
+      grd.addColorStop(0, 'rgba(0,212,255,0.4)');
+      grd.addColorStop(1, 'rgba(0,212,255,0)');
+      ctx.beginPath();
+      ctx.arc(ballX, ballY, 16, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      // Ball
+      ctx.beginPath();
+      ctx.arc(ballX, ballY, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(0,212,255,0.7)';
+      ctx.shadowBlur  = 10;
+      ctx.fill();
+      ctx.shadowBlur  = 0;
+    }
+
+    function drawTiltIndicator (px, py) {
+      const w = 50, h = 50, cx = 25, cy = 25;
+      tiltCtx.clearRect(0, 0, w, h);
+      tiltCtx.beginPath();
+      tiltCtx.arc(cx, cy, 20, 0, Math.PI * 2);
+      tiltCtx.strokeStyle = '#21262d'; tiltCtx.lineWidth = 1; tiltCtx.stroke();
+      tiltCtx.beginPath();
+      tiltCtx.arc(cx + px * 14, cy + py * 14, 3, 0, Math.PI * 2);
+      tiltCtx.fillStyle = '#00d4ff'; tiltCtx.fill();
+    }
+
+    function drawJoystick () {
+      joyCtx.clearRect(0, 0, 100, 100);
+      if (gyroGranted) return;
+      joyCtx.beginPath();
+      joyCtx.arc(50, 50, 40, 0, Math.PI * 2);
+      joyCtx.strokeStyle = '#21262d'; joyCtx.lineWidth = 1.5; joyCtx.stroke();
+      joyCtx.fillStyle = 'rgba(13,17,23,0.6)'; joyCtx.fill();
+      const tx = joyActive ? joyX * 26 : 0, ty = joyActive ? joyY * 26 : 0;
+      joyCtx.beginPath();
+      joyCtx.arc(50 + tx, 50 + ty, 14, 0, Math.PI * 2);
+      joyCtx.fillStyle   = joyActive ? 'rgba(0,212,255,0.3)' : 'rgba(50,60,70,0.5)';
+      joyCtx.strokeStyle = joyActive ? '#00d4ff' : '#30363d';
+      joyCtx.lineWidth   = 1.5; joyCtx.fill(); joyCtx.stroke();
+    }
+
+    // ── End game ───────────────────────────────────────────────────────────
+    function endGame () {
+      buildHeatmap();
+      heatValue = sampleHeat(bx, by);
+      const rawD20 = Math.max(1, Math.round(heatValue * 20));
+      hudEl.style.display = 'none';
+      state = 'result';
+
+      const d20El = document.getElementById('res-d20');
+      d20El.style.color = '#fbbf24';
+      let ticks = 0;
+      const iv = setInterval(() => {
+        d20El.textContent = Math.ceil(Math.random() * 20).toString();
+        if (++ticks > 24) { clearInterval(iv); d20El.textContent = rawD20.toString(); showResult(rawD20); }
+      }, 35);
+    }
+
+    function padImg (n) { return String(n).padStart(3, '0') + '.webp'; }
+
+    function showResult (d20) {
+      const required = calcRequired(playerBelt, oppBelt);
+      const success  = d20 >= required;
+
+      // D20 color
+      document.getElementById('res-d20').style.color      = success ? '#00ff88' : '#ef4444';
+      document.getElementById('res-d20').style.textShadow = success
+        ? '0 0 30px rgba(0,255,136,0.5)' : '0 0 30px rgba(239,68,68,0.5)';
+
+      // Belt labels
+      const pb = BELT_DATA[playerBelt], ob = BELT_DATA[oppBelt];
+      document.getElementById('res-player-belt-label').textContent = playerBelt.charAt(0).toUpperCase() + playerBelt.slice(1) + ' Belt';
+      document.getElementById('res-player-belt-label').style.color = pb.color;
+      document.getElementById('res-opp-belt-label').textContent    = oppBelt.charAt(0).toUpperCase() + oppBelt.slice(1) + ' Belt';
+      document.getElementById('res-opp-belt-label').style.color    = ob.color;
+      document.getElementById('res-required').textContent          = required.toString();
+      document.getElementById('res-rolled').textContent            = d20.toString();
+
+      // Outcome badge
+      const outEl = document.getElementById('res-outcome');
+      if (success) {
+        outEl.textContent = '✓ SUCCESS';
+        outEl.style.color = '#00ff88';
+        outEl.style.background = 'rgba(0,255,136,0.08)';
+        outEl.style.border = '1px solid rgba(0,255,136,0.25)';
+      } else {
+        outEl.textContent = '✗ FAILURE';
+        outEl.style.color = '#ef4444';
+        outEl.style.background = 'rgba(239,68,68,0.08)';
+        outEl.style.border = '1px solid rgba(239,68,68,0.25)';
+      }
+
+      // Scenario
+      const pool = success ? SCENARIOS_SUCCESS : SCENARIOS_FAILURE;
+      const s    = pool[Math.floor(Math.random() * pool.length)];
+      document.getElementById('res-technique-name').textContent = s.name;
+      document.getElementById('res-technique-desc').textContent = s.desc;
+      document.getElementById('res-heat').textContent           = (heatValue * 100).toFixed(0) + '%';
+
+      // Character images
+      document.getElementById('res-player-img').src = IMG_BASE + padImg(playerImgIdx);
+      document.getElementById('res-opp-img').src    = IMG_BASE + padImg(oppImgIdx);
+
+      // Tint portraits by outcome
+      const playerBorder = success ? '#00ff88' : '#ef4444';
+      const oppBorder    = success ? '#ef4444' : '#00ff88';
+      document.getElementById('res-player-img').style.borderColor = playerBorder;
+      document.getElementById('res-opp-img').style.borderColor    = oppBorder;
+
+      resultEl.style.display = 'flex';
+    }
+
+    // ── Input ─────────────────────────────────────────────────────────────
+    window.addEventListener('keydown', e => {
+      if (state !== 'playing') return;
+      keys[e.key.toLowerCase()] = true;
+      if (['arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase())) e.preventDefault();
+    });
+    window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+    canvas.addEventListener('mousedown', e => {
+      if (state !== 'playing') return;
+      mouseDrag = true; updateMouseTilt(e);
+    });
+    window.addEventListener('mousemove', e => { if (mouseDrag && state === 'playing') updateMouseTilt(e); });
+    window.addEventListener('mouseup',   () => { mouseDrag = false; mouseDx = 0; mouseDy = 0; });
+
+    function updateMouseTilt (e) {
+      const r = canvas.getBoundingClientRect();
+      mouseDx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width  / 2)) / (r.width  * 0.38)));
+      mouseDy = Math.max(-1, Math.min(1, (e.clientY - (r.top  + r.height / 2)) / (r.height * 0.38)));
+    }
+
+    // Touch joystick
+    let joyPid = null, joyOx = 0, joyOy = 0;
+    joyCanvas.addEventListener('pointerdown', e => {
+      if (state !== 'playing') return;
+      e.preventDefault(); joyCanvas.setPointerCapture(e.pointerId);
+      joyPid = e.pointerId;
+      const r = joyCanvas.getBoundingClientRect();
+      joyOx = r.left + r.width / 2; joyOy = r.top + r.height / 2;
+      joyActive = true; joyX = 0; joyY = 0;
+    }, { passive: false });
+    joyCanvas.addEventListener('pointermove', e => {
+      if (e.pointerId !== joyPid || state !== 'playing') return;
+      e.preventDefault();
+      joyX = Math.max(-1, Math.min(1, (e.clientX - joyOx) / 36));
+      joyY = Math.max(-1, Math.min(1, (e.clientY - joyOy) / 36));
+    }, { passive: false });
+    joyCanvas.addEventListener('pointerup',     () => { joyActive = false; joyX = 0; joyY = 0; joyPid = null; });
+    joyCanvas.addEventListener('pointercancel', () => { joyActive = false; joyX = 0; joyY = 0; joyPid = null; });
+
+    // Gyroscope
+    function requestGyro () {
+      if (typeof DeviceOrientationEvent === 'undefined') return;
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission().then(p => {
+          if (p === 'granted') { gyroGranted = true; bindGyro(); }
+        }).catch(() => {});
+      } else if ('ondeviceorientation' in window) {
+        gyroGranted = true; bindGyro();
+      }
+    }
+    function bindGyro () {
+      window.addEventListener('deviceorientation', e => {
+        if (state !== 'playing') return;
+        gyroX = Math.max(-1, Math.min(1, (e.gamma || 0) / 30));
+        gyroY = Math.max(-1, Math.min(1, (e.beta  || 0) / 30));
+      });
+      const mi = document.getElementById('tb-mode-indicator');
+      if (mi) mi.textContent = 'GYRO';
+    }
+
+    // ── Resize ────────────────────────────────────────────────────────────
+    function resize () {
+      canvas.width  = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    initOffscreen();
+
+  })();
+  </script>
+
+</BaseLayout>
