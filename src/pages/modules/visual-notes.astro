@@ -1,0 +1,182 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const filenames = [
+  '1674_DutchWrestlingManual.png',
+  'IMG_0030.jpg', 'IMG_0031.jpg', 'IMG_0095.jpg', 'IMG_0113.jpg',
+  'IMG_0115.jpg', 'IMG_0117.jpg', 'IMG_0123.jpg', 'IMG_0126.jpg',
+  'IMG_0128.jpg', 'IMG_0129.jpg', 'IMG_0130.jpg', 'IMG_0131.jpg',
+  'IMG_0136.jpg', 'IMG_0137.jpg', 'IMG_0148.jpg', 'IMG_0149.jpg',
+  'IMG_0150.jpg', 'IMG_0168.jpg', 'IMG_0169.jpg', 'IMG_0187.jpg',
+  'IMG_0208.jpg', 'IMG_0213.jpg', 'IMG_0215.jpg', 'IMG_0221.jpg',
+  'IMG_0225.jpg', 'IMG_0249.jpg', 'IMG_0250.jpg', 'IMG_0296.jpg',
+  'IMG_0301.jpg', 'IMG_0302.jpg', 'IMG_0305.jpg', 'IMG_0311.jpg',
+  'IMG_0485.jpg', 'IMG_0504.jpg', 'IMG_0505.jpg', 'IMG_0506.jpg',
+  'IMG_0507.jpg', 'IMG_0509.jpg', 'IMG_0510.jpg', 'IMG_0511.jpg',
+  'IMG_0512.jpg', 'IMG_0517.jpg', 'IMG_0518.jpg', 'IMG_0522.jpg',
+  'IMG_0523.jpg', 'IMG_0531.jpg', 'IMG_0539.jpg', 'IMG_0540.jpg',
+  'IMG_0542.jpg', 'IMG_0543.jpg', 'IMG_0544.jpg', 'IMG_2391.jpg',
+  'IMG_4507.jpg', 'IMG_4871.jpg', 'IMG_7206.jpg',
+  'Screen Shot 2022-06-28 at 13.29.05.jpg',
+  'Screen Shot 2022-06-28 at 13.29.59.jpg',
+  'Screen Shot 2022-06-28 at 13.30.03.jpg',
+  'Screen Shot 2022-06-28 at 13.30.20.jpg',
+  'Screen Shot 2022-08-31 at 10.03.39.jpg',
+  'Screen Shot 2022-08-31 at 10.04.05.jpg',
+  'Screen Shot 2022-08-31 at 10.04.31.jpg',
+  'Screen Shot 2022-08-31 at 10.14.15.jpg',
+  'Screen Shot 2022-08-31 at 9.53.35.jpg',
+  'Screen Shot 2022-08-31 at 9.55.34.jpg',
+];
+
+const images = filenames.map(f => ({
+  filename: f,
+  src: `${base}/images/visualnotes/${encodeURIComponent(f)}`,
+}));
+---
+
+<BaseLayout title="Visual Notes — Grappling Primitives" fullscreen={true}>
+
+  <!-- ── Toolbar ──────────────────────────────────────────────────────────── -->
+  <div style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:12px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
+    <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+    <span style="color:#21262d;">|</span>
+    <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Visual Notes</span>
+    <div style="flex:1;"></div>
+    <span style="font-size:10px;letter-spacing:0.1em;color:#6b7280;">{images.length} notes</span>
+  </div>
+
+  <!-- ── Header ───────────────────────────────────────────────────────────── -->
+  <div style="padding:60px 20px 24px;max-width:960px;margin:0 auto;font-family:'Courier New',Consolas,Monaco,monospace;">
+    <p style="font-size:9px;letter-spacing:4px;color:#00d4ff;text-transform:uppercase;margin-bottom:8px;">ARCHIVE</p>
+    <h1 style="font-size:clamp(20px,4vw,28px);font-weight:700;letter-spacing:0.04em;color:#c9d1d9;margin:0 0 8px;">Visual Notes</h1>
+    <p style="font-size:12px;color:#6b7280;letter-spacing:0.05em;">Hand-drawn diagrams and sketches collected over years of training. Click any image to view full size.</p>
+  </div>
+
+  <!-- ── Masonry Grid ──────────────────────────────────────────────────────── -->
+  <div id="gallery" style="padding:0 12px 40px;max-width:1200px;margin:0 auto;">
+    <div class="masonry">
+      {images.map((img, i) => (
+        <div class="masonry-item" data-index={i}>
+          <img
+            src={img.src}
+            alt={img.filename}
+            loading="lazy"
+            class="note-img"
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- ── Lightbox ──────────────────────────────────────────────────────────── -->
+  <div id="lightbox" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(5,5,9,0.96);backdrop-filter:blur(6px);touch-action:none;">
+    <!-- Close -->
+    <button id="lb-close" aria-label="Close" style="position:absolute;top:12px;right:14px;z-index:10;background:transparent;border:1px solid #21262d;color:#6b7280;font-size:18px;width:36px;height:36px;border-radius:3px;cursor:pointer;font-family:monospace;display:flex;align-items:center;justify-content:center;transition:color 0.15s,border-color 0.15s;">✕</button>
+
+    <!-- Counter -->
+    <div id="lb-counter" style="position:absolute;top:14px;left:50%;transform:translateX(-50%);font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;z-index:10;"></div>
+
+    <!-- Image -->
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:48px 60px;">
+      <img id="lb-img" src="" alt="" style="max-width:100%;max-height:100%;object-fit:contain;border:1px solid #21262d;" />
+    </div>
+
+    <!-- Prev -->
+    <button id="lb-prev" aria-label="Previous" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);z-index:10;background:transparent;border:1px solid #21262d;color:#6b7280;font-size:20px;width:40px;height:56px;border-radius:3px;cursor:pointer;font-family:monospace;transition:color 0.15s,border-color 0.15s;">‹</button>
+
+    <!-- Next -->
+    <button id="lb-next" aria-label="Next" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:10;background:transparent;border:1px solid #21262d;color:#6b7280;font-size:20px;width:40px;height:56px;border-radius:3px;cursor:pointer;font-family:monospace;transition:color 0.15s,border-color 0.15s;">›</button>
+
+    <!-- Caption -->
+    <div id="lb-caption" style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.15em;color:#6b7280;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80vw;z-index:10;"></div>
+  </div>
+
+  <style>
+    .masonry {
+      columns: 2;
+      column-gap: 8px;
+    }
+    @media (min-width: 520px)  { .masonry { columns: 3; } }
+    @media (min-width: 800px)  { .masonry { columns: 4; } }
+    @media (min-width: 1100px) { .masonry { columns: 5; } }
+
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 8px;
+      cursor: pointer;
+      overflow: hidden;
+      border: 1px solid transparent;
+      transition: border-color 0.15s;
+    }
+    .masonry-item:hover { border-color: #21262d; }
+
+    .note-img {
+      width: 100%;
+      display: block;
+      transition: opacity 0.2s;
+    }
+    .masonry-item:hover .note-img { opacity: 0.85; }
+
+    #lb-close:hover, #lb-prev:hover, #lb-next:hover {
+      color: #00d4ff;
+      border-color: #00d4ff;
+    }
+  </style>
+
+  <script define:vars={{ images }}>
+    const items = Array.from(document.querySelectorAll('.masonry-item'));
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    const lbCounter = document.getElementById('lb-counter');
+    const lbCaption = document.getElementById('lb-caption');
+    let current = 0;
+
+    function showLightbox(idx) {
+      current = (idx + images.length) % images.length;
+      lbImg.src = images[current].src;
+      lbImg.alt = images[current].filename;
+      lbCounter.textContent = `${current + 1} / ${images.length}`;
+      lbCaption.textContent = images[current].filename.replace(/\.[^.]+$/, '');
+      lb.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lb.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    items.forEach((item, i) => {
+      item.addEventListener('click', () => showLightbox(i));
+    });
+
+    document.getElementById('lb-close').addEventListener('click', closeLightbox);
+    document.getElementById('lb-prev').addEventListener('click', () => showLightbox(current - 1));
+    document.getElementById('lb-next').addEventListener('click', () => showLightbox(current + 1));
+
+    // Click backdrop to close (but not on image/buttons)
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb) closeLightbox();
+    });
+
+    // Keyboard nav
+    document.addEventListener('keydown', (e) => {
+      if (lb.style.display === 'none') return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') showLightbox(current + 1);
+      if (e.key === 'ArrowLeft')  showLightbox(current - 1);
+    });
+
+    // Touch swipe
+    let touchStartX = 0;
+    lb.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) showLightbox(dx < 0 ? current + 1 : current - 1);
+    }, { passive: true });
+  </script>
+
+</BaseLayout>
