@@ -4,14 +4,23 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
 <BaseLayout title="Belt Dropout — Grappling Primitives" fullscreen={true}>
 
+  <style>
+    /* Hide "Belt Dropout" title text on very narrow screens so toolbar stays one line */
+    @media (max-width: 520px) {
+      #tb-title, #tb-sep1, #tb-sep2 { display: none !important; }
+      #year-label { min-width: 30px !important; }
+    }
+  </style>
+
   <!-- ── Toolbar ──────────────────────────────────────────────────────────── -->
   <div style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
     <a href="/" style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
-    <span style="color:#21262d;">|</span>
-    <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Belt Dropout</span>
-    <span style="color:#21262d;">|</span>
+    <span id="tb-sep1" style="color:#21262d;">|</span>
+    <span id="tb-title" style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Belt Dropout</span>
+    <span id="tb-sep2" style="color:#21262d;">|</span>
     <span id="year-label" style="font-size:11px;letter-spacing:0.1em;color:#c9d1d9;min-width:52px;">Year 0</span>
     <div style="flex:1;"></div>
+    <button id="btn-info" title="Context &amp; notes" style="font-family:inherit;font-size:13px;padding:2px 9px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;" onmouseover="this.style.color='#00d4ff';this.style.borderColor='#00d4ff'" onmouseout="this.style.color='#6b7280';this.style.borderColor='#21262d'">ℹ</button>
     <button id="btn-gear" title="Simulation settings" style="font-family:inherit;font-size:15px;padding:2px 9px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;" onmouseover="this.style.color='#00d4ff';this.style.borderColor='#00d4ff'" onmouseout="this.style.color='#6b7280';this.style.borderColor='#21262d'">⚙</button>
     <button id="btn-play" style="font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;cursor:pointer;">▶ Play</button>
     <div style="display:flex;gap:4px;">
@@ -25,47 +34,63 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
   <!-- ── Canvas ──────────────────────────────────────────────────────────── -->
   <canvas id="main-canvas" style="position:fixed;top:36px;left:0;right:0;bottom:28px;width:100%;display:block;"></canvas>
 
-  <!-- ── Recap panel: left sidebar (canvas stays visible on right) ────────── -->
-  <div id="recap-panel" style="display:none;position:fixed;top:36px;left:0;width:320px;bottom:28px;z-index:45;overflow-y:auto;background:rgba(8,11,18,0.96);font-family:'Courier New',Consolas,Monaco,monospace;padding:22px 20px;border-right:1px solid #21262d;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:#c9d1d9;text-transform:uppercase;margin-bottom:22px;">Year 13 — Final Stats</div>
+  <!-- recap drawn on canvas -->
 
-    <!-- 3 summary items stacked vertically with breathing room -->
-    <div style="display:flex;flex-direction:column;gap:20px;margin-bottom:26px;padding-bottom:22px;border-bottom:1px solid #21262d;">
-      <div>
-        <div style="font-size:8px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Total Started</div>
-        <div id="rs-total" style="font-size:30px;font-weight:700;color:#c9d1d9;line-height:1;">0</div>
+  <!-- ── Character hover modal ────────────────────────────────────────────── -->
+  <div id="char-modal" style="display:none;position:fixed;z-index:80;pointer-events:none;max-width:270px;background:rgba(8,11,18,0.97);border:1px solid #30363d;border-radius:3px;font-family:'Courier New',Consolas,Monaco,monospace;padding:12px 14px;box-shadow:0 6px 24px rgba(0,0,0,0.7);">
+    <div id="cm-label" style="font-size:8px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px;"></div>
+    <div id="cm-name"  style="font-size:13px;font-weight:700;color:#c9d1d9;margin-bottom:8px;"></div>
+    <div id="cm-desc"  style="font-size:9px;color:#8b949e;line-height:1.65;font-style:italic;"></div>
+  </div>
+
+  <!-- ── Info / notes modal ────────────────────────────────────────────────── -->
+  <div id="info-overlay" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.74);backdrop-filter:blur(5px);">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#0d1117;border:1px solid #30363d;border-radius:4px;width:560px;max-width:96vw;max-height:86vh;overflow-y:auto;font-family:'Courier New',Consolas,Monaco,monospace;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #21262d;position:sticky;top:0;background:#0d1117;z-index:1;">
+        <span style="font-size:11px;letter-spacing:0.2em;color:#c9d1d9;text-transform:uppercase;">ℹ Context &amp; Notes</span>
+        <button id="info-close" style="background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;" onmouseover="this.style.color='#c9d1d9'" onmouseout="this.style.color='#6b7280'">×</button>
       </div>
-      <div>
-        <div style="font-size:8px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Total Dropped Out</div>
-        <div id="rs-dropped" style="font-size:30px;font-weight:700;color:#f87171;line-height:1;">0</div>
-        <div id="rs-dropout-pct" style="font-size:9px;color:#f87171;margin-top:5px;"></div>
-      </div>
-      <div>
-        <div style="font-size:8px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Currently Active</div>
-        <div id="rs-active" style="font-size:30px;font-weight:700;color:#34d399;line-height:1;">0</div>
-        <div id="rs-retention-pct" style="font-size:9px;color:#34d399;margin-top:5px;"></div>
+      <div style="padding:20px 22px;font-size:10px;color:#8b949e;line-height:1.85;">
+
+        <section style="margin-bottom:22px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:10px;">Skill Overlap Between Belts</div>
+          <p style="margin:0 0 8px;color:#c9d1d9;">While higher belts generally indicate greater skill, there's significant overlap between levels. An experienced blue belt may outperform a newer purple belt.</p>
+          <p style="margin:0;font-style:italic;color:#6b7280;font-size:9px;">* "other things being equal" (which they rarely are) — The "average" belt will typically best the "average" belt below, but ymmv.</p>
+        </section>
+
+        <section style="border-top:1px solid #1c2230;padding-top:20px;margin-bottom:22px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:10px;">Belt as Ability Proxy</div>
+          <p style="margin:0 0 8px;color:#c9d1d9;">Belt color is a decent proxy for ability, but there are wide discrepancies within belt colors.</p>
+          <p style="margin:0;color:#374151;font-size:9px;">「能力の概算」として帯色が悪くないですが、同じ帯色でも幅広く分布されています。</p>
+        </section>
+
+        <section style="border-top:1px solid #1c2230;padding-top:20px;margin-bottom:22px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:10px;">Belt Distribution</div>
+          <p style="margin:0;color:#c9d1d9;">There are typically lots of white belts, fewest brown belts — they either go to black or quit before brown.</p>
+        </section>
+
+        <section style="border-top:1px solid #1c2230;padding-top:20px;margin-bottom:22px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:10px;">Not All Training Hours Are Equal</div>
+          <p style="margin:0;color:#c9d1d9;">One hour of half-assed shrimping and resistance-less armbar drills <em style="color:#6b7280;">vs.</em> the same one hour with a great mentor giving tailor-made pointers and increasingly challenging drills — keeping you in the flow zone.</p>
+        </section>
+
+        <section style="border-top:1px solid #1c2230;padding-top:20px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:14px;">Outliers &amp; Edge Cases</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div><span style="color:#c9d1d9;">— Ex-wrestling champ or trained since age 5: Blue Belt</span><br><span style="color:#374151;font-size:9px;">レスリング背景や5歳から練習している青帯</span></div>
+            <div><span style="color:#c9d1d9;">— Out-of-prime hobbyist Brown / Black Belt with a bad knee</span><br><span style="color:#374151;font-size:9px;">「最近練習不足の茶黒帯、膝も痛いし」</span></div>
+            <div><span style="color:#c9d1d9;">— Elite "colored belt" competitors</span><br><span style="color:#374151;font-size:9px;">「色帯の一流選手」</span></div>
+            <div><span style="color:#c9d1d9;">— Always some outliers: freaks of nature, phenoms, full-time pros, PED users</span></div>
+          </div>
+        </section>
+
       </div>
     </div>
+  </div>
 
-    <!-- Belt table -->
-    <table style="width:100%;border-collapse:collapse;font-size:10px;">
-      <thead>
-        <tr style="border-bottom:1px solid #21262d;">
-          <th style="text-align:left;padding:5px 0;font-size:8px;letter-spacing:0.12em;color:#6b7280;font-weight:400;text-transform:uppercase;">Belt</th>
-          <th style="text-align:right;padding:5px 6px;font-size:8px;letter-spacing:0.10em;color:#6b7280;font-weight:400;text-transform:uppercase;">Active</th>
-          <th style="text-align:right;padding:5px 6px;font-size:8px;letter-spacing:0.10em;color:#6b7280;font-weight:400;text-transform:uppercase;">Dropped</th>
-          <th style="text-align:right;padding:5px 6px;font-size:8px;letter-spacing:0.10em;color:#6b7280;font-weight:400;text-transform:uppercase;">% Total</th>
-          <th style="text-align:right;padding:5px 0;font-size:8px;letter-spacing:0.10em;color:#6b7280;font-weight:400;text-transform:uppercase;">% Active</th>
-        </tr>
-      </thead>
-      <tbody id="rs-tbody"></tbody>
-    </table>
-
-    <!-- Avg cumulative years -->
-    <div style="margin-top:18px;padding-top:14px;border-top:1px solid #21262d;">
-      <div style="font-size:8px;letter-spacing:0.12em;color:#6b7280;text-transform:uppercase;margin-bottom:10px;">Avg cumulative years to reach belt</div>
-      <div id="rs-avg-years" style="font-size:10px;color:#8b949e;line-height:2.4;"></div>
-    </div>
+  <!-- ── DOM recap: mobile fallback when canvas recap is too narrow ─────────── -->
+  <div id="dom-recap" style="display:none;position:fixed;bottom:28px;left:0;right:0;z-index:46;max-height:60vh;overflow-y:auto;background:rgba(8,11,18,0.98);border-top:1px solid #21262d;font-family:'Courier New',Consolas,Monaco,monospace;padding:12px 14px 16px;">
+    <div id="dom-recap-inner"></div>
   </div>
 
   <!-- ── Gear modal ───────────────────────────────────────────────────────── -->
@@ -148,6 +173,74 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       { name: 'Black',  color: '#c8c8c8', mu: 760 },
     ];
 
+    // ── Character archetypes — introduced in succession as years advance ────────
+    // pct: 0.01 = bottom 1%, 0.50 = mid, 0.99 = top 1%; null = fixed skill value
+    // color override for Boris easter egg
+    const CHAR_DEFS = [
+      // White Belt
+      { belt: 0, pct: 0.01, introYear: 1,
+        name: 'Spazzy McWhite', label: 'White Belt · Bottom 1%',
+        desc: '"No control, no coordination, a danger to himself and others."' },
+      { belt: 0, pct: 0.50, introYear: 2,
+        name: 'Eager White', label: 'White Belt · Mid',
+        desc: '"Shows up three times a week, asks questions, survives rounds without hurting anyone. Accidentally hits a sweep once and thinks he discovered a new system."' },
+      { belt: 0, pct: 0.99, introYear: 3,
+        name: 'Mr. Sandbag', label: 'White Belt · Top 1%',
+        desc: '"Sure white belt in BJJ, but was left for 3 years in Dagestan as a kid and forgotten about."' },
+      // Blue Belt
+      { belt: 1, pct: 0.01, introYear: 4,
+        name: 'Imposter Blue', label: 'Blue Belt · Bottom 1%',
+        desc: '"Maybe got his belt out of time or pity. Better than before but still nothing really clicked."' },
+      { belt: 1, pct: 0.50, introYear: 5,
+        name: 'Solid Blue', label: 'Blue Belt · Mid',
+        desc: '"Knows the positions, defends decently, hits a few reliable sweeps. Not flashy, but you\'re not sweeping him by accident anymore."' },
+      { belt: 1, pct: 0.99, introYear: 6,
+        name: 'Competition Blue', label: 'Blue Belt · Top 1%',
+        desc: '"Subscribed to SubMeta and constantly absorbing new skills, trains 6x a week."' },
+      // Purple Belt
+      { belt: 2, pct: 0.01, introYear: 7,
+        name: 'Pity Purple', label: 'Purple Belt · Bottom 1%',
+        desc: '"Knowledgeable and been in the game for a long time, but just cannot impose his will on the mats."' },
+      { belt: 2, pct: 0.50, introYear: 8,
+        name: 'Crafty Purple', label: 'Purple Belt · Mid',
+        desc: '"Starts chaining things together. Doesn\'t move fast, but everything is two steps ahead. You feel like you walked into traps you never saw."' },
+      { belt: 2, pct: 0.99, introYear: 9,
+        name: 'Competition Purple', label: 'Purple Belt · Top 1%',
+        desc: '"\'Purple is mini-black\' and this guy has tapped more average black belts than he can count already with all his tricks."' },
+      // Brown Belt
+      { belt: 3, pct: 0.01, introYear: 10,
+        name: 'Out-of-Shape Brown', label: 'Brown Belt · Bottom 1%',
+        desc: '"He\'d say he\'s efficient in his movements, but really it\'s just laziness, and once someone gets top position he kinda gives up."' },
+      { belt: 3, pct: 0.50, introYear: 11,
+        name: 'Quiet Technician', label: 'Brown Belt · Mid',
+        desc: '"No drama, no highlights. Just brutal pressure, perfect timing, and every mistake quietly turns into a problem."' },
+      { belt: 3, pct: 0.99, introYear: 12,
+        name: 'Why Not Black Yet WTF!?', label: 'Brown Belt · Top 1%',
+        desc: '"He\'s probably changed gym too many times and not being promoted yet is just a bureaucratic oversight."' },
+      // Black Belt (all appear at year 13 — the end)
+      { belt: 4, pct: 0.01, introYear: 13,
+        name: 'Small Fish in Big Pond', label: 'Black Belt · Bottom 1%',
+        desc: '"Knowledgeable, efficient, some killer techniques, but lacking killer instinct and the je-ne-sais-quoi."' },
+      { belt: 4, pct: 0.50, introYear: 13,
+        name: 'Average Black Belt', label: 'Black Belt · Mid',
+        desc: '"Objectively good and dangerous, but still taps to lower-belt phenoms with better cardio and grit, and gets made to look like a white belt by elite black belts, like everyone else."' },
+      { belt: 4, pct: 0.99, introYear: 13,
+        name: 'Elite Black Belt', label: 'Black Belt · Top 1%',
+        desc: '"Won some championships. Insane BJJ + cardio + wrestling + etc. Talent and dedication in their prime."' },
+      // Easter egg — Boris, far right
+      { belt: 4, pct: null, skill: 968, introYear: 13, color: '#f59e0b',
+        name: 'BBB — Black Belt Boris', label: '✦ Easter Egg',
+        desc: '"Legend of the blue basement. Never competed, smashed every visiting competitor in the gym, disappeared at 40. No footage exists."' },
+    ];
+
+    // Return canvas x-position skill value for a character def
+    // pct 0.01 → z = -2.326 (1st percentile), 0.99 → z = +2.326 (99th percentile)
+    function charSkill(def) {
+      if (def.pct === null) return def.skill;
+      const z = def.pct < 0.5 ? -2.326 : def.pct > 0.5 ? 2.326 : 0;
+      return Math.max(5, Math.min(995, BELTS[def.belt].mu + S.belts[def.belt].sigma * z));
+    }
+
     // ── Default simulation settings (fully user-overridable via gear) ─────────
     // dropout = TOTAL fraction who quit during their time at this belt level,
     //   NOT an annual rate. Converted to per-year internally via:
@@ -158,11 +251,11 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     const DEFAULTS = {
       studentsPerYear: 100,
       belts: [
-        { dropout: 0.50, avgYears: 2.5, sigma: 55 },  // white  → blue
-        { dropout: 0.40, avgYears: 2.0, sigma: 65 },  // blue   → purple
-        { dropout: 0.30, avgYears: 2.0, sigma: 70 },  // purple → brown
-        { dropout: 0.15, avgYears: 2.5, sigma: 65 },  // brown  → black
-        { dropout: 0.04, avgYears: null, sigma: 75 }, // black  (no promotion; treated as /5yr window)
+        { dropout: 0.70, avgYears: 2.5, sigma: 55 },  // white  → blue
+        { dropout: 0.40, avgYears: 3.0, sigma: 65 },  // blue   → purple
+        { dropout: 0.25, avgYears: 3.5, sigma: 70 },  // purple → brown
+        { dropout: 0.15, avgYears: 3.0, sigma: 65 },  // brown  → black
+        { dropout: 0.02, avgYears: null, sigma: 75 }, // black  (no promotion; treated as /5yr window)
       ],
     };
 
@@ -221,10 +314,22 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     // ── Sim state ─────────────────────────────────────────────────────────────
     let people = [], pileSlots, promotionStats, totalIntroduced;
     let year = 0, playing = false, finished = false, lastTick = 0, speedIdx = 0;
+    let showingRecap = false, recapData = null;
+    let charPositions = [], hoveredCharIdx = -1;
+
+    // Fat-tailed skill distribution — 3% bad outlier, 3% good outlier per belt,
+    // so the best of each belt overlaps with the worst of the belt above.
+    function sampleSkillForBelt(b) {
+      const mu = BELTS[b].mu, sig = S.belts[b].sigma;
+      const r = Math.random();
+      if (r < 0.03) return Math.max(5,   mu - sig * 2.3 - Math.random() * sig * 0.4); // outlier low
+      if (r < 0.06) return Math.min(995, mu + sig * 2.3 + Math.random() * sig * 0.4); // outlier high
+      return mu + (Math.random() * 2 - 1) * sig * 1.6;                                // normal spread
+    }
 
     function mkPerson() {
       return {
-        skill:  BELTS[0].mu + (Math.random() - 0.5) * S.belts[0].sigma * 3.0,
+        skill:  sampleSkillForBelt(0),
         belt: 0, yearsAtBelt: 0, totalYears: 0,
         active: true, dropping: false, promoting: false, piled: false,
         x: 0, y: 0,
@@ -317,7 +422,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
             const nb = p.belt + 1;
             p.belt = nb; p.yearsAtBelt = 0; p.promoting = true;
             p.promStartX  = p.x;
-            p.skill       = BELTS[nb].mu + (Math.random() - 0.5) * S.belts[nb].sigma * 1.4;
+            p.skill       = sampleSkillForBelt(nb);
             p.promTargetX = skillX(p.skill); p.promT = 0; p.glowTimer = 40;
             promotionStats[nb - 1].count++;
             promotionStats[nb - 1].totalYears += p.totalYears;
@@ -336,46 +441,178 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     }
     function updateYearLabel() { document.getElementById('year-label').textContent = `Year ${year}`; }
 
-    // ── Recap panel ───────────────────────────────────────────────────────────
+    // ── Recap: compute + store data, canvas draws it (DOM fallback on mobile) ──
     function showRecap() {
       const cur = [0,0,0,0,0], drp = [0,0,0,0,0]; let activeTotal = 0;
       for (const p of people) {
         if (p.active) { cur[p.belt]++; activeTotal++; } else drp[p.belt]++;
       }
-      const droppedTotal = totalIntroduced - activeTotal;
+      recapData = {
+        cur, drp, activeTotal,
+        droppedTotal:   totalIntroduced - activeTotal,
+        total:          totalIntroduced,
+        promotionStats: promotionStats.map(s => ({ ...s })),
+      };
+      showingRecap = true;
+      // DOM recap on narrow screens where canvas recap won't fit (bw < 220 → W < 734)
+      if (W - 514 < 220) {
+        populateDOMRecap();
+        document.getElementById('dom-recap').style.display = 'block';
+      }
+    }
 
-      document.getElementById('rs-total').textContent    = totalIntroduced;
-      document.getElementById('rs-dropped').textContent  = droppedTotal;
-      document.getElementById('rs-dropout-pct').textContent =
-        `${(droppedTotal / totalIntroduced * 100).toFixed(1)}% dropout rate`;
-      document.getElementById('rs-active').textContent   = activeTotal;
-      document.getElementById('rs-retention-pct').textContent =
-        `${(activeTotal / totalIntroduced * 100).toFixed(1)}% retention`;
+    function populateDOMRecap() {
+      if (!recapData) return;
+      const { cur, drp, activeTotal, droppedTotal, total, promotionStats: ps } = recapData;
+      const pct = (n, d) => d > 0 ? (n / d * 100).toFixed(1) + '%' : '0.0%';
 
-      const tbody = document.getElementById('rs-tbody');
-      tbody.innerHTML = '';
+      let rows = BELTS.map((belt, b) => `
+        <tr style="border-bottom:1px solid #0d1117;">
+          <td style="padding:5px 0;font-weight:600;color:${belt.color};">${belt.name}</td>
+          <td style="padding:5px 4px;text-align:right;color:#c9d1d9;">${cur[b]}</td>
+          <td style="padding:5px 4px;text-align:right;color:${drp[b]>0?'#f87171':'#8b949e'};">${drp[b]}</td>
+          <td style="padding:5px 4px;text-align:right;color:#6b7280;">${pct(cur[b]+drp[b], total)}</td>
+          <td style="padding:5px 0;text-align:right;color:#6b7280;">${pct(cur[b], activeTotal)}</td>
+        </tr>`).join('');
+
+      let avgParts = ['Blue','Purple','Brown','Black'].map((name, i) => {
+        const s = ps[i], avg = s.count > 0 ? (s.totalYears/s.count).toFixed(1)+' yr' : '--';
+        return `<span style="color:${BELTS[i+1].color};">${name}</span> ${avg}`;
+      }).join('&emsp;');
+
+      document.getElementById('dom-recap-inner').innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #21262d;">
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.14em;color:#c9d1d9;text-transform:uppercase;">Year ${MAX_YEAR} — Final Stats</span>
+          <button onclick="document.getElementById('dom-recap').style.display='none'" style="background:none;border:none;color:#6b7280;font-size:18px;cursor:pointer;padding:0 2px;line-height:1;">×</button>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #21262d;">
+          <div><div style="font-size:7px;letter-spacing:0.14em;color:#4b5563;text-transform:uppercase;margin-bottom:4px;">Total Started</div>
+               <div style="font-size:22px;font-weight:700;color:#c9d1d9;">${total}</div></div>
+          <div><div style="font-size:7px;letter-spacing:0.14em;color:#4b5563;text-transform:uppercase;margin-bottom:4px;">Dropped Out</div>
+               <div style="font-size:22px;font-weight:700;color:#f87171;">${droppedTotal}</div>
+               <div style="font-size:8px;color:#f87171;">${pct(droppedTotal,total)} dropout</div></div>
+          <div><div style="font-size:7px;letter-spacing:0.14em;color:#4b5563;text-transform:uppercase;margin-bottom:4px;">Active</div>
+               <div style="font-size:22px;font-weight:700;color:#34d399;">${activeTotal}</div>
+               <div style="font-size:8px;color:#34d399;">${pct(activeTotal,total)} retention</div></div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:9px;margin-bottom:14px;">
+          <thead><tr style="border-bottom:1px solid #21262d;">
+            <th style="text-align:left;padding:4px 0;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">Belt</th>
+            <th style="text-align:right;padding:4px 4px;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">Active</th>
+            <th style="text-align:right;padding:4px 4px;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">Dropped</th>
+            <th style="text-align:right;padding:4px 4px;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">%&nbsp;Tot</th>
+            <th style="text-align:right;padding:4px 0;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">%&nbsp;Act</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div style="font-size:7px;letter-spacing:0.12em;color:#4b5563;text-transform:uppercase;margin-bottom:6px;">Avg cumulative years to reach belt</div>
+        <div style="font-size:9px;line-height:2.0;">${avgParts}</div>`;
+    }
+
+    function drawRecap() {
+      if (!recapData) return;
+      const { cur, drp, activeTotal, droppedTotal, total } = recapData;
+      const ps = recapData.promotionStats;
+
+      // Panel: fills the space between ASSUMPTIONS (right=258) and STATS (left=W-244) boxes
+      const bx  = 264;
+      const bxE = W - 250;
+      const bw  = bxE - bx;
+      const by  = 10;
+      const bh  = Math.min(groundY() - 145, 290);
+      if (bw < 220 || bh < 100) return;
+
+      ctx.fillStyle = 'rgba(8,11,18,0.92)';
+      ctx.strokeStyle = '#21262d'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.fill(); ctx.stroke();
+
+      const lpx = bx + 14;
+      ctx.textAlign = 'left';
+
+      // Title
+      ctx.font = '9px "Courier New",monospace'; ctx.fillStyle = '#c9d1d9';
+      ctx.fillText(`YEAR ${MAX_YEAR}  —  FINAL STATS`, lpx, by + 17);
+      ctx.strokeStyle = '#21262d';
+      ctx.beginPath(); ctx.moveTo(bx + 1, by + 23); ctx.lineTo(bx + bw - 1, by + 23); ctx.stroke();
+
+      // Zone widths
+      const zAW = Math.max(90, Math.floor(bw * 0.25));
+      const zA  = lpx;
+      const zBW = Math.floor(bw * 0.42);
+      const zB  = zA + zAW + 20;
+      const zC  = zB + zBW + 14;
+
+      // ── Zone A: 3 summary stats ─────────────────────────────────────────────
+      let ay = by + 36;
+      ctx.font = '7px "Courier New",monospace'; ctx.fillStyle = '#4b5563';
+      ctx.fillText('TOTAL STARTED', zA, ay); ay += 14;
+      ctx.font = 'bold 18px "Courier New",monospace'; ctx.fillStyle = '#c9d1d9';
+      ctx.fillText(total, zA, ay); ay += 22;
+
+      ctx.font = '7px "Courier New",monospace'; ctx.fillStyle = '#4b5563';
+      ctx.fillText('TOTAL DROPPED OUT', zA, ay); ay += 14;
+      ctx.font = 'bold 18px "Courier New",monospace'; ctx.fillStyle = '#f87171';
+      ctx.fillText(droppedTotal, zA, ay); ay += 16;
+      ctx.font = '8px "Courier New",monospace'; ctx.fillStyle = '#f87171';
+      ctx.fillText(`${(droppedTotal / total * 100).toFixed(1)}% dropout rate`, zA, ay); ay += 18;
+
+      ctx.font = '7px "Courier New",monospace'; ctx.fillStyle = '#4b5563';
+      ctx.fillText('CURRENTLY ACTIVE', zA, ay); ay += 14;
+      ctx.font = 'bold 18px "Courier New",monospace'; ctx.fillStyle = '#34d399';
+      ctx.fillText(activeTotal, zA, ay); ay += 16;
+      ctx.font = '8px "Courier New",monospace'; ctx.fillStyle = '#34d399';
+      ctx.fillText(`${(activeTotal / total * 100).toFixed(1)}% retention`, zA, ay);
+
+      // ── Zone B: belt table ──────────────────────────────────────────────────
+      const colW = Math.floor(zBW / 5);
+      const thY  = by + 36;
+      const hdrs   = ['BELT','ACTIVE','DROPPED','% TOTAL','% ACTIVE'];
+      const hAlign = ['left','right','right','right','right'];
+      ctx.font = '7px "Courier New",monospace';
+      hdrs.forEach((h, i) => {
+        ctx.textAlign = hAlign[i]; ctx.fillStyle = '#4b5563';
+        ctx.fillText(h, zB + colW * i, thY);
+      });
+      ctx.strokeStyle = '#21262d';
+      ctx.beginPath(); ctx.moveTo(zB, thY + 5); ctx.lineTo(zB + zBW, thY + 5); ctx.stroke();
+
       BELTS.forEach((belt, b) => {
-        const pct_all    = ((cur[b] + drp[b]) / totalIntroduced * 100).toFixed(1);
-        const pct_active = activeTotal > 0 ? (cur[b] / activeTotal * 100).toFixed(1) : '0.0';
-        const tr = document.createElement('tr');
-        tr.style.borderBottom = '1px solid #0d1117';
-        tr.innerHTML = `
-          <td style="padding:7px 0;font-weight:600;color:${belt.color};">${belt.name}</td>
-          <td style="padding:7px 6px;text-align:right;color:#c9d1d9;">${cur[b]}</td>
-          <td style="padding:7px 6px;text-align:right;color:#f87171;">${drp[b]}</td>
-          <td style="padding:7px 6px;text-align:right;color:#8b949e;">${pct_all}%</td>
-          <td style="padding:7px 0;text-align:right;color:#8b949e;">${pct_active}%</td>`;
-        tbody.appendChild(tr);
+        const ry     = thY + 18 + b * 20;
+        const pctAll = total > 0 ? ((cur[b] + drp[b]) / total * 100).toFixed(1) + '%' : '0.0%';
+        const pctAct = activeTotal > 0 ? (cur[b] / activeTotal * 100).toFixed(1) + '%' : '0.0%';
+        ctx.font = '9px "Courier New",monospace';
+        ctx.textAlign = 'left';  ctx.fillStyle = belt.color;
+        ctx.fillText(belt.name, zB + colW * 0, ry);
+        ctx.textAlign = 'right'; ctx.fillStyle = '#c9d1d9';
+        ctx.fillText(cur[b],    zB + colW * 1, ry);
+        ctx.fillStyle = drp[b] > 0 ? '#f87171' : '#8b949e';
+        ctx.fillText(drp[b],    zB + colW * 2, ry);
+        ctx.fillStyle = '#6b7280';
+        ctx.fillText(pctAll,    zB + colW * 3, ry);
+        ctx.fillText(pctAct,    zB + colW * 4, ry);
       });
 
-      const names = ['Blue', 'Purple', 'Brown', 'Black'];
-      const parts = names.map((name, i) => {
-        const s   = promotionStats[i];
-        const avg = s.count > 0 ? (s.totalYears / s.count).toFixed(1) : '--';
-        return `<span style="color:${BELTS[i+1].color};">${name}</span>&nbsp;&nbsp;${avg} yr`;
-      });
-      document.getElementById('rs-avg-years').innerHTML = parts.join('<br>');
-      document.getElementById('recap-panel').style.display = 'block';
+      // ── Zone C: avg cumulative years ────────────────────────────────────────
+      if (zC + 90 < bx + bw) {
+        ctx.font = '7px "Courier New",monospace'; ctx.textAlign = 'left';
+        ctx.fillStyle = '#4b5563';
+        ctx.fillText('AVG CUMUL. YEARS TO REACH BELT', zC, thY);
+        ctx.strokeStyle = '#21262d';
+        ctx.beginPath(); ctx.moveTo(zC, thY + 5); ctx.lineTo(bx + bw - 10, thY + 5); ctx.stroke();
+        const avgLabels = ['Blue','Purple','Brown','Black'];
+        for (let i = 0; i < 4; i++) {
+          const s   = ps[i];
+          const avg = s.count > 0 ? (s.totalYears / s.count).toFixed(1) + ' yr' : '--.- yr';
+          const ry  = thY + 18 + i * 20;
+          ctx.font = '9px "Courier New",monospace';
+          ctx.fillStyle = BELTS[i + 1].color; ctx.textAlign = 'left';
+          ctx.fillText(avgLabels[i], zC, ry);
+          ctx.fillStyle = '#8b949e'; ctx.textAlign = 'right';
+          ctx.fillText(avg, bx + bw - 12, ry);
+        }
+      }
+
+      ctx.textAlign = 'left';
     }
 
     // ── Easing ────────────────────────────────────────────────────────────────
@@ -388,6 +625,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     }
 
     function drawAssumptionsBox() {
+      if (W < 580) return;
       const bx = 10, by = 10, bw = 248, bh = 94;
       drawPanel(bx, by, bw, bh);
       const lx = bx + 9;
@@ -403,6 +641,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     }
 
     function drawStatsBox() {
+      if (W < 580) return;
       const bw = 234, bx = W - bw - 10, by = 10, bh = 102;
       drawPanel(bx, by, bw, bh);
       const lx = bx + 9;
@@ -420,6 +659,51 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
         const avg = s.count > 0 ? (s.totalYears / s.count).toFixed(1) + ' yr' : '-.-  yr';
         ctx.fillStyle = color;
         ctx.fillText(`${label} ${s.count.toString().padStart(3)}  (${pct.padStart(5)})  avg ${avg}`, lx, by + 39 + i * 14);
+      });
+    }
+
+    // ── Character archetypes ──────────────────────────────────────────────────
+    function drawCharacters() {
+      const now = Date.now();
+      charPositions = [];
+      CHAR_DEFS.forEach((def, idx) => {
+        if (year < def.introYear) return;
+        const skill    = charSkill(def);
+        const cx       = skillX(skill);
+        const bellTop  = groundY() - bellH(skill, def.belt);
+        const cy       = Math.min(bellTop, groundY() - 20); // floor: always visible above ground
+        charPositions.push({ x: cx, y: cy, idx });
+
+        const isHovered  = hoveredCharIdx === idx;
+        const pulse      = 0.5 + 0.5 * Math.sin(now * 0.0014 + idx * 0.88);
+        const isBlack    = def.belt === 4;
+        const dotColor   = isBlack ? '#0d0d0d'  : (def.color || BELTS[def.belt].color);
+        const ringColor  = isBlack ? '#dc2626'  : (def.color || BELTS[def.belt].color);
+
+        ctx.save();
+        // Pulsating glow ring
+        ctx.beginPath();
+        ctx.arc(cx, cy, 9 + pulse * 4, 0, Math.PI * 2);
+        ctx.strokeStyle = ringColor;
+        ctx.globalAlpha = isHovered ? 0.85 : 0.18 + pulse * 0.28;
+        ctx.lineWidth   = isHovered ? 2.5 : 1.5;
+        ctx.stroke();
+        // Second tighter ring when hovered
+        if (isHovered) {
+          ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+          ctx.strokeStyle = ringColor; ctx.globalAlpha = 0.55; ctx.lineWidth = 1; ctx.stroke();
+        }
+        // Main dot (brighter + larger than sim dots)
+        ctx.beginPath(); ctx.arc(cx, cy, isHovered ? 6 : 5, 0, Math.PI * 2);
+        ctx.fillStyle   = dotColor;
+        ctx.globalAlpha = isHovered ? 1.0 : 0.60 + pulse * 0.40;
+        ctx.fill();
+        // White pinpoint centre
+        ctx.beginPath(); ctx.arc(cx, cy, 1.8, 0, Math.PI * 2);
+        ctx.fillStyle   = '#ffffff';
+        ctx.globalAlpha = isHovered ? 0.95 : 0.45 + pulse * 0.45;
+        ctx.fill();
+        ctx.restore();
       });
     }
 
@@ -470,6 +754,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       ctx.fillText('↓  drop-outs', PAD_L, gy + 38); ctx.globalAlpha = 1;
       ctx.fillStyle = '#2d3748';
       ctx.fillText('skill →', W - PAD_R - 46, gy + 13);
+      // Y-axis label
+      ctx.save();
+      ctx.translate(10, gy - 65); ctx.rotate(-Math.PI / 2);
+      ctx.font = '8px "Courier New",monospace'; ctx.textAlign = 'center';
+      ctx.fillStyle = '#374151'; ctx.globalAlpha = 0.50;
+      ctx.fillText('ability', 0, 0);
+      ctx.restore();
 
       // Physics update
       for (const p of people) {
@@ -532,8 +823,10 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
         ctx.restore();
       }
 
+      drawCharacters();
       drawAssumptionsBox();
       drawStatsBox();
+      if (showingRecap) drawRecap();
     }
 
     // ── RAF loop ──────────────────────────────────────────────────────────────
@@ -564,7 +857,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     });
 
     document.getElementById('btn-replay').addEventListener('click', () => {
-      document.getElementById('recap-panel').style.display = 'none';
+      showingRecap = false; recapData = null;
+      document.getElementById('dom-recap').style.display   = 'none';
       document.getElementById('btn-replay').style.display  = 'none';
       document.getElementById('btn-play').style.display    = 'inline';
       document.getElementById('btn-play').textContent      = '▶ Play';
@@ -677,7 +971,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
         S.belts[b].sigma = Math.min(200, Math.max(10, parseInt(el.value) || 60));
       });
       closeGear();
-      document.getElementById('recap-panel').style.display = 'none';
+      showingRecap = false; recapData = null;
+      document.getElementById('dom-recap').style.display   = 'none';
       document.getElementById('btn-replay').style.display  = 'none';
       document.getElementById('btn-play').style.display    = 'inline';
       document.getElementById('btn-play').textContent      = '▶ Play';
@@ -697,6 +992,65 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     document.getElementById('gear-reset').addEventListener('click', resetGear);
     document.getElementById('gear-overlay').addEventListener('click', (e) => {
       if (e.target === document.getElementById('gear-overlay')) closeGear();
+    });
+
+    // ── Info modal ────────────────────────────────────────────────────────────
+    document.getElementById('btn-info').addEventListener('click', () => {
+      document.getElementById('info-overlay').style.display = 'block';
+    });
+    document.getElementById('info-close').addEventListener('click', () => {
+      document.getElementById('info-overlay').style.display = 'none';
+    });
+    document.getElementById('info-overlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('info-overlay'))
+        document.getElementById('info-overlay').style.display = 'none';
+    });
+
+    // ── Character hover modal ─────────────────────────────────────────────────
+    const charModal = document.getElementById('char-modal');
+
+    function showCharModal(clientX, clientY) {
+      const def = CHAR_DEFS[hoveredCharIdx];
+      document.getElementById('cm-label').textContent = def.label;
+      document.getElementById('cm-label').style.color = def.color || BELTS[def.belt].color;
+      document.getElementById('cm-name').textContent  = def.name;
+      document.getElementById('cm-desc').textContent  = def.desc;
+      // Position near cursor, stay in viewport
+      const mw = 275, mh = 130;
+      let mx = clientX + 16, my = clientY - 24;
+      if (mx + mw > window.innerWidth  - 8) mx = clientX - mw - 14;
+      if (my + mh > window.innerHeight - 8) my = clientY - mh - 10;
+      if (my < 44) my = 44;
+      charModal.style.left    = mx + 'px';
+      charModal.style.top     = my + 'px';
+      charModal.style.display = 'block';
+    }
+
+    function hideCharModal() {
+      charModal.style.display = 'none';
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx   = e.clientX - rect.left;
+      const my   = e.clientY - rect.top;
+      let found  = -1;
+      for (const cp of charPositions) {
+        const dx = mx - cp.x, dy = my - cp.y;
+        if (dx * dx + dy * dy < 196) { found = cp.idx; break; } // 14px radius
+      }
+      if (found !== hoveredCharIdx) {
+        hoveredCharIdx = found;
+        canvas.style.cursor = found >= 0 ? 'pointer' : 'default';
+        if (found < 0) hideCharModal();
+      }
+      if (hoveredCharIdx >= 0) showCharModal(e.clientX, e.clientY);
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      hoveredCharIdx = -1;
+      canvas.style.cursor = 'default';
+      hideCharModal();
     });
 
     // ── Init ──────────────────────────────────────────────────────────────────
