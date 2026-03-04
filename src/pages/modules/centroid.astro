@@ -111,7 +111,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <!-- Buttons -->
       <div style="display:flex;gap:8px;">
         <button id="btn-play-again" style="flex:1;padding:10px;font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;border-radius:4px;cursor:pointer;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;">Play Again</button>
-        <button id="btn-home" style="flex:1;padding:10px;font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;border-radius:4px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#8b949e;">← Home</button>
+        <button id="btn-home" data-href={`${base}/`} style="flex:1;padding:10px;font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;border-radius:4px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#8b949e;">← Home</button>
       </div>
 
     </div>
@@ -506,7 +506,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     });
 
     document.getElementById('btn-home').addEventListener('click', () => {
-      window.location.href = '/';
+      window.location.href = document.getElementById('btn-home').dataset.href;
     });
 
     // ── Sample canvas (idle) ──────────────────────────────────────────────────

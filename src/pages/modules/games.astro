@@ -1,0 +1,100 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ModuleCard from '@/components/ui/ModuleCard.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const games = [
+  {
+    title: 'Pressure Game',
+    description: 'Steer a ball on a tilting platform toward pressure zones. Timer expires → d20 roll → BJJ technique scenario.',
+    href: `${base}/modules/pressure-game`,
+    status: 'live' as const,
+    tag: 'PHYSICS',
+  },
+  {
+    title: 'Memory Game',
+    description: 'Match technique card pairs from the JJJ image set. 8 pairs, 4×4 grid — study the layout, then find all matches.',
+    href: `${base}/modules/memory`,
+    status: 'live' as const,
+    tag: 'MEMORY',
+  },
+  {
+    title: 'Centroid Game',
+    description: 'Estimate the center of mass of a dot cluster. 10 rounds, Chebyshev scoring, timer penalty — lowest score wins.',
+    href: `${base}/modules/centroid`,
+    status: 'live' as const,
+    tag: 'SPATIAL',
+  },
+  {
+    title: 'Udejuji Hakai Game',
+    description: 'Arm destruction scenarios — recognize joint lock entries, evaluate danger levels, choose the correct counter.',
+    href: `${base}/modules/udejuji-hakai`,
+    status: 'wip' as const,
+    tag: 'DECISION',
+  },
+  {
+    title: 'Guard Retention Drill',
+    description: 'React to passing attempts in real time. Pattern recognition under pressure — hold your guard or accept the sweep.',
+    href: '#',
+    status: 'soon' as const,
+    tag: 'REACTION',
+  },
+  {
+    title: 'Submission Tree',
+    description: 'Navigate a decision tree of submission chains. From a given position, pick the optimal next attack before the window closes.',
+    href: '#',
+    status: 'soon' as const,
+    tag: 'STRATEGY',
+  },
+];
+---
+
+<BaseLayout title="Games — Grappling Primitives">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+
+    <!-- Header -->
+    <div class="mb-10 fade-up">
+      <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">Modules / Games</p>
+      <h1 class="text-3xl font-bold tracking-tight text-text-primary mb-3 glow-blue">
+        Games Hub
+      </h1>
+      <p class="text-sm text-text-muted max-w-xl leading-relaxed">
+        Gamified drills and decision tools built on grappling mechanics.
+        Score, react, and resolve — each game ends with a d20 or a verdict.
+      </p>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-3 gap-px bg-border mb-10 fade-up">
+      {[
+        { n: '3',   label: 'Live' },
+        { n: '1',   label: 'In Progress' },
+        { n: '2',   label: 'Coming Soon' },
+      ].map(({ n, label }) => (
+        <div class="bg-surface px-4 py-3 text-center">
+          <div class="text-xl font-bold text-accent">{n}</div>
+          <div class="text-[9px] tracking-[2px] text-text-dim uppercase mt-0.5">{label}</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Games grid -->
+    <div class="mb-4">
+      <p class="text-[9px] tracking-[3px] text-text-dim uppercase mb-4">All Games</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {games.map((g) => (
+          <ModuleCard {...g} />
+        ))}
+      </div>
+    </div>
+
+    <!-- Back -->
+    <div class="mt-10 fade-up">
+      <a href={`${base}/`} class="text-[10px] tracking-[3px] text-text-dim uppercase hover:text-accent transition-colors">
+        ← All Modules
+      </a>
+    </div>
+
+  </div>
+</BaseLayout>
