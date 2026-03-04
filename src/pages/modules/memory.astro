@@ -1,0 +1,444 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Memory Game — Grappling Primitives" fullscreen={true}>
+
+<style is:global>
+  /* ── Card 3D flip ──────────────────────────────────────────────────────── */
+  /* NOTE: is:global required — cards are built dynamically in JS and won't
+     receive Astro's scoped data-attribute, so scoped selectors never match. */
+  .card-wrap {
+    cursor: pointer;
+    border-radius: 10px;
+    perspective: 900px;
+    flex-shrink: 0;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 260ms ease-in-out;
+    border-radius: 10px;
+  }
+  .card-wrap.is-flipped .card-inner,
+  .card-wrap.is-matched .card-inner {
+    transform: rotateY(180deg);
+  }
+  .card-wrap.is-shrunk .card-inner {
+    transform: scale(0.05) !important;
+    transition: transform 200ms ease-in !important;
+  }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-face-front { transform: rotateY(180deg); }
+  .card-face-back  { transform: rotateY(0deg); }
+
+  /* ── Match glow ────────────────────────────────────────────────────────── */
+  @keyframes match-glow {
+    0%   { box-shadow: 0 0 0 2px rgba(102,187,106,0.6); }
+    45%  { box-shadow: 0 0 0 8px rgba(102,187,106,0.45); }
+    100% { box-shadow: 0 0 0 2px rgba(102,187,106,0.3); }
+  }
+  .card-wrap.is-matched {
+    animation: match-glow 0.55s ease-out forwards;
+    box-shadow: 0 0 0 2px rgba(102,187,106,0.3);
+  }
+
+  /* ── Mismatch flash ────────────────────────────────────────────────────── */
+  .card-wrap.is-mismatch {
+    outline: 2px solid rgba(255,100,100,0.8);
+    outline-offset: 1px;
+    border-radius: 10px;
+  }
+
+  /* ── Phase banner ──────────────────────────────────────────────────────── */
+  #phase-banner {
+    position: fixed;
+    top: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+  }
+</style>
+
+<!-- Preload card back -->
+<link rel="preload" as="image" href="/images/memory/Memory_JJJ_Back_440x.webp">
+
+<!-- ── Toolbar ──────────────────────────────────────────────────────────── -->
+<div style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:12px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
+  <a href="/" style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+  <span style="color:#21262d;">|</span>
+  <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Memory Game</span>
+  <div style="flex:1;"></div>
+  <span style="font-size:10px;letter-spacing:0.1em;color:#6b7280;">Pairs: <span id="pairs-val" style="color:#c9d1d9;">0/8</span></span>
+  <span style="font-size:10px;letter-spacing:0.1em;color:#6b7280;">Moves: <span id="moves-val" style="color:#c9d1d9;">0</span></span>
+  <span style="font-size:10px;letter-spacing:0.1em;color:#6b7280;">Time: <span id="timer-val" style="color:#c9d1d9;">0:00</span></span>
+  <button id="btn-new" style="font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border:1px solid #21262d;background:transparent;color:#6b7280;border-radius:3px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#00d4ff';this.style.color='#00d4ff'" onmouseout="this.style.borderColor='#21262d';this.style.color='#6b7280'">⟳ New</button>
+</div>
+
+<!-- ── Phase banner ──────────────────────────────────────────────────────── -->
+<div id="phase-banner" style="opacity:0;">
+  <div style="background:rgba(0,0,0,0.85);border:1px solid #21262d;border-radius:4px;padding:5px 14px;font-family:'Courier New',Consolas,Monaco,monospace;font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;" id="phase-text"></div>
+</div>
+
+<!-- ── Game area ──────────────────────────────────────────────────────────── -->
+<!-- Fixed container exactly filling the space below the toolbar.
+     This guarantees the grid never overflows — computeCardW() sizes to fit. -->
+<div id="game-area" style="position:fixed;top:36px;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+  <div id="grid" style="display:grid;"></div>
+</div>
+
+<!-- ── Win modal ─────────────────────────────────────────────────────────── -->
+<div id="win-modal" style="display:none;position:fixed;inset:0;z-index:100;">
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.72);"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(90vw,340px);background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:24px;font-family:'Courier New',Consolas,Monaco,monospace;text-align:center;">
+    <div style="font-size:18px;font-weight:700;color:#c9d1d9;letter-spacing:0.08em;margin-bottom:6px;">All pairs matched!</div>
+    <div id="win-badge" style="display:none;font-size:9px;letter-spacing:0.25em;color:#ffaa00;text-transform:uppercase;margin-bottom:14px;">★ New best time!</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:14px 10px;background:rgba(255,255,255,0.03);border-radius:4px;margin-bottom:14px;">
+      <div>
+        <div id="win-time"  style="font-size:20px;font-weight:700;color:#00d4ff;"></div>
+        <div style="font-size:9px;letter-spacing:0.15em;color:#6b7280;text-transform:uppercase;margin-top:3px;">Time</div>
+      </div>
+      <div>
+        <div id="win-moves" style="font-size:20px;font-weight:700;color:#00d4ff;"></div>
+        <div style="font-size:9px;letter-spacing:0.15em;color:#6b7280;text-transform:uppercase;margin-top:3px;">Moves</div>
+      </div>
+      <div>
+        <div id="win-eff"   style="font-size:20px;font-weight:700;color:#00ff88;"></div>
+        <div style="font-size:9px;letter-spacing:0.15em;color:#6b7280;text-transform:uppercase;margin-top:3px;">Efficiency</div>
+      </div>
+    </div>
+    <div id="win-prev" style="font-size:11px;color:#6b7280;margin-bottom:18px;min-height:16px;"></div>
+    <div style="display:flex;gap:8px;">
+      <button id="btn-again" style="flex:1;padding:10px;font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;border-radius:4px;cursor:pointer;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;">Play Again</button>
+      <a href="/" style="flex:1;padding:10px;font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;border-radius:4px;text-decoration:none;border:1px solid #21262d;background:transparent;color:#8b949e;display:flex;align-items:center;justify-content:center;">← Home</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Splash / intro ─────────────────────────────────────────────────────── -->
+<div id="splash" style="position:fixed;inset:0;z-index:80;background:rgba(0,0,0,0.88);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:20px;">
+  <img id="splash-img" src="/images/memory/Memory_JJJ_Back_440x.webp" alt="card back" width="440" height="597"
+    style="width:min(55vw,200px);height:auto;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.9);display:block;">
+  <div style="font-family:'Courier New',Consolas,Monaco,monospace;text-align:center;">
+    <div style="font-size:13px;font-weight:600;letter-spacing:0.08em;color:#c9d1d9;margin-bottom:6px;">Memory Game</div>
+    <div style="font-size:10px;letter-spacing:0.15em;color:#6b7280;text-transform:uppercase;">8 pairs · 4×4 grid · tap to begin</div>
+  </div>
+</div>
+
+<script>
+  // ── Constants ─────────────────────────────────────────────────────────────
+  const TOTAL_IMAGES = 160;
+  const PAIRS        = 8;
+  const CARD_RATIO   = 597 / 440;
+  const GAP          = 8;
+  const BACK_URL     = '/images/memory/Memory_JJJ_Back_440x.webp';
+  const PER_PAIR_MS  = 650;   // reveal speed per pair
+  const LSKEY        = 'gp-memory-best-8';
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  let deck        = [];   // { imageId, pairId, uid }[]
+  let flipped     = [];   // UIDs of the ≤2 currently face-up unmatched cards
+  let matched     = new Set(); // pairIds confirmed matched
+  let moves       = 0;
+  let elapsed     = 0;
+  let timerOn     = false;
+  let timerRef    = null;
+  let busy        = true;
+  let phase       = 'splash'; // splash | reveal | hold | shuffle | play | done
+  let cardW       = 100;
+  const sched     = [];
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  const pad = n => n.toString().padStart(3, '0');
+  const imgUrl = (id, ext) => `/images/memory/${ext}/${id}.${ext}`;
+  const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const el = id => document.getElementById(id);
+
+  function schedule(fn, ms) { const id = setTimeout(fn, ms); sched.push(id); return id; }
+  function clearSched()      { sched.forEach(clearTimeout); sched.length = 0; }
+  function stopTimer()       { if (timerRef) { clearInterval(timerRef); timerRef = null; } timerOn = false; }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // ── Card sizing ───────────────────────────────────────────────────────────
+  // Available area = viewport minus fixed toolbar (36px) minus padding (16px).
+  // Cards must fit in a 4×4 grid within that space without scrolling.
+  function computeCardW() {
+    const vw = window.innerWidth;
+    const availH = window.innerHeight - 36 - 16; // toolbar + padding
+    const availW = vw - 16;                       // horizontal padding
+    const cols = 4, rows = 4;
+
+    // Width-constrained size
+    let wFromW = Math.floor((availW - GAP * (cols - 1)) / cols);
+    // Height-constrained size
+    let wFromH = Math.floor(((availH - GAP * (rows - 1)) / rows) / CARD_RATIO);
+
+    return Math.max(50, Math.min(wFromW, wFromH));
+  }
+
+  function applyLayout() {
+    cardW = computeCardW();
+    const h = Math.floor(cardW * CARD_RATIO);
+    el('grid').style.gridTemplateColumns = `repeat(4, ${cardW}px)`;
+    el('grid').style.gap = GAP + 'px';
+    document.querySelectorAll('.card-wrap').forEach(c => {
+      c.style.width  = cardW + 'px';
+      c.style.height = h + 'px';
+    });
+  }
+  window.addEventListener('resize', applyLayout);
+
+  // ── Build grid DOM ────────────────────────────────────────────────────────
+  function buildGrid(cards, startShrunk = false) {
+    const g = el('grid');
+    const h = Math.floor(cardW * CARD_RATIO);
+    g.style.gridTemplateColumns = `repeat(4, ${cardW}px)`;
+    g.style.gap = GAP + 'px';
+    g.innerHTML = '';
+
+    for (const card of cards) {
+      const wrap = document.createElement('div');
+      wrap.className = 'card-wrap' + (startShrunk ? ' is-shrunk' : '');
+      wrap.style.width  = cardW + 'px';
+      wrap.style.height = h + 'px';
+      wrap.dataset.uid = card.uid;
+      if (matched.has(card.pairId)) wrap.classList.add('is-matched');
+
+      wrap.innerHTML = `
+        <div class="card-inner">
+          <div class="card-face card-face-back">
+            <img src="${BACK_URL}" alt="back" width="440" height="597"
+              style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="card-face card-face-front">
+            <picture>
+              <source srcset="${imgUrl(card.imageId, 'avif')}" type="image/avif">
+              <img src="${imgUrl(card.imageId, 'webp')}" alt="card ${card.imageId}"
+                width="440" height="597"
+                style="width:100%;height:100%;object-fit:cover;display:block;"
+                loading="lazy">
+            </picture>
+          </div>
+        </div>`;
+
+      wrap.addEventListener('click', () => onCardClick(card));
+      g.appendChild(wrap);
+    }
+  }
+
+  const cardEl = uid => document.querySelector(`[data-uid="${uid}"]`);
+
+  // ── Banner helper ─────────────────────────────────────────────────────────
+  function showBanner(text, durationMs = 0) {
+    el('phase-text').textContent = text;
+    el('phase-banner').style.opacity = '1';
+    if (durationMs) schedule(() => { el('phase-banner').style.opacity = '0'; }, durationMs);
+  }
+  function hideBanner() { el('phase-banner').style.opacity = '0'; }
+
+  // ── New game ──────────────────────────────────────────────────────────────
+  function newGame() {
+    clearSched();
+    stopTimer();
+
+    // Reset state
+    flipped  = [];
+    matched  = new Set();
+    moves    = 0;
+    elapsed  = 0;
+    busy     = true;
+    phase    = 'reveal';
+
+    updateHUD();
+
+    // Pick PAIRS random pairs from 80 available
+    const pairNums = shuffle(Array.from({ length: TOTAL_IMAGES / 2 }, (_, i) => i + 1)).slice(0, PAIRS);
+    const revealDeck = [];
+    for (const p of pairNums) {
+      const a = pad(2 * p - 1), b = pad(2 * p);
+      revealDeck.push({ imageId: a, pairId: p, uid: `${a}-A` });
+      revealDeck.push({ imageId: b, pairId: p, uid: `${b}-B` });
+    }
+    const finalDeck = shuffle([...revealDeck]);
+
+    deck = revealDeck;
+    cardW = computeCardW();
+    buildGrid(revealDeck);
+
+    // ── Reveal phase: flip pairs face-up one at a time ───────────────────
+    showBanner('Memorise the pairs…');
+    for (let k = 0; k < PAIRS; k++) {
+      schedule(() => {
+        cardEl(revealDeck[k * 2].uid)?.classList.add('is-flipped');
+        cardEl(revealDeck[k * 2 + 1].uid)?.classList.add('is-flipped');
+      }, PER_PAIR_MS * k);
+    }
+
+    // ── Hold, then shuffle ───────────────────────────────────────────────
+    schedule(() => {
+      phase = 'hold';
+      showBanner('Shuffling…');
+      schedule(() => doShuffle(finalDeck), 700);
+    }, PER_PAIR_MS * PAIRS);
+  }
+
+  // ── Shuffle animation: flip-down → shrink → rearrange → expand ───────────
+  function doShuffle(finalDeck) {
+    phase = 'shuffle';
+
+    // Flip all face-down
+    document.querySelectorAll('.card-wrap').forEach(c => c.classList.remove('is-flipped'));
+
+    // Shrink after flip completes
+    schedule(() => {
+      document.querySelectorAll('.card-wrap').forEach(c => c.classList.add('is-shrunk'));
+
+      // Rebuild in shuffled order while all invisible
+      schedule(() => {
+        deck = finalDeck;
+        buildGrid(finalDeck, true); // all start shrunk
+
+        // Next two frames: remove shrunk → cards expand into place
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          document.querySelectorAll('.card-wrap').forEach(c => c.classList.remove('is-shrunk'));
+          schedule(() => {
+            phase = 'play';
+            busy  = false;
+            hideBanner();
+          }, 360);
+        }));
+      }, 240);
+    }, 340);
+  }
+
+  // ── Card click ────────────────────────────────────────────────────────────
+  function onCardClick(card) {
+    if (busy || phase !== 'play')       return;
+    if (matched.has(card.pairId))       return;
+    if (flipped.includes(card.uid))     return;
+    if (flipped.length >= 2)            return;
+
+    // Start timer on first interaction
+    if (!timerOn) {
+      timerOn  = true;
+      timerRef = setInterval(() => {
+        elapsed++;
+        el('timer-val').textContent = fmt(elapsed);
+      }, 1000);
+    }
+
+    flipped.push(card.uid);
+    cardEl(card.uid)?.classList.add('is-flipped');
+
+    if (flipped.length === 2) {
+      busy = true;
+      moves++;
+      el('moves-val').textContent = String(moves);
+
+      const [u1, u2] = flipped;
+      const c1 = deck.find(d => d.uid === u1);
+      const c2 = deck.find(d => d.uid === u2);
+      const isMatch = c1.pairId === c2.pairId;
+
+      if (isMatch) {
+        schedule(() => {
+          const e1 = cardEl(u1), e2 = cardEl(u2);
+          if (e1) { e1.classList.remove('is-flipped'); e1.classList.add('is-matched'); }
+          if (e2) { e2.classList.remove('is-flipped'); e2.classList.add('is-matched'); }
+          matched.add(c1.pairId);
+          flipped = [];
+          busy    = false;
+          el('pairs-val').textContent = `${matched.size}/${PAIRS}`;
+          if (matched.size === PAIRS) gameDone();
+        }, 340);
+      } else {
+        // Mismatch: red outline, then flip back
+        cardEl(u1)?.classList.add('is-mismatch');
+        cardEl(u2)?.classList.add('is-mismatch');
+        schedule(() => {
+          const e1 = cardEl(u1), e2 = cardEl(u2);
+          if (e1) { e1.classList.remove('is-flipped', 'is-mismatch'); }
+          if (e2) { e2.classList.remove('is-flipped', 'is-mismatch'); }
+          flipped = [];
+          busy    = false;
+        }, 750);
+      }
+    }
+  }
+
+  // ── Game over ─────────────────────────────────────────────────────────────
+  function gameDone() {
+    phase = 'done';
+    stopTimer();
+
+    // Efficiency: perfect = PAIRS moves, efficiency % = PAIRS/moves * 100
+    const effPct = Math.round((PAIRS / Math.max(moves, PAIRS)) * 100);
+
+    // Best time (localStorage)
+    const prev      = parseInt(localStorage.getItem(LSKEY) || '0', 10);
+    const isNewBest = !prev || elapsed < prev;
+    if (isNewBest) localStorage.setItem(LSKEY, String(elapsed));
+
+    el('win-time').textContent  = fmt(elapsed);
+    el('win-moves').textContent = String(moves);
+    el('win-eff').textContent   = effPct + '%';
+    el('win-badge').style.display = isNewBest ? 'block' : 'none';
+
+    const prevEl = el('win-prev');
+    if (prev && isNewBest)  prevEl.textContent = `Previous best: ${fmt(prev)}`;
+    else if (prev)          prevEl.textContent = `Best time: ${fmt(prev)}`;
+    else                    prevEl.textContent = 'First completion — well done!';
+
+    schedule(() => { el('win-modal').style.display = 'block'; }, 450);
+  }
+
+  // ── HUD ───────────────────────────────────────────────────────────────────
+  function updateHUD() {
+    el('pairs-val').textContent = `${matched.size}/${PAIRS}`;
+    el('moves-val').textContent = String(moves);
+    el('timer-val').textContent = fmt(elapsed);
+  }
+
+  // ── Button events ─────────────────────────────────────────────────────────
+  el('btn-new').addEventListener('click', () => {
+    el('win-modal').style.display = 'none';
+    newGame();
+  });
+  el('btn-again').addEventListener('click', () => {
+    el('win-modal').style.display = 'none';
+    newGame();
+  });
+
+  // ── Splash: click anywhere to start ──────────────────────────────────────
+  el('splash').addEventListener('click', () => {
+    el('splash').style.display = 'none';
+    newGame();
+  });
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  cardW = computeCardW();
+  // Pre-populate an empty grid so layout is set before newGame() runs
+  // (newGame is triggered by splash click)
+</script>
+
+</BaseLayout>

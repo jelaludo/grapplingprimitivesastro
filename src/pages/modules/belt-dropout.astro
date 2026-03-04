@@ -1,0 +1,1061 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Belt Dropout — Grappling Primitives" fullscreen={true}>
+
+  <style>
+    /* Hide "Belt Dropout" title text on very narrow screens so toolbar stays one line */
+    @media (max-width: 520px) {
+      #tb-title, #tb-sep1, #tb-sep2 { display: none !important; }
+      #year-label { min-width: 30px !important; }
+    }
+  </style>
+
+  <!-- ── Toolbar ──────────────────────────────────────────────────────────── -->
+  <div style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
+    <a href="/" style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+    <span id="tb-sep1" style="color:#21262d;">|</span>
+    <span id="tb-title" style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Belt Dropout</span>
+    <span id="tb-sep2" style="color:#21262d;">|</span>
+    <span id="year-label" style="font-size:11px;letter-spacing:0.1em;color:#c9d1d9;min-width:52px;">Year 0</span>
+    <div style="flex:1;"></div>
+    <button id="btn-info" title="Context &amp; notes" style="font-family:inherit;font-size:13px;padding:2px 9px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;" onmouseover="this.style.color='#00d4ff';this.style.borderColor='#00d4ff'" onmouseout="this.style.color='#6b7280';this.style.borderColor='#21262d'">ℹ</button>
+    <button id="btn-gear" title="Simulation settings" style="font-family:inherit;font-size:15px;padding:2px 9px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;" onmouseover="this.style.color='#00d4ff';this.style.borderColor='#00d4ff'" onmouseout="this.style.color='#6b7280';this.style.borderColor='#21262d'">⚙</button>
+    <button id="btn-play" style="font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;cursor:pointer;">▶ Play</button>
+    <div style="display:flex;gap:4px;">
+      <button data-speed="0" style="font-family:inherit;font-size:10px;padding:3px 7px;border-radius:3px;border:1px solid #00d4ff;background:rgba(0,212,255,0.15);color:#00d4ff;cursor:pointer;">1×</button>
+      <button data-speed="1" style="font-family:inherit;font-size:10px;padding:3px 7px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;">2×</button>
+      <button data-speed="2" style="font-family:inherit;font-size:10px;padding:3px 7px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;">5×</button>
+    </div>
+    <button id="btn-replay" style="display:none;font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;border:1px solid #6b7280;background:transparent;color:#6b7280;cursor:pointer;">↺ Replay</button>
+  </div>
+
+  <!-- ── Canvas ──────────────────────────────────────────────────────────── -->
+  <canvas id="main-canvas" style="position:fixed;top:36px;left:0;right:0;bottom:28px;width:100%;display:block;"></canvas>
+
+  <!-- recap drawn on canvas -->
+
+  <!-- ── Character hover modal ────────────────────────────────────────────── -->
+  <div id="char-modal" style="display:none;position:fixed;z-index:80;pointer-events:none;max-width:270px;background:rgba(8,11,18,0.97);border:1px solid #30363d;border-radius:3px;font-family:'Courier New',Consolas,Monaco,monospace;padding:12px 14px;box-shadow:0 6px 24px rgba(0,0,0,0.7);">
+    <div id="cm-label" style="font-size:8px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px;"></div>
+    <div id="cm-name"  style="font-size:13px;font-weight:700;color:#c9d1d9;margin-bottom:8px;"></div>
+    <div id="cm-desc"  style="font-size:9px;color:#8b949e;line-height:1.65;font-style:italic;"></div>
+  </div>
+
+  <!-- ── Info / notes modal ────────────────────────────────────────────────── -->
+  <div id="info-overlay" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.74);backdrop-filter:blur(5px);">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#0d1117;border:1px solid #30363d;border-radius:4px;width:560px;max-width:96vw;max-height:86vh;overflow-y:auto;font-family:'Courier New',Consolas,Monaco,monospace;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #21262d;position:sticky;top:0;background:#0d1117;z-index:1;">
+        <span style="font-size:11px;letter-spacing:0.2em;color:#c9d1d9;text-transform:uppercase;">ℹ Context &amp; Notes</span>
+        <button id="info-close" style="background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;" onmouseover="this.style.color='#c9d1d9'" onmouseout="this.style.color='#6b7280'">×</button>
+      </div>
+      <div style="padding:20px 22px;font-size:10px;color:#8b949e;line-height:1.85;">
+
+        <section style="margin-bottom:22px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:10px;">Skill Overlap Between Belts</div>
+          <p style="margin:0 0 8px;color:#c9d1d9;">While higher belts generally indicate greater skill, there's significant overlap between levels. An experienced blue belt may outperform a newer purple belt.</p>
+          <p style="margin:0;font-style:italic;color:#6b7280;font-size:9px;">* "other things being equal" (which they rarely are) — The "average" belt will typically best the "average" belt below, but ymmv.</p>
+        </section>
+
+        <section style="border-top:1px solid #1c2230;padding-top:20px;margin-bottom:22px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:10px;">Belt as Ability Proxy</div>
+          <p style="margin:0 0 8px;color:#c9d1d9;">Belt color is a decent proxy for ability, but there are wide discrepancies within belt colors.</p>
+          <p style="margin:0;color:#374151;font-size:9px;">「能力の概算」として帯色が悪くないですが、同じ帯色でも幅広く分布されています。</p>
+        </section>
+
+        <section style="border-top:1px solid #1c2230;padding-top:20px;margin-bottom:22px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:10px;">Belt Distribution</div>
+          <p style="margin:0;color:#c9d1d9;">There are typically lots of white belts, fewest brown belts — they either go to black or quit before brown.</p>
+        </section>
+
+        <section style="border-top:1px solid #1c2230;padding-top:20px;margin-bottom:22px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:10px;">Not All Training Hours Are Equal</div>
+          <p style="margin:0;color:#c9d1d9;">One hour of half-assed shrimping and resistance-less armbar drills <em style="color:#6b7280;">vs.</em> the same one hour with a great mentor giving tailor-made pointers and increasingly challenging drills — keeping you in the flow zone.</p>
+        </section>
+
+        <section style="border-top:1px solid #1c2230;padding-top:20px;">
+          <div style="font-size:8px;letter-spacing:0.15em;color:#00d4ff;text-transform:uppercase;margin-bottom:14px;">Outliers &amp; Edge Cases</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div><span style="color:#c9d1d9;">— Ex-wrestling champ or trained since age 5: Blue Belt</span><br><span style="color:#374151;font-size:9px;">レスリング背景や5歳から練習している青帯</span></div>
+            <div><span style="color:#c9d1d9;">— Out-of-prime hobbyist Brown / Black Belt with a bad knee</span><br><span style="color:#374151;font-size:9px;">「最近練習不足の茶黒帯、膝も痛いし」</span></div>
+            <div><span style="color:#c9d1d9;">— Elite "colored belt" competitors</span><br><span style="color:#374151;font-size:9px;">「色帯の一流選手」</span></div>
+            <div><span style="color:#c9d1d9;">— Always some outliers: freaks of nature, phenoms, full-time pros, PED users</span></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DOM recap: mobile fallback when canvas recap is too narrow ─────────── -->
+  <div id="dom-recap" style="display:none;position:fixed;bottom:28px;left:0;right:0;z-index:46;max-height:60vh;overflow-y:auto;background:rgba(8,11,18,0.98);border-top:1px solid #21262d;font-family:'Courier New',Consolas,Monaco,monospace;padding:12px 14px 16px;">
+    <div id="dom-recap-inner"></div>
+  </div>
+
+  <!-- ── Gear modal ───────────────────────────────────────────────────────── -->
+  <div id="gear-overlay" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.74);backdrop-filter:blur(5px);">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#0d1117;border:1px solid #30363d;border-radius:4px;width:540px;max-width:95vw;max-height:90vh;overflow-y:auto;font-family:'Courier New',Consolas,Monaco,monospace;">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #21262d;position:sticky;top:0;background:#0d1117;z-index:1;">
+        <span style="font-size:11px;letter-spacing:0.2em;color:#c9d1d9;text-transform:uppercase;">⚙ Simulation Settings</span>
+        <button id="gear-close" style="background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;" onmouseover="this.style.color='#c9d1d9'" onmouseout="this.style.color='#6b7280'">×</button>
+      </div>
+
+      <div style="padding:20px 22px;">
+
+        <!-- Students per year -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #21262d;">
+          <label style="font-size:9px;letter-spacing:0.14em;color:#6b7280;text-transform:uppercase;">New white belts per year</label>
+          <input id="cfg-spy" type="number" min="10" max="500" step="10" style="width:80px;background:#161b22;border:1px solid #30363d;border-radius:3px;color:#c9d1d9;font-family:inherit;font-size:13px;padding:5px 8px;text-align:center;outline:none;">
+        </div>
+
+        <!-- Section: Avg years to reach each belt -->
+        <div style="font-size:9px;letter-spacing:0.14em;color:#8b949e;text-transform:uppercase;margin-bottom:10px;">Avg years to reach each belt</div>
+        <div style="font-size:8px;color:#374151;margin-bottom:12px;line-height:1.6;">"From previous" = time spent at that belt level. "Total" = cumulative from white belt.</div>
+        <table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:24px;">
+          <thead>
+            <tr style="border-bottom:1px solid #1c2230;">
+              <th style="text-align:left;padding:6px 0;font-size:8px;letter-spacing:0.10em;color:#4b5563;font-weight:400;">Target Belt</th>
+              <th style="text-align:center;padding:6px 8px;font-size:8px;letter-spacing:0.08em;color:#4b5563;font-weight:400;">From Previous</th>
+              <th style="text-align:center;padding:6px 0;font-size:8px;letter-spacing:0.08em;color:#4b5563;font-weight:400;">Total (calculated)</th>
+            </tr>
+          </thead>
+          <tbody id="gear-prog-tbody"></tbody>
+        </table>
+
+        <!-- Section: Per-belt dropout + sigma -->
+        <div style="font-size:9px;letter-spacing:0.14em;color:#8b949e;text-transform:uppercase;margin-bottom:10px;">Attrition &amp; skill spread per belt</div>
+        <div style="font-size:8px;color:#374151;margin-bottom:12px;line-height:1.6;">"% Quit at Belt" = total fraction who drop out <em>over their entire time</em> at that belt — not per year. Converted to an annual rate internally using the avg-years period. Skill σ = spread within belt (wider = more overlap between belts).</div>
+        <table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:24px;">
+          <thead>
+            <tr style="border-bottom:1px solid #1c2230;">
+              <th style="text-align:left;padding:6px 0;font-size:8px;letter-spacing:0.10em;color:#4b5563;font-weight:400;">Belt</th>
+              <th style="text-align:center;padding:6px 8px;font-size:8px;letter-spacing:0.08em;color:#4b5563;font-weight:400;">% Quit at Belt</th>
+              <th style="text-align:center;padding:6px 0;font-size:8px;letter-spacing:0.08em;color:#4b5563;font-weight:400;">Skill σ</th>
+            </tr>
+          </thead>
+          <tbody id="gear-attr-tbody"></tbody>
+        </table>
+
+        <!-- Actions -->
+        <div style="display:flex;gap:8px;">
+          <button id="gear-apply" style="flex:1;font-family:inherit;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:9px;border-radius:3px;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;cursor:pointer;">Apply &amp; Replay</button>
+          <button id="gear-reset" style="font-family:inherit;font-size:10px;letter-spacing:0.10em;text-transform:uppercase;padding:9px 16px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;">Reset Defaults</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Stats bar ───────────────────────────────────────────────────────── -->
+  <div style="position:fixed;bottom:0;left:0;right:0;height:28px;z-index:50;display:flex;align-items:center;justify-content:center;gap:14px;padding:0 12px;border-top:1px solid #21262d;background:rgba(5,5,9,0.97);font-family:'Courier New',Consolas,Monaco,monospace;font-size:10px;color:#6b7280;letter-spacing:0.06em;white-space:nowrap;">
+    <span>White <span id="stat-0" style="color:#d1d5db;">0</span></span>
+    <span style="color:#21262d;">·</span>
+    <span>Blue <span id="stat-1" style="color:#3b82f6;">0</span></span>
+    <span style="color:#21262d;">·</span>
+    <span>Purple <span id="stat-2" style="color:#8b5cf6;">0</span></span>
+    <span style="color:#21262d;">·</span>
+    <span>Brown <span id="stat-3" style="color:#7c3d11;">0</span></span>
+    <span style="color:#21262d;">·</span>
+    <span>Black <span id="stat-4" style="color:#c8c8c8;">0</span></span>
+    <span style="color:#21262d;">·</span>
+    <span>Dropped <span id="stat-out" style="color:#ff4444;">0</span></span>
+  </div>
+
+  <script>
+    // ── Belt display config (visual + positional — immutable) ─────────────────
+    const BELTS = [
+      { name: 'White',  color: '#d1d5db', mu: 170 },
+      { name: 'Blue',   color: '#3b82f6', mu: 315 },
+      { name: 'Purple', color: '#8b5cf6', mu: 455 },
+      { name: 'Brown',  color: '#7c3d11', mu: 600 },
+      { name: 'Black',  color: '#c8c8c8', mu: 760 },
+    ];
+
+    // ── Character archetypes — introduced in succession as years advance ────────
+    // pct: 0.01 = bottom 1%, 0.50 = mid, 0.99 = top 1%; null = fixed skill value
+    // color override for Boris easter egg
+    const CHAR_DEFS = [
+      // White Belt
+      { belt: 0, pct: 0.01, introYear: 1,
+        name: 'Spazzy McWhite', label: 'White Belt · Bottom 1%',
+        desc: '"No control, no coordination, a danger to himself and others."' },
+      { belt: 0, pct: 0.50, introYear: 2,
+        name: 'Eager White', label: 'White Belt · Mid',
+        desc: '"Shows up three times a week, asks questions, survives rounds without hurting anyone. Accidentally hits a sweep once and thinks he discovered a new system."' },
+      { belt: 0, pct: 0.99, introYear: 3,
+        name: 'Mr. Sandbag', label: 'White Belt · Top 1%',
+        desc: '"Sure white belt in BJJ, but was left for 3 years in Dagestan as a kid and forgotten about."' },
+      // Blue Belt
+      { belt: 1, pct: 0.01, introYear: 4,
+        name: 'Imposter Blue', label: 'Blue Belt · Bottom 1%',
+        desc: '"Maybe got his belt out of time or pity. Better than before but still nothing really clicked."' },
+      { belt: 1, pct: 0.50, introYear: 5,
+        name: 'Solid Blue', label: 'Blue Belt · Mid',
+        desc: '"Knows the positions, defends decently, hits a few reliable sweeps. Not flashy, but you\'re not sweeping him by accident anymore."' },
+      { belt: 1, pct: 0.99, introYear: 6,
+        name: 'Competition Blue', label: 'Blue Belt · Top 1%',
+        desc: '"Subscribed to SubMeta and constantly absorbing new skills, trains 6x a week."' },
+      // Purple Belt
+      { belt: 2, pct: 0.01, introYear: 7,
+        name: 'Pity Purple', label: 'Purple Belt · Bottom 1%',
+        desc: '"Knowledgeable and been in the game for a long time, but just cannot impose his will on the mats."' },
+      { belt: 2, pct: 0.50, introYear: 8,
+        name: 'Crafty Purple', label: 'Purple Belt · Mid',
+        desc: '"Starts chaining things together. Doesn\'t move fast, but everything is two steps ahead. You feel like you walked into traps you never saw."' },
+      { belt: 2, pct: 0.99, introYear: 9,
+        name: 'Competition Purple', label: 'Purple Belt · Top 1%',
+        desc: '"\'Purple is mini-black\' and this guy has tapped more average black belts than he can count already with all his tricks."' },
+      // Brown Belt
+      { belt: 3, pct: 0.01, introYear: 10,
+        name: 'Out-of-Shape Brown', label: 'Brown Belt · Bottom 1%',
+        desc: '"He\'d say he\'s efficient in his movements, but really it\'s just laziness, and once someone gets top position he kinda gives up."' },
+      { belt: 3, pct: 0.50, introYear: 11,
+        name: 'Quiet Technician', label: 'Brown Belt · Mid',
+        desc: '"No drama, no highlights. Just brutal pressure, perfect timing, and every mistake quietly turns into a problem."' },
+      { belt: 3, pct: 0.99, introYear: 12,
+        name: 'Why Not Black Yet WTF!?', label: 'Brown Belt · Top 1%',
+        desc: '"He\'s probably changed gym too many times and not being promoted yet is just a bureaucratic oversight."' },
+      // Black Belt (all appear at year 13 — the end)
+      { belt: 4, pct: 0.01, introYear: 13,
+        name: 'Small Fish in Big Pond', label: 'Black Belt · Bottom 1%',
+        desc: '"Knowledgeable, efficient, some killer techniques, but lacking killer instinct and the je-ne-sais-quoi."' },
+      { belt: 4, pct: 0.50, introYear: 13,
+        name: 'Average Black Belt', label: 'Black Belt · Mid',
+        desc: '"Objectively good and dangerous, but still taps to lower-belt phenoms with better cardio and grit, and gets made to look like a white belt by elite black belts, like everyone else."' },
+      { belt: 4, pct: 0.99, introYear: 13,
+        name: 'Elite Black Belt', label: 'Black Belt · Top 1%',
+        desc: '"Won some championships. Insane BJJ + cardio + wrestling + etc. Talent and dedication in their prime."' },
+      // Easter egg — Boris, far right
+      { belt: 4, pct: null, skill: 968, introYear: 13, color: '#f59e0b',
+        name: 'BBB — Black Belt Boris', label: '✦ Easter Egg',
+        desc: '"Legend of the blue basement. Never competed, smashed every visiting competitor in the gym, disappeared at 40. No footage exists."' },
+    ];
+
+    // Return canvas x-position skill value for a character def
+    // pct 0.01 → z = -2.326 (1st percentile), 0.99 → z = +2.326 (99th percentile)
+    function charSkill(def) {
+      if (def.pct === null) return def.skill;
+      const z = def.pct < 0.5 ? -2.326 : def.pct > 0.5 ? 2.326 : 0;
+      return Math.max(5, Math.min(995, BELTS[def.belt].mu + S.belts[def.belt].sigma * z));
+    }
+
+    // ── Default simulation settings (fully user-overridable via gear) ─────────
+    // dropout = TOTAL fraction who quit during their time at this belt level,
+    //   NOT an annual rate. Converted to per-year internally via:
+    //   annualDrop = 1 − (1−dropout)^(1/avgYears)
+    // avgYears drives both the annual progression probability and the dropout
+    //   conversion — calibrated for: ~2.5yr to blue · ~4.5yr to purple ·
+    //   ~6.5yr to brown · ~9yr to black (cumulative from start).
+    const DEFAULTS = {
+      studentsPerYear: 100,
+      belts: [
+        { dropout: 0.70, avgYears: 2.5, sigma: 55 },  // white  → blue
+        { dropout: 0.40, avgYears: 3.0, sigma: 65 },  // blue   → purple
+        { dropout: 0.25, avgYears: 3.5, sigma: 70 },  // purple → brown
+        { dropout: 0.15, avgYears: 3.0, sigma: 65 },  // brown  → black
+        { dropout: 0.02, avgYears: null, sigma: 75 }, // black  (no promotion; treated as /5yr window)
+      ],
+    };
+
+    let S = JSON.parse(JSON.stringify(DEFAULTS)); // mutable working copy
+
+    // Convert avgYears + dropout → annual progression probability.
+    // E = 1/(1−s·(1−p))  →  p = 1 − (1 − 1/E)/s  where s = 1−dropout.
+    function rateFromAvgYears(avgYears, dropout) {
+      const s = 1 - dropout;
+      if (!avgYears || avgYears <= 0) return 0.50;
+      const p = 1 - (1 - 1 / avgYears) / s;
+      return Math.min(0.90, Math.max(0.01, p));
+    }
+
+    function cumulativeYears() {
+      // out[b] = total avg years from start to complete belt b and earn belt b+1
+      const out = [0, 0, 0, 0];
+      let sum = 0;
+      for (let b = 0; b < 4; b++) { sum += S.belts[b].avgYears || 0; out[b] = sum; }
+      return out;
+    }
+
+    // ── Constants ─────────────────────────────────────────────────────────────
+    const MAX_YEAR  = 13;
+    const PAD_L     = 48, PAD_R = 20;
+    const SPEEDS    = [1200, 600, 240];
+    const NUM_SLOTS = 280;
+    const LAYER_PX  = 4;
+
+    // ── Canvas ────────────────────────────────────────────────────────────────
+    const canvas = document.getElementById('main-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W = 0, H = 0;
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+      W = canvas.clientWidth  || window.innerWidth;
+      H = canvas.clientHeight || (window.innerHeight - 64);
+      canvas.width  = W * DPR;
+      canvas.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+
+    // ── Coordinate helpers ────────────────────────────────────────────────────
+    function skillX(s)   { return PAD_L + (s / 1000) * (W - PAD_L - PAD_R); }
+    function groundY()   { return H * 0.68; }
+    function bellH(s, b) {
+      const z = (s - BELTS[b].mu) / S.belts[b].sigma;
+      return Math.exp(-0.5 * z * z) * 115;
+    }
+    function targetY(p)  { return groundY() - bellH(p.skill, p.belt) + p.jitter; }
+    function slotW()         { return (W - PAD_L - PAD_R) / NUM_SLOTS; }
+    function xToSlot(x)      { return Math.max(0, Math.min(NUM_SLOTS - 1, Math.floor((x - PAD_L) / slotW()))); }
+    function pileFloorY(sl)  { return H - 4 - pileSlots[sl] * LAYER_PX; }
+
+    // ── Sim state ─────────────────────────────────────────────────────────────
+    let people = [], pileSlots, promotionStats, totalIntroduced;
+    let year = 0, playing = false, finished = false, lastTick = 0, speedIdx = 0;
+    let showingRecap = false, recapData = null;
+    let charPositions = [], hoveredCharIdx = -1;
+
+    // Fat-tailed skill distribution — 3% bad outlier, 3% good outlier per belt,
+    // so the best of each belt overlaps with the worst of the belt above.
+    function sampleSkillForBelt(b) {
+      const mu = BELTS[b].mu, sig = S.belts[b].sigma;
+      const r = Math.random();
+      if (r < 0.03) return Math.max(5,   mu - sig * 2.3 - Math.random() * sig * 0.4); // outlier low
+      if (r < 0.06) return Math.min(995, mu + sig * 2.3 + Math.random() * sig * 0.4); // outlier high
+      return mu + (Math.random() * 2 - 1) * sig * 1.6;                                // normal spread
+    }
+
+    function mkPerson() {
+      return {
+        skill:  sampleSkillForBelt(0),
+        belt: 0, yearsAtBelt: 0, totalYears: 0,
+        active: true, dropping: false, promoting: false, piled: false,
+        x: 0, y: 0,
+        jitter: (Math.random() - 0.5) * 28,
+        vy: 0, alpha: 1, glowTimer: 0,
+        promStartX: 0, promTargetX: 0, promT: 0,
+        pileSlot: 0, pileLayer: 0,
+      };
+    }
+
+    function initSim() {
+      people = []; pileSlots = new Array(NUM_SLOTS).fill(0);
+      promotionStats = Array.from({ length: 4 }, () => ({ count: 0, totalYears: 0 }));
+      totalIntroduced = 0;
+      year = 0; playing = false; finished = false; lastTick = 0;
+      resize(); updateStats(); updateYearLabel();
+    }
+
+    // ── Plateau ───────────────────────────────────────────────────────────────
+    function plateauCenter() {
+      return { x: skillX(75), y: groundY() - bellH(BELTS[0].mu, 0) - 62 };
+    }
+
+    function drawPlateau() {
+      const { x: cx, y: cy } = plateauCenter();
+      const pw = 112, ph = 7;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(0.07); // positive tilt: right side lower → recruits fall toward distribution
+
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(-pw / 2 + 3, ph + 1, pw, 4);
+
+      ctx.fillStyle   = 'rgba(209,213,219,0.08)';
+      ctx.strokeStyle = 'rgba(209,213,219,0.36)';
+      ctx.lineWidth   = 1;
+      ctx.beginPath(); ctx.rect(-pw / 2, 0, pw, ph); ctx.fill(); ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(209,213,219,0.18)';
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath();
+      ctx.moveTo(-pw / 2 + 14, ph); ctx.lineTo(-pw / 2 + 14, ph + 28);
+      ctx.moveTo( pw / 2 - 14, ph); ctx.lineTo( pw / 2 - 14, ph + 28);
+      ctx.stroke(); ctx.setLineDash([]);
+
+      ctx.fillStyle = 'rgba(209,213,219,0.38)';
+      ctx.font = '8px "Courier New",monospace'; ctx.textAlign = 'center';
+      ctx.fillText('new recruits', 0, -5);
+      ctx.restore();
+    }
+
+    // ── Add cohort ────────────────────────────────────────────────────────────
+    function addCohort() {
+      const { x: px, y: py } = plateauCenter();
+      for (let i = 0; i < S.studentsPerYear; i++) {
+        const p = mkPerson();
+        p.x = px + (Math.random() - 0.5) * 90;
+        p.y = py + (Math.random() - 0.5) * 5;
+        people.push(p); totalIntroduced++;
+      }
+    }
+
+    // ── Year simulation ───────────────────────────────────────────────────────
+    function runYear() {
+      year++;
+      addCohort();
+      for (const p of people) {
+        if (!p.active || p.dropping || p.promoting) continue;
+        const bs = S.belts[p.belt];
+
+        // Visual skill drift toward belt mean
+        p.skill += (BELTS[p.belt].mu - p.skill) * 0.22 + (Math.random() - 0.5) * bs.sigma * 0.18;
+        p.skill = Math.max(0, Math.min(999, p.skill));
+
+        // Convert total-belt-tenure dropout → annual rate.
+        // bs.dropout is the fraction who quit OVER the whole belt period,
+        // so the per-year equivalent is 1 − (1−total)^(1/period).
+        const period     = bs.avgYears || 5;
+        const annualDrop = 1 - Math.pow(1 - bs.dropout, 1 / period);
+        const dropChance = annualDrop * (1 + (Math.random() - 0.5) * 0.40);
+        if (Math.random() < dropChance) { p.dropping = true; p.vy = 0; continue; }
+
+        p.yearsAtBelt++; p.totalYears++;
+
+        // Progression — pass annualDrop so the timing formula uses the correct s
+        if (p.belt < 4 && bs.avgYears !== null) {
+          const rate  = rateFromAvgYears(bs.avgYears, annualDrop);
+          const noise = (Math.random() - 0.5) * rate * 0.30;
+          if (Math.random() < rate + noise) {
+            const nb = p.belt + 1;
+            p.belt = nb; p.yearsAtBelt = 0; p.promoting = true;
+            p.promStartX  = p.x;
+            p.skill       = sampleSkillForBelt(nb);
+            p.promTargetX = skillX(p.skill); p.promT = 0; p.glowTimer = 40;
+            promotionStats[nb - 1].count++;
+            promotionStats[nb - 1].totalYears += p.totalYears;
+          }
+        }
+      }
+      updateStats(); updateYearLabel();
+    }
+
+    // ── DOM stats ─────────────────────────────────────────────────────────────
+    function updateStats() {
+      const c = [0,0,0,0,0]; let out = 0;
+      for (const p of people) { if (p.active) c[p.belt]++; else out++; }
+      for (let i = 0; i < 5; i++) document.getElementById(`stat-${i}`).textContent = c[i];
+      document.getElementById('stat-out').textContent = out;
+    }
+    function updateYearLabel() { document.getElementById('year-label').textContent = `Year ${year}`; }
+
+    // ── Recap: compute + store data, canvas draws it (DOM fallback on mobile) ──
+    function showRecap() {
+      const cur = [0,0,0,0,0], drp = [0,0,0,0,0]; let activeTotal = 0;
+      for (const p of people) {
+        if (p.active) { cur[p.belt]++; activeTotal++; } else drp[p.belt]++;
+      }
+      recapData = {
+        cur, drp, activeTotal,
+        droppedTotal:   totalIntroduced - activeTotal,
+        total:          totalIntroduced,
+        promotionStats: promotionStats.map(s => ({ ...s })),
+      };
+      showingRecap = true;
+      // DOM recap on narrow screens where canvas recap won't fit (bw < 220 → W < 734)
+      if (W - 514 < 220) {
+        populateDOMRecap();
+        document.getElementById('dom-recap').style.display = 'block';
+      }
+    }
+
+    function populateDOMRecap() {
+      if (!recapData) return;
+      const { cur, drp, activeTotal, droppedTotal, total, promotionStats: ps } = recapData;
+      const pct = (n, d) => d > 0 ? (n / d * 100).toFixed(1) + '%' : '0.0%';
+
+      let rows = BELTS.map((belt, b) => `
+        <tr style="border-bottom:1px solid #0d1117;">
+          <td style="padding:5px 0;font-weight:600;color:${belt.color};">${belt.name}</td>
+          <td style="padding:5px 4px;text-align:right;color:#c9d1d9;">${cur[b]}</td>
+          <td style="padding:5px 4px;text-align:right;color:${drp[b]>0?'#f87171':'#8b949e'};">${drp[b]}</td>
+          <td style="padding:5px 4px;text-align:right;color:#6b7280;">${pct(cur[b]+drp[b], total)}</td>
+          <td style="padding:5px 0;text-align:right;color:#6b7280;">${pct(cur[b], activeTotal)}</td>
+        </tr>`).join('');
+
+      let avgParts = ['Blue','Purple','Brown','Black'].map((name, i) => {
+        const s = ps[i], avg = s.count > 0 ? (s.totalYears/s.count).toFixed(1)+' yr' : '--';
+        return `<span style="color:${BELTS[i+1].color};">${name}</span> ${avg}`;
+      }).join('&emsp;');
+
+      document.getElementById('dom-recap-inner').innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #21262d;">
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.14em;color:#c9d1d9;text-transform:uppercase;">Year ${MAX_YEAR} — Final Stats</span>
+          <button onclick="document.getElementById('dom-recap').style.display='none'" style="background:none;border:none;color:#6b7280;font-size:18px;cursor:pointer;padding:0 2px;line-height:1;">×</button>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #21262d;">
+          <div><div style="font-size:7px;letter-spacing:0.14em;color:#4b5563;text-transform:uppercase;margin-bottom:4px;">Total Started</div>
+               <div style="font-size:22px;font-weight:700;color:#c9d1d9;">${total}</div></div>
+          <div><div style="font-size:7px;letter-spacing:0.14em;color:#4b5563;text-transform:uppercase;margin-bottom:4px;">Dropped Out</div>
+               <div style="font-size:22px;font-weight:700;color:#f87171;">${droppedTotal}</div>
+               <div style="font-size:8px;color:#f87171;">${pct(droppedTotal,total)} dropout</div></div>
+          <div><div style="font-size:7px;letter-spacing:0.14em;color:#4b5563;text-transform:uppercase;margin-bottom:4px;">Active</div>
+               <div style="font-size:22px;font-weight:700;color:#34d399;">${activeTotal}</div>
+               <div style="font-size:8px;color:#34d399;">${pct(activeTotal,total)} retention</div></div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:9px;margin-bottom:14px;">
+          <thead><tr style="border-bottom:1px solid #21262d;">
+            <th style="text-align:left;padding:4px 0;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">Belt</th>
+            <th style="text-align:right;padding:4px 4px;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">Active</th>
+            <th style="text-align:right;padding:4px 4px;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">Dropped</th>
+            <th style="text-align:right;padding:4px 4px;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">%&nbsp;Tot</th>
+            <th style="text-align:right;padding:4px 0;font-size:7px;letter-spacing:0.1em;color:#4b5563;font-weight:400;text-transform:uppercase;">%&nbsp;Act</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div style="font-size:7px;letter-spacing:0.12em;color:#4b5563;text-transform:uppercase;margin-bottom:6px;">Avg cumulative years to reach belt</div>
+        <div style="font-size:9px;line-height:2.0;">${avgParts}</div>`;
+    }
+
+    function drawRecap() {
+      if (!recapData) return;
+      const { cur, drp, activeTotal, droppedTotal, total } = recapData;
+      const ps = recapData.promotionStats;
+
+      // Panel: fills the space between ASSUMPTIONS (right=258) and STATS (left=W-244) boxes
+      const bx  = 264;
+      const bxE = W - 250;
+      const bw  = bxE - bx;
+      const by  = 10;
+      const bh  = Math.min(groundY() - 145, 290);
+      if (bw < 220 || bh < 100) return;
+
+      ctx.fillStyle = 'rgba(8,11,18,0.92)';
+      ctx.strokeStyle = '#21262d'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.fill(); ctx.stroke();
+
+      const lpx = bx + 14;
+      ctx.textAlign = 'left';
+
+      // Title
+      ctx.font = '9px "Courier New",monospace'; ctx.fillStyle = '#c9d1d9';
+      ctx.fillText(`YEAR ${MAX_YEAR}  —  FINAL STATS`, lpx, by + 17);
+      ctx.strokeStyle = '#21262d';
+      ctx.beginPath(); ctx.moveTo(bx + 1, by + 23); ctx.lineTo(bx + bw - 1, by + 23); ctx.stroke();
+
+      // Zone widths
+      const zAW = Math.max(90, Math.floor(bw * 0.25));
+      const zA  = lpx;
+      const zBW = Math.floor(bw * 0.42);
+      const zB  = zA + zAW + 20;
+      const zC  = zB + zBW + 14;
+
+      // ── Zone A: 3 summary stats ─────────────────────────────────────────────
+      let ay = by + 36;
+      ctx.font = '7px "Courier New",monospace'; ctx.fillStyle = '#4b5563';
+      ctx.fillText('TOTAL STARTED', zA, ay); ay += 14;
+      ctx.font = 'bold 18px "Courier New",monospace'; ctx.fillStyle = '#c9d1d9';
+      ctx.fillText(total, zA, ay); ay += 22;
+
+      ctx.font = '7px "Courier New",monospace'; ctx.fillStyle = '#4b5563';
+      ctx.fillText('TOTAL DROPPED OUT', zA, ay); ay += 14;
+      ctx.font = 'bold 18px "Courier New",monospace'; ctx.fillStyle = '#f87171';
+      ctx.fillText(droppedTotal, zA, ay); ay += 16;
+      ctx.font = '8px "Courier New",monospace'; ctx.fillStyle = '#f87171';
+      ctx.fillText(`${(droppedTotal / total * 100).toFixed(1)}% dropout rate`, zA, ay); ay += 18;
+
+      ctx.font = '7px "Courier New",monospace'; ctx.fillStyle = '#4b5563';
+      ctx.fillText('CURRENTLY ACTIVE', zA, ay); ay += 14;
+      ctx.font = 'bold 18px "Courier New",monospace'; ctx.fillStyle = '#34d399';
+      ctx.fillText(activeTotal, zA, ay); ay += 16;
+      ctx.font = '8px "Courier New",monospace'; ctx.fillStyle = '#34d399';
+      ctx.fillText(`${(activeTotal / total * 100).toFixed(1)}% retention`, zA, ay);
+
+      // ── Zone B: belt table ──────────────────────────────────────────────────
+      const colW = Math.floor(zBW / 5);
+      const thY  = by + 36;
+      const hdrs   = ['BELT','ACTIVE','DROPPED','% TOTAL','% ACTIVE'];
+      const hAlign = ['left','right','right','right','right'];
+      ctx.font = '7px "Courier New",monospace';
+      hdrs.forEach((h, i) => {
+        ctx.textAlign = hAlign[i]; ctx.fillStyle = '#4b5563';
+        ctx.fillText(h, zB + colW * i, thY);
+      });
+      ctx.strokeStyle = '#21262d';
+      ctx.beginPath(); ctx.moveTo(zB, thY + 5); ctx.lineTo(zB + zBW, thY + 5); ctx.stroke();
+
+      BELTS.forEach((belt, b) => {
+        const ry     = thY + 18 + b * 20;
+        const pctAll = total > 0 ? ((cur[b] + drp[b]) / total * 100).toFixed(1) + '%' : '0.0%';
+        const pctAct = activeTotal > 0 ? (cur[b] / activeTotal * 100).toFixed(1) + '%' : '0.0%';
+        ctx.font = '9px "Courier New",monospace';
+        ctx.textAlign = 'left';  ctx.fillStyle = belt.color;
+        ctx.fillText(belt.name, zB + colW * 0, ry);
+        ctx.textAlign = 'right'; ctx.fillStyle = '#c9d1d9';
+        ctx.fillText(cur[b],    zB + colW * 1, ry);
+        ctx.fillStyle = drp[b] > 0 ? '#f87171' : '#8b949e';
+        ctx.fillText(drp[b],    zB + colW * 2, ry);
+        ctx.fillStyle = '#6b7280';
+        ctx.fillText(pctAll,    zB + colW * 3, ry);
+        ctx.fillText(pctAct,    zB + colW * 4, ry);
+      });
+
+      // ── Zone C: avg cumulative years ────────────────────────────────────────
+      if (zC + 90 < bx + bw) {
+        ctx.font = '7px "Courier New",monospace'; ctx.textAlign = 'left';
+        ctx.fillStyle = '#4b5563';
+        ctx.fillText('AVG CUMUL. YEARS TO REACH BELT', zC, thY);
+        ctx.strokeStyle = '#21262d';
+        ctx.beginPath(); ctx.moveTo(zC, thY + 5); ctx.lineTo(bx + bw - 10, thY + 5); ctx.stroke();
+        const avgLabels = ['Blue','Purple','Brown','Black'];
+        for (let i = 0; i < 4; i++) {
+          const s   = ps[i];
+          const avg = s.count > 0 ? (s.totalYears / s.count).toFixed(1) + ' yr' : '--.- yr';
+          const ry  = thY + 18 + i * 20;
+          ctx.font = '9px "Courier New",monospace';
+          ctx.fillStyle = BELTS[i + 1].color; ctx.textAlign = 'left';
+          ctx.fillText(avgLabels[i], zC, ry);
+          ctx.fillStyle = '#8b949e'; ctx.textAlign = 'right';
+          ctx.fillText(avg, bx + bw - 12, ry);
+        }
+      }
+
+      ctx.textAlign = 'left';
+    }
+
+    // ── Easing ────────────────────────────────────────────────────────────────
+    function easeOut3(t) { return 1 - Math.pow(1 - t, 3); }
+
+    // ── Canvas overlay panels ─────────────────────────────────────────────────
+    function drawPanel(bx, by, bw, bh) {
+      ctx.fillStyle = 'rgba(8,11,18,0.82)'; ctx.strokeStyle = '#1c2230'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.fill(); ctx.stroke();
+    }
+
+    function drawAssumptionsBox() {
+      if (W < 580) return;
+      const bx = 10, by = 10, bw = 248, bh = 94;
+      drawPanel(bx, by, bw, bh);
+      const lx = bx + 9;
+      ctx.font = '9px "Courier New",monospace'; ctx.textAlign = 'left';
+      ctx.fillStyle = '#8b949e'; ctx.fillText('ASSUMPTIONS', lx, by + 15);
+      ctx.fillStyle = '#1c2230'; ctx.fillText('──────────────────────────────', lx, by + 26);
+      ctx.fillStyle = '#4b5563'; ctx.fillText(`+${S.studentsPerYear} white belts / year`, lx, by + 39);
+      const d = S.belts.map((b, i) => `${['W','B','P','Br','Bk'][i]}:${Math.round(b.dropout*100)}%`);
+      ctx.fillText(`Quit/belt: ${d.join(' ')}`, lx, by + 52);
+      const cumul = cumulativeYears();
+      ctx.fillText(`Avg→belt: B:${cumul[0].toFixed(1)} P:${cumul[1].toFixed(1)} Br:${cumul[2].toFixed(1)} Bk:${cumul[3].toFixed(1)} yr`, lx, by + 65);
+      ctx.fillText('Randomized each year within stated ranges', lx, by + 78);
+    }
+
+    function drawStatsBox() {
+      if (W < 580) return;
+      const bw = 234, bx = W - bw - 10, by = 10, bh = 102;
+      drawPanel(bx, by, bw, bh);
+      const lx = bx + 9;
+      ctx.font = '9px "Courier New",monospace'; ctx.textAlign = 'left';
+      ctx.fillStyle = '#8b949e'; ctx.fillText(`STATS  (${totalIntroduced} introduced)`, lx, by + 15);
+      ctx.fillStyle = '#1c2230'; ctx.fillText('──────────────────────────────────', lx, by + 26);
+      [
+        { label: '→ Blue:  ', idx: 0, color: '#3b82f6' },
+        { label: '→ Purple:', idx: 1, color: '#8b5cf6' },
+        { label: '→ Brown: ', idx: 2, color: '#7c3d11' },
+        { label: '→ Black: ', idx: 3, color: '#c8c8c8' },
+      ].forEach(({ label, idx, color }, i) => {
+        const s   = promotionStats[idx];
+        const pct = totalIntroduced > 0 ? (s.count / totalIntroduced * 100).toFixed(1) + '%' : '-.-% ';
+        const avg = s.count > 0 ? (s.totalYears / s.count).toFixed(1) + ' yr' : '-.-  yr';
+        ctx.fillStyle = color;
+        ctx.fillText(`${label} ${s.count.toString().padStart(3)}  (${pct.padStart(5)})  avg ${avg}`, lx, by + 39 + i * 14);
+      });
+    }
+
+    // ── Character archetypes ──────────────────────────────────────────────────
+    function drawCharacters() {
+      const now = Date.now();
+      charPositions = [];
+      CHAR_DEFS.forEach((def, idx) => {
+        if (year < def.introYear) return;
+        const skill    = charSkill(def);
+        const cx       = skillX(skill);
+        const bellTop  = groundY() - bellH(skill, def.belt);
+        const cy       = Math.min(bellTop, groundY() - 20); // floor: always visible above ground
+        charPositions.push({ x: cx, y: cy, idx });
+
+        const isHovered  = hoveredCharIdx === idx;
+        const pulse      = 0.5 + 0.5 * Math.sin(now * 0.0014 + idx * 0.88);
+        const isBlack    = def.belt === 4;
+        const dotColor   = isBlack ? '#0d0d0d'  : (def.color || BELTS[def.belt].color);
+        const ringColor  = isBlack ? '#dc2626'  : (def.color || BELTS[def.belt].color);
+
+        ctx.save();
+        // Pulsating glow ring
+        ctx.beginPath();
+        ctx.arc(cx, cy, 9 + pulse * 4, 0, Math.PI * 2);
+        ctx.strokeStyle = ringColor;
+        ctx.globalAlpha = isHovered ? 0.85 : 0.18 + pulse * 0.28;
+        ctx.lineWidth   = isHovered ? 2.5 : 1.5;
+        ctx.stroke();
+        // Second tighter ring when hovered
+        if (isHovered) {
+          ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+          ctx.strokeStyle = ringColor; ctx.globalAlpha = 0.55; ctx.lineWidth = 1; ctx.stroke();
+        }
+        // Main dot (brighter + larger than sim dots)
+        ctx.beginPath(); ctx.arc(cx, cy, isHovered ? 6 : 5, 0, Math.PI * 2);
+        ctx.fillStyle   = dotColor;
+        ctx.globalAlpha = isHovered ? 1.0 : 0.60 + pulse * 0.40;
+        ctx.fill();
+        // White pinpoint centre
+        ctx.beginPath(); ctx.arc(cx, cy, 1.8, 0, Math.PI * 2);
+        ctx.fillStyle   = '#ffffff';
+        ctx.globalAlpha = isHovered ? 0.95 : 0.45 + pulse * 0.45;
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // ── Main draw ─────────────────────────────────────────────────────────────
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#080b12'; ctx.fillRect(0, 0, W, H);
+      const gy = groundY();
+
+      // Bell curves
+      for (let b = 0; b < 5; b++) {
+        const belt = BELTS[b];
+        ctx.beginPath(); ctx.moveTo(skillX(0), gy);
+        for (let s = 0; s <= 1000; s += 4) ctx.lineTo(skillX(s), gy - bellH(s, b));
+        ctx.lineTo(skillX(1000), gy); ctx.closePath();
+        ctx.fillStyle = belt.color; ctx.globalAlpha = 0.09; ctx.fill(); ctx.globalAlpha = 1;
+
+        ctx.beginPath();
+        for (let s = 0; s <= 1000; s += 4) {
+          const x = skillX(s), y = gy - bellH(s, b);
+          s === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = belt.color; ctx.globalAlpha = 0.25; ctx.lineWidth = 1;
+        ctx.stroke(); ctx.globalAlpha = 1;
+
+        ctx.fillStyle = belt.color; ctx.globalAlpha = 0.60;
+        ctx.font = 'bold 10px "Courier New",monospace'; ctx.textAlign = 'center';
+        ctx.fillText(belt.name[0], skillX(belt.mu), gy - bellH(belt.mu, b) - 8);
+        ctx.globalAlpha = 1;
+      }
+
+      drawPlateau();
+
+      // Ground line
+      ctx.strokeStyle = '#1c2230'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(PAD_L, gy); ctx.lineTo(W - PAD_R, gy); ctx.stroke();
+
+      // Belt labels below ground
+      ctx.textAlign = 'center';
+      for (let b = 0; b < 5; b++) {
+        ctx.fillStyle = BELTS[b].color; ctx.globalAlpha = 0.30;
+        ctx.font = '9px "Courier New",monospace';
+        ctx.fillText(BELTS[b].name, skillX(BELTS[b].mu), gy + 20);
+      }
+      ctx.globalAlpha = 1; ctx.textAlign = 'left';
+      ctx.fillStyle = '#374151'; ctx.globalAlpha = 0.55;
+      ctx.font = '9px "Courier New",monospace';
+      ctx.fillText('↓  drop-outs', PAD_L, gy + 38); ctx.globalAlpha = 1;
+      ctx.fillStyle = '#2d3748';
+      ctx.fillText('skill →', W - PAD_R - 46, gy + 13);
+      // Y-axis label
+      ctx.save();
+      ctx.translate(10, gy - 65); ctx.rotate(-Math.PI / 2);
+      ctx.font = '8px "Courier New",monospace'; ctx.textAlign = 'center';
+      ctx.fillStyle = '#374151'; ctx.globalAlpha = 0.50;
+      ctx.fillText('ability', 0, 0);
+      ctx.restore();
+
+      // Physics update
+      for (const p of people) {
+        if (!p.active && !p.dropping) continue;
+        if (p.dropping) {
+          p.vy += 0.45; p.y += p.vy;
+          const sl = xToSlot(p.x), floor = pileFloorY(sl);
+          if (p.y >= floor) {
+            p.pileSlot = sl; p.pileLayer = pileSlots[sl]++;
+            p.y = floor; p.dropping = false; p.active = false; p.piled = true;
+          }
+        } else if (p.promoting) {
+          p.promT = Math.min(1, p.promT + 0.04);
+          p.x = p.promStartX + (p.promTargetX - p.promStartX) * easeOut3(p.promT);
+          p.y += (targetY(p) - p.y) * 0.08;
+          if (p.promT >= 1) p.promoting = false;
+          if (p.glowTimer > 0) p.glowTimer--;
+        } else {
+          p.x += (skillX(p.skill) - p.x) * 0.05;
+          p.y += (targetY(p)      - p.y) * 0.05;
+        }
+      }
+
+      // Piled dots (graveyard)
+      const sw = slotW();
+      for (const p of people) {
+        if (!p.piled) continue;
+        const px = PAD_L + (p.pileSlot + 0.5) * sw;
+        const py = H - 4 - p.pileLayer * LAYER_PX;
+        ctx.save(); ctx.globalAlpha = 0.38;
+        if (p.belt === 4) {
+          ctx.shadowBlur = 5; ctx.shadowColor = 'rgba(220,38,38,0.5)';
+          ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI * 2);
+          ctx.fillStyle = '#111111'; ctx.fill(); ctx.shadowBlur = 0;
+        } else {
+          ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI * 2);
+          ctx.fillStyle = BELTS[p.belt].color; ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // Active / dropping dots
+      for (const p of people) {
+        if (!p.active && !p.dropping) continue;
+        ctx.save(); ctx.globalAlpha = p.alpha;
+        if (p.glowTimer > 0) {
+          const gf = p.glowTimer / 40;
+          ctx.beginPath(); ctx.arc(p.x, p.y, 5 + (1 - gf) * 9, 0, Math.PI * 2);
+          ctx.strokeStyle = BELTS[p.belt].color; ctx.globalAlpha = p.alpha * gf * 0.65;
+          ctx.lineWidth = 1.5; ctx.stroke(); ctx.globalAlpha = p.alpha;
+        }
+        if (p.belt === 4) {
+          ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(220,38,38,0.55)';
+          ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+          ctx.fillStyle = '#101010'; ctx.fill(); ctx.shadowBlur = 0;
+        } else {
+          ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = BELTS[p.belt].color; ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      drawCharacters();
+      drawAssumptionsBox();
+      drawStatsBox();
+      if (showingRecap) drawRecap();
+    }
+
+    // ── RAF loop ──────────────────────────────────────────────────────────────
+    function loop(ts) {
+      draw();
+      if (playing && !finished) {
+        if (!lastTick) lastTick = ts;
+        if (ts - lastTick >= SPEEDS[speedIdx]) {
+          lastTick = ts;
+          runYear();
+          if (year >= MAX_YEAR) {
+            finished = true; playing = false;
+            document.getElementById('btn-play').style.display   = 'none';
+            document.getElementById('btn-replay').style.display = 'inline';
+            setTimeout(showRecap, 1800);
+          }
+        }
+      }
+      requestAnimationFrame(loop);
+    }
+
+    // ── Playback controls ─────────────────────────────────────────────────────
+    document.getElementById('btn-play').addEventListener('click', () => {
+      if (finished) return;
+      playing = !playing;
+      document.getElementById('btn-play').textContent = playing ? '⏸ Pause' : '▶ Play';
+      if (playing) lastTick = 0;
+    });
+
+    document.getElementById('btn-replay').addEventListener('click', () => {
+      showingRecap = false; recapData = null;
+      document.getElementById('dom-recap').style.display   = 'none';
+      document.getElementById('btn-replay').style.display  = 'none';
+      document.getElementById('btn-play').style.display    = 'inline';
+      document.getElementById('btn-play').textContent      = '▶ Play';
+      initSim();
+    });
+
+    document.querySelectorAll('[data-speed]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        speedIdx = parseInt(btn.dataset.speed);
+        document.querySelectorAll('[data-speed]').forEach((b) => {
+          const on = parseInt(b.dataset.speed) === speedIdx;
+          b.style.background  = on ? 'rgba(0,212,255,0.15)' : 'transparent';
+          b.style.color       = on ? '#00d4ff' : '#6b7280';
+          b.style.borderColor = on ? '#00d4ff' : '#21262d';
+        });
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      resize();
+      for (const p of people) {
+        if (!p.active || p.dropping || p.promoting) continue;
+        p.x = skillX(p.skill); p.y = targetY(p);
+      }
+    });
+
+    // ── Gear modal ────────────────────────────────────────────────────────────
+    const INP = 'width:66px;background:#161b22;border:1px solid #30363d;border-radius:3px;color:#c9d1d9;font-family:inherit;font-size:11px;padding:5px 6px;text-align:center;outline:none;';
+
+    // Build the "avg years to reach belt" section (4 rows: →Blue →Purple →Brown →Black)
+    function buildProgTable() {
+      const cumul = cumulativeYears();
+      const tbody = document.getElementById('gear-prog-tbody');
+      tbody.innerHTML = '';
+      // Belt b=0..3 each has avgYears = time at that belt before promotion
+      // → Blue = b=0 avgYears, → Purple = b=1, etc.
+      const targets = ['→ Blue', '→ Purple', '→ Brown', '→ Black'];
+      for (let b = 0; b < 4; b++) {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #0d1117';
+        tr.innerHTML = `
+          <td style="padding:9px 0;color:${BELTS[b+1].color};font-weight:600;">${targets[b]}</td>
+          <td style="padding:9px 8px;text-align:center;">
+            <input class="cfg-avg" data-belt="${b}" type="number" min="0.5" max="15" step="0.5"
+              value="${S.belts[b].avgYears}" style="${INP}">
+          </td>
+          <td style="padding:9px 0;text-align:center;">
+            <span class="cfg-cum" data-belt="${b}" style="font-size:11px;color:#6b7280;">${cumul[b].toFixed(1)} yr</span>
+          </td>`;
+        tbody.appendChild(tr);
+      }
+      document.querySelectorAll('.cfg-avg').forEach((el) => {
+        el.addEventListener('input', refreshCumulative);
+      });
+    }
+
+    function refreshCumulative() {
+      let cum = 0;
+      for (let b = 0; b < 4; b++) {
+        const el   = document.querySelector(`.cfg-avg[data-belt="${b}"]`);
+        const span = document.querySelector(`.cfg-cum[data-belt="${b}"]`);
+        if (el)   cum += parseFloat(el.value) || 0;
+        if (span) span.textContent = cum.toFixed(1) + ' yr';
+      }
+    }
+
+    // Build the "attrition & skill spread" section (5 rows: White…Black)
+    function buildAttrTable() {
+      const tbody = document.getElementById('gear-attr-tbody');
+      tbody.innerHTML = '';
+      BELTS.forEach((belt, b) => {
+        const bs = S.belts[b];
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #0d1117';
+        tr.innerHTML = `
+          <td style="padding:9px 0;color:${belt.color};font-weight:600;">${belt.name}</td>
+          <td style="padding:9px 8px;text-align:center;">
+            <input class="cfg-drop" data-belt="${b}" type="number" min="1" max="95" step="1"
+              value="${Math.round(bs.dropout * 100)}" style="${INP}">
+          </td>
+          <td style="padding:9px 0;text-align:center;">
+            <input class="cfg-sig" data-belt="${b}" type="number" min="10" max="200" step="5"
+              value="${bs.sigma}" style="${INP}">
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openGear() {
+      document.getElementById('cfg-spy').value = S.studentsPerYear;
+      buildProgTable();
+      buildAttrTable();
+      document.getElementById('gear-overlay').style.display = 'block';
+    }
+
+    function closeGear() { document.getElementById('gear-overlay').style.display = 'none'; }
+
+    function applyGear() {
+      S.studentsPerYear = Math.max(10, parseInt(document.getElementById('cfg-spy').value) || 100);
+      document.querySelectorAll('.cfg-avg').forEach((el) => {
+        const b = parseInt(el.dataset.belt);
+        S.belts[b].avgYears = Math.min(15, Math.max(0.5, parseFloat(el.value) || 1));
+      });
+      document.querySelectorAll('.cfg-drop').forEach((el) => {
+        const b = parseInt(el.dataset.belt);
+        S.belts[b].dropout = Math.min(0.95, Math.max(0.01, parseFloat(el.value) / 100));
+      });
+      document.querySelectorAll('.cfg-sig').forEach((el) => {
+        const b = parseInt(el.dataset.belt);
+        S.belts[b].sigma = Math.min(200, Math.max(10, parseInt(el.value) || 60));
+      });
+      closeGear();
+      showingRecap = false; recapData = null;
+      document.getElementById('dom-recap').style.display   = 'none';
+      document.getElementById('btn-replay').style.display  = 'none';
+      document.getElementById('btn-play').style.display    = 'inline';
+      document.getElementById('btn-play').textContent      = '▶ Play';
+      initSim();
+    }
+
+    function resetGear() {
+      S = JSON.parse(JSON.stringify(DEFAULTS));
+      document.getElementById('cfg-spy').value = S.studentsPerYear;
+      buildProgTable();
+      buildAttrTable();
+    }
+
+    document.getElementById('btn-gear').addEventListener('click', openGear);
+    document.getElementById('gear-close').addEventListener('click', closeGear);
+    document.getElementById('gear-apply').addEventListener('click', applyGear);
+    document.getElementById('gear-reset').addEventListener('click', resetGear);
+    document.getElementById('gear-overlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('gear-overlay')) closeGear();
+    });
+
+    // ── Info modal ────────────────────────────────────────────────────────────
+    document.getElementById('btn-info').addEventListener('click', () => {
+      document.getElementById('info-overlay').style.display = 'block';
+    });
+    document.getElementById('info-close').addEventListener('click', () => {
+      document.getElementById('info-overlay').style.display = 'none';
+    });
+    document.getElementById('info-overlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('info-overlay'))
+        document.getElementById('info-overlay').style.display = 'none';
+    });
+
+    // ── Character hover modal ─────────────────────────────────────────────────
+    const charModal = document.getElementById('char-modal');
+
+    function showCharModal(clientX, clientY) {
+      const def = CHAR_DEFS[hoveredCharIdx];
+      document.getElementById('cm-label').textContent = def.label;
+      document.getElementById('cm-label').style.color = def.color || BELTS[def.belt].color;
+      document.getElementById('cm-name').textContent  = def.name;
+      document.getElementById('cm-desc').textContent  = def.desc;
+      // Position near cursor, stay in viewport
+      const mw = 275, mh = 130;
+      let mx = clientX + 16, my = clientY - 24;
+      if (mx + mw > window.innerWidth  - 8) mx = clientX - mw - 14;
+      if (my + mh > window.innerHeight - 8) my = clientY - mh - 10;
+      if (my < 44) my = 44;
+      charModal.style.left    = mx + 'px';
+      charModal.style.top     = my + 'px';
+      charModal.style.display = 'block';
+    }
+
+    function hideCharModal() {
+      charModal.style.display = 'none';
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx   = e.clientX - rect.left;
+      const my   = e.clientY - rect.top;
+      let found  = -1;
+      for (const cp of charPositions) {
+        const dx = mx - cp.x, dy = my - cp.y;
+        if (dx * dx + dy * dy < 196) { found = cp.idx; break; } // 14px radius
+      }
+      if (found !== hoveredCharIdx) {
+        hoveredCharIdx = found;
+        canvas.style.cursor = found >= 0 ? 'pointer' : 'default';
+        if (found < 0) hideCharModal();
+      }
+      if (hoveredCharIdx >= 0) showCharModal(e.clientX, e.clientY);
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      hoveredCharIdx = -1;
+      canvas.style.cursor = 'default';
+      hideCharModal();
+    });
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    initSim();
+    requestAnimationFrame(loop);
+  </script>
+
+</BaseLayout>
