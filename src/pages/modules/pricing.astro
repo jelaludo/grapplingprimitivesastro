@@ -1,0 +1,1176 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="BJJ Pricing Worldwide — Grappling Primitives" fullscreen={true}>
+
+  <!-- Google Fonts + D3 -->
+  <Fragment slot="default">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  </Fragment>
+
+  <style>
+    /* ── PRICING MODULE SCOPED STYLES ── */
+    .pricing-page {
+      --bg: #F7F6F2;
+      --surface: #FFFFFF;
+      --border: #E5E2D9;
+      --text-primary: #1C1917;
+      --text-secondary: #6B6560;
+      --text-tertiary: #A09C96;
+      --accent: #2D3BCD;
+      --accent-light: #EEF0FC;
+      --accent-muted: #7B86E0;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding-top: 36px;
+    }
+
+    /* ── TOOLBAR ── */
+    .pricing-toolbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 36px; z-index: 50;
+      display: flex; align-items: center; gap: 10px; padding: 0 12px;
+      border-bottom: 1px solid #21262d;
+      background: rgba(5,5,9,0.97); backdrop-filter: blur(8px);
+      font-family: 'Courier New', Consolas, Monaco, monospace;
+    }
+    .pricing-toolbar a {
+      font-size: 10px; letter-spacing: 0.2em; color: #6b7280;
+      text-transform: uppercase; text-decoration: none;
+    }
+    .pricing-toolbar a:hover { color: #00d4ff; }
+    .pricing-toolbar span.sep { color: #21262d; }
+    .pricing-toolbar span.title {
+      font-size: 11px; letter-spacing: 0.2em; color: #6b7280;
+      text-transform: uppercase; user-select: none;
+    }
+
+    /* ── HEADER ── */
+    .top-bar {
+      max-width: 1200px; margin: 0 auto; padding: 24px 48px 0;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .top-bar h1 {
+      font-family: var(--font-display); font-size: 24px;
+      font-weight: 600; letter-spacing: -0.02em;
+    }
+    .top-bar-right { display: flex; align-items: center; gap: 12px; }
+
+    /* ── CURRENCY TOGGLE ── */
+    .currency-group {
+      display: flex; align-items: center; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 2px;
+    }
+    .currency-btn {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+      padding: 5px 13px; border-radius: 5px; border: none;
+      background: transparent; color: var(--text-secondary);
+      cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.04em;
+    }
+    .currency-btn:hover { color: var(--text-primary); }
+    .currency-btn.active { background: var(--accent); color: white; }
+
+    /* ── RATE NOTE ── */
+    .rate-note-bar {
+      max-width: 1200px; margin: 0 auto; padding: 5px 48px 0; text-align: right;
+    }
+    .rate-note {
+      font-family: var(--font-mono); font-size: 10px;
+      color: var(--text-tertiary); letter-spacing: 0.03em;
+    }
+
+    /* ── TABS ── */
+    .tab-bar-wrap { max-width: 1200px; margin: 0 auto; padding: 16px 48px 0; }
+    .tab-bar { display: flex; border-bottom: 1px solid var(--border); }
+    .tab-btn {
+      font-family: var(--font-body); font-size: 13px; font-weight: 500;
+      padding: 9px 22px; border: none; border-bottom: 2px solid transparent;
+      background: transparent; color: var(--text-tertiary);
+      cursor: pointer; margin-bottom: -1px; transition: all 0.15s ease;
+    }
+    .tab-btn:hover { color: var(--text-primary); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── PANELS ── */
+    .pricing-page .panel { display: none; }
+    .pricing-page .panel.active { display: block; }
+
+    /* ── LAYOUT ── */
+    .pricing-page main {
+      max-width: 1200px; margin: 0 auto; padding: 0 48px 80px;
+    }
+    .pricing-page section { padding: 32px 0; }
+    .section-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 24px; flex-wrap: wrap; gap: 10px;
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: 21px;
+      font-weight: 600; letter-spacing: -0.01em;
+    }
+    .section-subtitle { font-size: 12px; color: var(--text-secondary); font-weight: 300; }
+
+    /* ── SUMMARY STRIP ── */
+    .summary-strip {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; margin-bottom: 24px;
+    }
+    .summary-cell {
+      background: var(--surface); padding: 14px 18px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .summary-cell-label {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-tertiary);
+    }
+    .summary-cell-value {
+      font-family: var(--font-display); font-size: 21px;
+      font-weight: 700; letter-spacing: -0.02em;
+    }
+    .summary-cell-sub { font-size: 10px; color: var(--text-secondary); }
+
+    /* ── MAP ── */
+    .map-container {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px; margin-bottom: 24px;
+    }
+    .map-label {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 14px;
+    }
+    #region-map { width: 100%; display: block; cursor: pointer; }
+    .region-shape { transition: all 0.2s ease; cursor: pointer; }
+    .region-shape:hover { opacity: 0.85; }
+    .region-text {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 11px; font-weight: 500;
+      fill: white; pointer-events: none; text-anchor: middle;
+    }
+    .region-subtext {
+      font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+      fill: rgba(255,255,255,0.85); pointer-events: none; text-anchor: middle;
+    }
+    .region-hint {
+      font-size: 11px; color: var(--text-tertiary); margin-top: 9px; font-style: italic;
+    }
+
+    /* ── SELECTION BAR ── */
+    .selection-bar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+      padding: 8px 14px; background: var(--accent-light); border-radius: 8px;
+      border: 1px solid rgba(79,70,229,0.15);
+    }
+    .selection-bar-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0;
+    }
+    .selection-bar-text {
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--accent); letter-spacing: 0.04em;
+    }
+    .selection-clear {
+      margin-left: auto; font-size: 11px; color: var(--accent); cursor: pointer;
+      text-decoration: underline; background: none; border: none;
+      font-family: var(--font-body); padding: 0;
+    }
+    .selection-clear:hover { opacity: 0.7; }
+
+    /* ── BOX PLOT CARDS ── */
+    .boxplot-grid { display: grid; gap: 18px; }
+    .boxplot-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px 26px; transition: border-color 0.2s;
+    }
+    .boxplot-card:hover { border-color: var(--accent-muted); }
+    .boxplot-card-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    }
+    .boxplot-tier {
+      font-family: var(--font-display); font-size: 16px;
+      font-weight: 600; letter-spacing: -0.01em;
+    }
+    .boxplot-badge {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+      background: var(--accent-light); color: var(--accent);
+    }
+    .legend-row {
+      display: flex; gap: 18px; flex-wrap: wrap;
+      margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border);
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 10px; color: var(--text-secondary);
+    }
+    .legend-swatch { width: 18px; height: 3px; border-radius: 2px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 40px 0;
+      color: var(--text-tertiary); font-size: 13px;
+    }
+    .empty-state-icon { font-size: 26px; margin-bottom: 10px; }
+
+    /* ── SEMINAR ── */
+    .seminar-grid { display: flex; flex-direction: column; gap: 22px; }
+    .seminar-row {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px 26px;
+    }
+    .seminar-row-header {
+      display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px;
+    }
+    .seminar-rank-badge {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .seminar-row-info h3 {
+      font-family: var(--font-display); font-size: 17px; font-weight: 600;
+      letter-spacing: -0.01em; margin-bottom: 3px;
+    }
+    .seminar-row-info p { font-size: 12px; color: var(--text-secondary); font-weight: 300; }
+    .seminar-tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .seminar-tag {
+      font-size: 10px; padding: 3px 10px; border-radius: 20px; font-family: var(--font-mono);
+    }
+
+    /* ── SEMINAR SUB-TABS ── */
+    .seminar-subtab-bar { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+    .seminar-subtab-btn {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.05em; padding: 6px 16px; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-secondary); cursor: pointer; transition: all 0.15s ease;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .seminar-subtab-btn:hover { border-color: var(--text-tertiary); color: var(--text-primary); }
+    .seminar-subtab-btn.active {
+      background: var(--text-primary); border-color: var(--text-primary); color: white;
+    }
+    .seminar-subtab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .seminar-context-note {
+      font-size: 11px; color: var(--text-tertiary); font-style: italic;
+      margin-bottom: 18px; padding: 8px 12px; background: var(--bg);
+      border-radius: 6px; border-left: 2px solid var(--border);
+    }
+
+    /* ── TOOLTIP ── */
+    .pricing-tooltip {
+      position: fixed; background: var(--text-primary); color: white;
+      padding: 11px 15px; border-radius: 8px; font-size: 12px; line-height: 1.6;
+      max-width: 260px; pointer-events: none; opacity: 0;
+      transition: opacity 0.12s ease; z-index: 9999;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .pricing-tooltip.visible { opacity: 1; }
+    .tooltip-title { font-weight: 600; font-size: 12px; margin-bottom: 5px; }
+    .tooltip-price { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: #93C5FD; margin-bottom: 5px; }
+    .tooltip-examples { color: #D1D5DB; font-size: 11px; }
+    .tooltip-example { display: block; padding: 1px 0; }
+
+    /* ── FOOTER ── */
+    .pricing-page footer {
+      padding: 22px 48px; max-width: 1200px; margin: 0 auto;
+      border-top: 1px solid var(--border);
+    }
+    .footer-text { font-size: 10px; color: var(--text-tertiary); line-height: 1.8; }
+
+    @media (max-width: 768px) {
+      .top-bar, .rate-note-bar, .tab-bar-wrap, .pricing-page main, .pricing-page footer {
+        padding-left: 20px; padding-right: 20px;
+      }
+      .map-container { padding: 16px; }
+    }
+  </style>
+
+  <!-- ── Toolbar ── -->
+  <div class="pricing-toolbar">
+    <a href={`${base}/`}>← Home</a>
+    <span class="sep">|</span>
+    <span class="title">BJJ Pricing</span>
+  </div>
+
+  <!-- ── Page wrapper ── -->
+  <div class="pricing-page">
+
+    <div class="pricing-tooltip" id="tooltip">
+      <div class="tooltip-title" id="tt-title"></div>
+      <div class="tooltip-price" id="tt-price"></div>
+      <div class="tooltip-examples" id="tt-examples"></div>
+    </div>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <h1>BJJ Pricing Worldwide</h1>
+      <div class="top-bar-right">
+        <div class="currency-group">
+          <button class="currency-btn active" data-currency="USD" onclick="setCurrency('USD')">USD</button>
+          <button class="currency-btn" data-currency="EUR" onclick="setCurrency('EUR')">EUR</button>
+          <button class="currency-btn" data-currency="JPY" onclick="setCurrency('JPY')">JPY</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="rate-note-bar">
+      <span class="rate-note" id="rate-note">Showing USD · assumed rates: 1 USD = 0.91 EUR = 149 JPY</span>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-bar-wrap">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('monthly')">Monthly Memberships</button>
+        <button class="tab-btn" onclick="switchTab('seminars')">Seminar Fees</button>
+      </div>
+    </div>
+
+    <main>
+      <!-- PANEL: MONTHLY -->
+      <div class="panel active" id="panel-monthly">
+        <section>
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Monthly Memberships</h2>
+              <p class="section-subtitle">Adult unlimited plan (or closest available) · displaying <span id="mem-currency-label">USD</span></p>
+            </div>
+          </div>
+          <div class="summary-strip" id="summary-strip"></div>
+          <div class="map-container">
+            <div class="map-label">Click a region to explore pricing tiers</div>
+            <svg id="region-map" viewBox="0 0 900 295" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="region-hint">Select a region to view detailed pricing breakdown below</div>
+          </div>
+          <div class="selection-bar" id="selection-bar" style="display:none">
+            <div class="selection-bar-dot"></div>
+            <span class="selection-bar-text" id="selection-bar-text"></span>
+            <button class="selection-clear" onclick="clearRegion()">Clear</button>
+          </div>
+          <div id="boxplot-container">
+            <div class="empty-state">
+              <div class="empty-state-icon">🗺</div>
+              <div>Select a region on the map to view detailed pricing tiers</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- PANEL: SEMINARS -->
+      <div class="panel" id="panel-seminars">
+        <section>
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Seminar Fees</h2>
+              <p class="section-subtitle">Per-person fee for a 2-4 hour session · displaying <span id="sem-currency-label">USD</span></p>
+            </div>
+          </div>
+
+          <!-- Seminar sub-tabs -->
+          <div class="seminar-subtab-bar">
+            <button class="seminar-subtab-btn active" data-semview="global" onclick="switchSeminarTab('global')">
+              <span class="seminar-subtab-dot" style="background:#6B7280"></span>Global
+            </button>
+            <button class="seminar-subtab-btn" data-semview="us" onclick="switchSeminarTab('us')">
+              <span class="seminar-subtab-dot" style="background:#2D3BCD"></span>USD / US
+            </button>
+            <button class="seminar-subtab-btn" data-semview="eu" onclick="switchSeminarTab('eu')">
+              <span class="seminar-subtab-dot" style="background:#7C3AED"></span>EUR / EU
+            </button>
+            <button class="seminar-subtab-btn" data-semview="jp" onclick="switchSeminarTab('jp')">
+              <span class="seminar-subtab-dot" style="background:#B45309"></span>JPY / JP
+            </button>
+          </div>
+
+          <div class="seminar-context-note" id="seminar-context-note">
+            Global ranges aggregated across all regions. Currency toggle applies to display only.
+          </div>
+
+          <div class="seminar-grid" id="seminar-grid"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <p class="footer-text">
+        Sources: gym price pages, White Belt Club 2025 guide, BJJEE, Kioto BJJ, Novakik BJJ, r/bjj and r/Tokyo forums, individual academy websites.
+        <br>Exchange rate assumptions (approximate, stable rates used for display conversion only):
+        <strong>1 USD = 0.91 EUR = 149 JPY · 1 EUR = 1.10 USD · 1 GBP = 1.25 USD.</strong>
+        All membership data reflects adult unlimited plans as of 2024-2025. Data stored internally in USD.
+      </p>
+    </footer>
+
+  </div><!-- /.pricing-page -->
+
+  <script is:inline>
+  // ─────────────────────────────────────────────
+  // CURRENCY
+  // ─────────────────────────────────────────────
+  const RATES  = { USD: 1, EUR: 0.91, JPY: 149 };
+  const SYMBOLS = { USD: '$', EUR: '€', JPY: '¥' };
+  const RATE_NOTES = {
+    USD: 'Showing USD · assumed rates: 1 USD = 0.91 EUR = 149 JPY',
+    EUR: 'Showing EUR · assumed rates: 1 EUR = 1.10 USD = 164 JPY',
+    JPY: 'Showing JPY · assumed rates: 100 JPY = 0.67 USD = 0.61 EUR',
+  };
+
+  let currentCurrency = 'USD';
+
+  function cv(usdVal) {
+    const v = usdVal * RATES[currentCurrency];
+    if (currentCurrency === 'JPY') return Math.round(v / 100) * 100;
+    return Math.round(v);
+  }
+  function fmt(usdVal) {
+    const v = cv(usdVal);
+    if (currentCurrency === 'JPY') return '¥' + v.toLocaleString();
+    return SYMBOLS[currentCurrency] + v;
+  }
+
+  function setCurrency(c) {
+    currentCurrency = c;
+    document.querySelectorAll('.currency-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.currency === c));
+    document.getElementById('rate-note').textContent = RATE_NOTES[c];
+    document.getElementById('mem-currency-label').textContent = c;
+    document.getElementById('sem-currency-label').textContent = c;
+    buildSummaryStrip();
+    updateMapLabels();
+    if (selectedRegion) renderBoxPlots();
+    document.getElementById('seminar-context-note').textContent = SEMINAR_DATASETS[currentSeminarView].context;
+    document.getElementById('seminar-grid').innerHTML = '';
+    buildSeminars();
+  }
+
+  // ─────────────────────────────────────────────
+  // DATA  (all prices internally in USD)
+  // ─────────────────────────────────────────────
+  const REGIONS = [
+    {
+      id:'us', name:'United States', color:'#2D3BCD',
+      mapX:55, mapY:65, mapW:220, mapH:148,
+      summaryMedian:160, summaryColor:'#2D3BCD',
+      tiers:[
+        { label:'Mainstream', badge:'Most commercial gyms',
+          min:120, q1:135, median:160, q3:182, max:200, outliers:[],
+          examples:[
+            {name:'New England BJJ Academy', city:'Massachusetts', price_usd:160},
+            {name:'Orlando BJJ',              city:'Florida',       price_usd:180},
+            {name:'Typical TX / FL gym',      city:'TX / FL',       price_usd:165},
+          ]},
+        { label:'Big-city & Elite', badge:'NYC · LA · SF · Top teams',
+          min:200, q1:220, median:262, q3:282, max:300, outliers:[325],
+          examples:[
+            {name:'NYC academies',             city:'New York',      price_usd:215},
+            {name:'LA / SF elite teams',       city:'California',    price_usd:265},
+            {name:'World-champion affiliates', city:'US nationwide', price_usd:285},
+          ]},
+      ]
+    },
+    {
+      id:'uk', name:'United Kingdom', color:'#059669',
+      mapX:350, mapY:42, mapW:78, mapH:88,
+      summaryMedian:90, summaryColor:'#059669',
+      tiers:[
+        { label:'Regional UK', badge:'Outside London',
+          min:70, q1:78, median:90, q3:100, max:110, outliers:[],
+          examples:[
+            {name:'Peak Jiu Jitsu',       city:'UK regional',  price_usd:75},
+            {name:'Average commercial gym', city:'UK nationwide', price_usd:90},
+          ]},
+        { label:'London', badge:'Central & prestige gyms',
+          min:120, q1:138, median:155, q3:172, max:200, outliers:[250,340],
+          examples:[
+            {name:'Fightzone London', city:'London', price_usd:131},
+            {name:'GB Top Team',       city:'London', price_usd:200},
+            {name:'Outlier super-gyms', city:'London', price_usd:320},
+          ]},
+      ]
+    },
+    {
+      id:'br', name:'Brazil', color:'#16A34A',
+      mapX:135, mapY:145, mapW:168, mapH:128,
+      summaryMedian:35, summaryColor:'#16A34A',
+      tiers:[
+        { label:'Favela / Community', badge:'Social-project gyms',
+          min:7, q1:10, median:15, q3:20, max:25, outliers:[],
+          examples:[
+            {name:'Community project gyms', city:'Rio favelas', price_usd:10},
+            {name:'Small-city academies',   city:'Interior',    price_usd:20},
+          ]},
+        { label:'Mainstream', badge:'City academies',
+          min:20, q1:25, median:35, q3:44, max:55, outliers:[],
+          examples:[
+            {name:'Standard Rio academy', city:'Rio de Janeiro', price_usd:30},
+            {name:'São Paulo mid-tier',   city:'São Paulo',      price_usd:40},
+          ]},
+        { label:'Elite', badge:'Alliance · Atos · GFTeam HQ',
+          min:55, q1:62, median:75, q3:88, max:100, outliers:[120],
+          examples:[
+            {name:'Alliance HQ',  city:'São Paulo', price_usd:75},
+            {name:'Atos HQ',      city:'São Paulo', price_usd:80},
+            {name:'Premium plan', city:'Rio',        price_usd:100},
+          ]},
+      ]
+    },
+    {
+      id:'weu', name:'Western EU', color:'#7C3AED',
+      mapX:432, mapY:70, mapW:140, mapH:128,
+      summaryMedian:90, summaryColor:'#7C3AED',
+      tiers:[
+        { label:'Club / Verein', badge:'Sports-club model',
+          min:35, q1:44, median:50, q3:57, max:65, outliers:[],
+          examples:[
+            {name:'German Verein clubs', city:'Germany', price_usd:50},
+            {name:'Takado',               city:'Finland',  price_usd:66},
+          ]},
+        { label:'Commercial gym', badge:'Non-capital cities',
+          min:70, q1:80, median:92, q3:105, max:115, outliers:[],
+          examples:[
+            {name:'German commercial gyms', city:'Germany', price_usd:87},
+            {name:'Irish gyms',              city:'Ireland',  price_usd:110},
+          ]},
+        { label:'Capital / Elite', badge:'Berlin · Paris · Amsterdam',
+          min:120, q1:140, median:158, q3:178, max:200, outliers:[220],
+          examples:[
+            {name:'Berlin elite academies', city:'Germany', price_usd:200},
+            {name:'Paris top gyms',          city:'France',  price_usd:160},
+          ]},
+      ]
+    },
+    {
+      id:'eeu', name:'Eastern Europe', color:'#E11D48',
+      mapX:580, mapY:70, mapW:98, mapH:128,
+      summaryMedian:35, summaryColor:'#E11D48',
+      tiers:[
+        { label:'Mainstream', badge:'Poland · Czech · Hungary',
+          min:20, q1:26, median:35, q3:44, max:55, outliers:[],
+          examples:[
+            {name:'Forum reports',       city:'Eastern Europe', price_usd:30},
+            {name:'Local academies',     city:'Poland / Czech',  price_usd:40},
+          ]},
+      ]
+    },
+    {
+      id:'jp', name:'Japan', color:'#B45309',
+      mapX:718, mapY:50, mapW:142, mapH:148,
+      summaryMedian:95, summaryColor:'#B45309',
+      tiers:[
+        { label:'Mainstream', badge:'Tokyo · Osaka',
+          min:80, q1:87, median:95, q3:103, max:110, outliers:[],
+          examples:[
+            {name:'Tri-Force BJJ Ojima', city:'Tokyo', price_usd:100},
+            {name:'CAVE BJJ Oshiage',     city:'Tokyo', price_usd:81},
+            {name:'Tri-Force Osaka',       city:'Osaka', price_usd:94},
+          ]},
+        { label:'High-end + extras', badge:'Premium Tokyo programs',
+          min:120, q1:135, median:148, q3:162, max:180, outliers:[],
+          examples:[
+            {name:'Elite Tokyo programs',  city:'Tokyo', price_usd:120},
+            {name:'With gi-wash + locker', city:'Tokyo', price_usd:155},
+          ]},
+      ]
+    }
+  ];
+
+  // All seminar price values stored in USD regardless of region view.
+  const SEMINAR_DATASETS = {
+    global: {
+      context: 'Global ranges aggregated across all regions. Currency toggle applies to display only.',
+      tiers: [
+        {
+          tier:'Regular / Local Black Belt',
+          description:'2-3 hour session at a local gym or community event',
+          badge:'BB', badgeBg:'#E5E7EB', badgeColor:'#374151',
+          barColor:'#6B7280', barBgColor:'#F3F4F6',
+          min:40, typical_low:60, median:85, typical_high:110, max:120,
+          note:'Most gym-organized visiting instructor seminars fall in this band. Broadly accessible price point.',
+          examples_usd:[
+            {label:'US typical',      min:60, max:120},
+            {label:'EU lower-income', min:40, max:80},
+            {label:'Japan',           min:50, max:80},
+          ]
+        },
+        {
+          tier:'Notable Champion',
+          description:'IBJJF / ADCC medalist, recognized competitor',
+          badge:'🏆', badgeBg:'#FEF3C7', badgeColor:'#92400E',
+          barColor:'#D97706', barBgColor:'#FEF9EC',
+          min:70, typical_low:90, median:115, typical_high:135, max:150,
+          note:'Recognizable competitors without superstar-level following. Common format for regional tours.',
+          examples_usd:[
+            {label:'US / Western EU', min:90, max:150},
+            {label:'Japan',           min:80, max:120},
+          ]
+        },
+        {
+          tier:'World Champion / Superstar',
+          description:'Multi-time IBJJF / ADCC champion, major marketing draw',
+          badge:'⭐', badgeBg:'#EEF0FC', badgeColor:'#2D3BCD',
+          barColor:'#2D3BCD', barBgColor:'#EEF0FC',
+          min:130, typical_low:160, median:200, typical_high:235, max:260,
+          note:'Nicholas Meregali charged $250/person for a 4h seminar (2024). Gordon Ryan, Rickson Gracie tier.',
+          examples_usd:[
+            {label:'Nicholas Meregali',       min:250, max:250},
+            {label:'Gordon Ryan / Rickson',   min:150, max:250},
+            {label:'European tour big names', min:150, max:200},
+          ]
+        }
+      ]
+    },
+    us: {
+      context: 'United States market. Prices are USD-native — no conversion needed. Generally the most expensive major BJJ market.',
+      tiers: [
+        {
+          tier:'Regular / Local Black Belt',
+          description:'Local or regional black belt, gym-hosted event',
+          badge:'BB', badgeBg:'#E5E7EB', badgeColor:'#374151',
+          barColor:'#2D3BCD', barBgColor:'#EEF0FC',
+          min:50, typical_low:65, median:85, typical_high:108, max:120,
+          note:'Standard US visiting black belt seminar. Often 2-3h, includes open mat. Price varies by gym size and draw.',
+          examples_usd:[
+            {label:'Smaller regional gyms', min:50,  max:75},
+            {label:'Established academies', min:75,  max:120},
+            {label:'Online-advertised open seminars', min:60, max:100},
+          ]
+        },
+        {
+          tier:'Notable Champion',
+          description:'IBJJF / ADCC medalist with national recognition',
+          badge:'🏆', badgeBg:'#FEF3C7', badgeColor:'#92400E',
+          barColor:'#D97706', barBgColor:'#FEF9EC',
+          min:90, typical_low:105, median:125, typical_high:145, max:160,
+          note:'Well-known competitors with competition pedigree but below superstar tier. Prices have risen sharply post-2020.',
+          examples_usd:[
+            {label:'IBJJF regional champion', min:90,  max:130},
+            {label:'ADCC trials qualifier',   min:100, max:150},
+            {label:'Affiliate team visit',    min:95,  max:140},
+          ]
+        },
+        {
+          tier:'World Champion / Superstar',
+          description:'Multi-time world champion, major social following',
+          badge:'⭐', badgeBg:'#EEF0FC', badgeColor:'#2D3BCD',
+          barColor:'#2D3BCD', barBgColor:'#EEF0FC',
+          min:150, typical_low:180, median:220, typical_high:248, max:260,
+          note:'Gordon Ryan reportedly commands $200-250+ per head. Top ADCC open-weight champions are in this band in the US.',
+          examples_usd:[
+            {label:'Gordon Ryan tier',    min:200, max:260},
+            {label:'Nicholas Meregali',   min:250, max:250},
+            {label:'Multi-time IBJJF champ', min:150, max:220},
+          ]
+        }
+      ]
+    },
+    eu: {
+      context: 'European market. Prices stored in USD; use EUR toggle above to see native values. Western EU capital cities tend toward the higher end.',
+      tiers: [
+        {
+          tier:'Regular / Local Black Belt',
+          description:'Local or visiting black belt, community gym event',
+          badge:'BB', badgeBg:'#E5E7EB', badgeColor:'#374151',
+          barColor:'#7C3AED', barBgColor:'#F5F3FF',
+          min:33, typical_low:50, median:70, typical_high:88, max:100,
+          note:'EU seminars typically run cheaper than equivalent US events. Eastern EU is often €30-50; Western EU €55-90.',
+          examples_usd:[
+            {label:'Eastern EU (e.g. Poland)', min:33, max:55},
+            {label:'Western EU non-capital',   min:55, max:88},
+            {label:'UK regional',              min:60, max:95},
+          ]
+        },
+        {
+          tier:'Notable Champion',
+          description:'IBJJF / ADCC medalist on European circuit',
+          badge:'🏆', badgeBg:'#FEF3C7', badgeColor:'#92400E',
+          barColor:'#D97706', barBgColor:'#FEF9EC',
+          min:77, typical_low:90, median:107, typical_high:121, max:143,
+          note:'European tour stops for ranked competitors. Prices are lower than US equivalents; UK slightly higher than mainland EU.',
+          examples_usd:[
+            {label:'Mainland EU champion tour', min:77,  max:110},
+            {label:'UK championship medalist',  min:90,  max:130},
+            {label:'London major gym event',    min:100, max:143},
+          ]
+        },
+        {
+          tier:'World Champion / Superstar',
+          description:'Multi-time IBJJF / ADCC champion on EU tour',
+          badge:'⭐', badgeBg:'#EEF0FC', badgeColor:'#2D3BCD',
+          barColor:'#2D3BCD', barBgColor:'#EEF0FC',
+          min:121, typical_low:148, median:176, typical_high:203, max:220,
+          note:'Superstar EU seminar prices trail US by ~15-20%. London and Scandinavian markets trend higher; Southern/Eastern EU lower.',
+          examples_usd:[
+            {label:'Superstar, Eastern EU',     min:121, max:154},
+            {label:'Superstar, Western EU',     min:148, max:187},
+            {label:'Superstar, London',         min:165, max:220},
+          ]
+        }
+      ]
+    },
+    jp: {
+      context: 'Japan market. Prices stored in USD; use JPY toggle above to see native values. Japanese seminar fees are notably lower than US/EU equivalents.',
+      tiers: [
+        {
+          tier:'Regular / Local Black Belt',
+          description:'Domestic or visiting black belt, standard gym event',
+          badge:'BB', badgeBg:'#E5E7EB', badgeColor:'#374151',
+          barColor:'#B45309', barBgColor:'#FEF3C7',
+          min:34, typical_low:40, median:54, typical_high:64, max:74,
+          note:'Japanese BJJ culture keeps seminar pricing modest relative to membership fees. ¥5,000-¥11,000 is the typical domestic black belt range.',
+          examples_usd:[
+            {label:'Domestic BB (¥5,000-¥8,000)',  min:34, max:54},
+            {label:'Visiting foreign BB (¥7,000-¥11,000)', min:47, max:74},
+          ]
+        },
+        {
+          tier:'Notable Champion',
+          description:'IBJJF / ADCC medalist visiting Japan',
+          badge:'🏆', badgeBg:'#FEF3C7', badgeColor:'#92400E',
+          barColor:'#D97706', barBgColor:'#FEF9EC',
+          min:60, typical_low:74, median:94, typical_high:107, max:121,
+          note:'Foreign champions touring Japan typically price below their home-market rate. ¥9,000-¥16,000 range typical for a major name.',
+          examples_usd:[
+            {label:'Foreign champion, small venue (¥9,000-¥12,000)',  min:60, max:81},
+            {label:'Foreign champion, major Tokyo gym (¥12,000-¥16,000)', min:81, max:107},
+            {label:'ADCC medalist Japan debut', min:87, max:121},
+          ]
+        },
+        {
+          tier:'World Champion / Superstar',
+          description:'Top-tier international champion, major event',
+          badge:'⭐', badgeBg:'#EEF0FC', badgeColor:'#2D3BCD',
+          barColor:'#2D3BCD', barBgColor:'#EEF0FC',
+          min:101, typical_low:121, median:148, typical_high:168, max:188,
+          note:'Elite international names (ADCC/IBJJF absolute champions) can command ¥15,000-¥28,000 in Japan. Market is price-sensitive; events often subsidized by host gym.',
+          examples_usd:[
+            {label:'Top champion, regional JP city (¥15,000-¥20,000)', min:101, max:134},
+            {label:'Top champion, Tokyo major event (¥18,000-¥25,000)', min:121, max:168},
+            {label:'Marquee event, elite name (¥22,000-¥28,000)', min:148, max:188},
+          ]
+        }
+      ]
+    }
+  };
+
+  // ─────────────────────────────────────────────
+  // TABS
+  // ─────────────────────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) =>
+      b.classList.toggle('active', ['monthly','seminars'][i] === name));
+    document.querySelectorAll('.pricing-page .panel').forEach(p =>
+      p.classList.toggle('active', p.id === 'panel-' + name));
+  }
+
+  // ─────────────────────────────────────────────
+  // SEMINAR SUB-TABS
+  // ─────────────────────────────────────────────
+  let currentSeminarView = 'global';
+
+  function switchSeminarTab(view) {
+    currentSeminarView = view;
+    document.querySelectorAll('.seminar-subtab-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.semview === view));
+    document.getElementById('seminar-context-note').textContent =
+      SEMINAR_DATASETS[view].context;
+    document.getElementById('seminar-grid').innerHTML = '';
+    buildSeminars();
+  }
+
+  // ─────────────────────────────────────────────
+  // TOOLTIP
+  // ─────────────────────────────────────────────
+  const tooltip    = document.getElementById('tooltip');
+  const ttTitle    = document.getElementById('tt-title');
+  const ttPrice    = document.getElementById('tt-price');
+  const ttExamples = document.getElementById('tt-examples');
+
+  function showTooltip(evt, title, priceStr, lines) {
+    ttTitle.textContent = title;
+    ttPrice.textContent = priceStr;
+    ttExamples.innerHTML = lines.map(l => '<span class="tooltip-example">• ' + l + '</span>').join('');
+    tooltip.classList.add('visible');
+    moveTooltip(evt);
+  }
+  function moveTooltip(evt) {
+    var x = evt.clientX + 14, y = evt.clientY - 10;
+    var tw = 260, th = 130;
+    tooltip.style.left = (x + tw > window.innerWidth  ? x - tw - 28 : x) + 'px';
+    tooltip.style.top  = (y + th > window.innerHeight ? y - th      : y) + 'px';
+  }
+  function hideTooltip() { tooltip.classList.remove('visible'); }
+  document.addEventListener('mousemove', function(e) {
+    if (tooltip.classList.contains('visible')) moveTooltip(e);
+  });
+
+  // ─────────────────────────────────────────────
+  // SUMMARY STRIP
+  // ─────────────────────────────────────────────
+  function buildSummaryStrip() {
+    document.getElementById('summary-strip').innerHTML =
+      REGIONS.map(function(r) { return '\
+        <div class="summary-cell">\
+          <span class="summary-cell-label">' + r.name + '</span>\
+          <span class="summary-cell-value" style="color:' + r.summaryColor + '">' + fmt(r.summaryMedian) + '</span>\
+          <span class="summary-cell-sub">median / month</span>\
+        </div>';
+      }).join('');
+  }
+
+  // ─────────────────────────────────────────────
+  // MAP
+  // ─────────────────────────────────────────────
+  function buildMap() {
+    var svg = d3.select('#region-map');
+    var W = 900, H = 295;
+
+    // Subtle grid
+    var gridG = svg.append('g');
+    for (var x = 0; x <= W; x += 60)
+      gridG.append('line').attr('x1',x).attr('y1',0).attr('x2',x).attr('y2',H)
+        .attr('stroke','#E5E2D9').attr('stroke-width',0.5);
+    for (var y = 0; y <= H; y += 60)
+      gridG.append('line').attr('x1',0).attr('y1',y).attr('x2',W).attr('y2',y)
+        .attr('stroke','#E5E2D9').attr('stroke-width',0.5);
+
+    // Continent area labels
+    [{t:'AMERICAS',x:165},{t:'EUROPE',x:507},{t:'EAST ASIA',x:789}].forEach(function(l) {
+      svg.append('text').text(l.t)
+        .attr('x',l.x).attr('y',260)
+        .attr('fill','#C8C4BC').attr('font-size',8).attr('letter-spacing',3)
+        .attr('font-family','IBM Plex Mono').attr('text-anchor','middle');
+    });
+
+    // Zone dividers
+    [[328,18,328,248],[694,18,694,248]].forEach(function(c) {
+      svg.append('line').attr('x1',c[0]).attr('y1',c[1]).attr('x2',c[2]).attr('y2',c[3])
+        .attr('stroke','#D0CCC4').attr('stroke-width',1).attr('stroke-dasharray','4,4');
+    });
+
+    // Region blobs
+    REGIONS.forEach(function(r) {
+      var g = svg.append('g').attr('class','region-shape').datum(r)
+        .on('click', function(_,d) { selectRegion(d.id); })
+        .on('mouseenter', function(evt,d) {
+          var lines = d.tiers.map(function(t) { return t.label + ': ' + fmt(t.median) + '/mo'; });
+          showTooltip(evt, d.name,
+            fmt(Math.min.apply(null, d.tiers.map(function(t){return t.min;}))) + '–' +
+            fmt(Math.max.apply(null, d.tiers.map(function(t){return t.max;}))) + '/mo',
+            lines);
+        })
+        .on('mouseleave', hideTooltip);
+
+      g.append('rect')
+        .attr('x',r.mapX).attr('y',r.mapY)
+        .attr('width',r.mapW).attr('height',r.mapH)
+        .attr('rx',10).attr('ry',10)
+        .attr('fill',r.color).attr('stroke',r.color).attr('stroke-width',1.5)
+        .attr('id','region-rect-' + r.id);
+
+      var cx = r.mapX + r.mapW/2;
+      var cy = r.mapY + r.mapH/2;
+      g.append('text').text(r.name).attr('x',cx).attr('y',cy-8).attr('class','region-text');
+      g.append('text').attr('x',cx).attr('y',cy+9).attr('class','region-subtext').attr('id','map-price-' + r.id);
+      g.append('text').text(r.tiers.length + ' tier' + (r.tiers.length>1?'s':''))
+        .attr('x',cx).attr('y',cy+23).attr('class','region-subtext').style('opacity',0.65);
+    });
+
+    updateMapLabels();
+  }
+
+  function updateMapLabels() {
+    REGIONS.forEach(function(r) {
+      var el = document.getElementById('map-price-' + r.id);
+      if (!el) return;
+      var ms = r.tiers.map(function(t) { return t.median; });
+      el.textContent = ms.length === 1
+        ? fmt(ms[0]) + '/mo'
+        : fmt(Math.min.apply(null, ms)) + '–' + fmt(Math.max.apply(null, ms)) + '/mo';
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // REGION SELECTION
+  // ─────────────────────────────────────────────
+  var selectedRegion = null;
+
+  function selectRegion(id) {
+    selectedRegion = selectedRegion === id ? null : id;
+    updateMapState();
+    renderBoxPlots();
+    updateSelectionBar();
+  }
+  function clearRegion() {
+    selectedRegion = null;
+    updateMapState();
+    renderBoxPlots();
+    updateSelectionBar();
+  }
+  function updateMapState() {
+    REGIONS.forEach(function(r) {
+      var rect = document.getElementById('region-rect-' + r.id);
+      if (!rect) return;
+      var isActive = r.id === selectedRegion;
+      rect.style.opacity     = !selectedRegion || isActive ? '1' : '0.28';
+      rect.style.filter      = isActive ? 'brightness(1.1)' : 'none';
+      rect.style.strokeWidth = isActive ? '3' : '1.5';
+    });
+  }
+  function updateSelectionBar() {
+    var bar = document.getElementById('selection-bar');
+    var txt = document.getElementById('selection-bar-text');
+    if (selectedRegion) {
+      var r = REGIONS.find(function(r) { return r.id === selectedRegion; });
+      bar.style.display = 'flex';
+      txt.textContent = 'Viewing: ' + r.name + ' — ' + r.tiers.length + ' pricing tier' + (r.tiers.length>1?'s':'');
+    } else {
+      bar.style.display = 'none';
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // BOX PLOTS
+  // ─────────────────────────────────────────────
+  function renderBoxPlots() {
+    var container = document.getElementById('boxplot-container');
+    if (!selectedRegion) {
+      container.innerHTML = '\
+        <div class="empty-state">\
+          <div class="empty-state-icon">🗺</div>\
+          <div>Select a region on the map to view detailed pricing tiers</div>\
+        </div>';
+      return;
+    }
+    var region = REGIONS.find(function(r) { return r.id === selectedRegion; });
+    container.innerHTML = '';
+
+    var allUsd = region.tiers.flatMap(function(t) { return [t.min].concat(t.outliers, [t.max]); });
+    var dMinUsd = Math.max(0, Math.min.apply(null, allUsd) - 15);
+    var dMaxUsd = Math.max.apply(null, allUsd) + 25;
+
+    region.tiers.forEach(function(tier) {
+      var safeId = 'bp-' + tier.label.replace(/[^a-zA-Z0-9]/g,'-').toLowerCase();
+      var card = document.createElement('div');
+      card.className = 'boxplot-card';
+      card.innerHTML = '\
+        <div class="boxplot-card-header">\
+          <div class="boxplot-tier">' + tier.label + '</div>\
+          <div class="boxplot-badge">' + tier.badge + '</div>\
+        </div>\
+        <div id="' + safeId + '"></div>\
+        <div class="legend-row">\
+          <div class="legend-item">\
+            <div class="legend-swatch" style="background:' + region.color + '"></div><span>Typical range (Q1–Q3)</span>\
+          </div>\
+          <div class="legend-item">\
+            <div class="legend-dot" style="background:' + region.color + '"></div><span>Median</span>\
+          </div>\
+          <div class="legend-item">\
+            <div class="legend-swatch" style="background:' + region.color + '; opacity:0.3"></div><span>Full range</span>\
+          </div>' +
+          (tier.outliers.length ? '\
+          <div class="legend-item">\
+            <div class="legend-dot" style="background:transparent;border:2px solid #EF4444;width:9px;height:9px"></div><span>Outliers</span>\
+          </div>' : '') +
+        '</div>';
+      container.appendChild(card);
+      drawBoxPlot(safeId, tier, region.color, dMinUsd, dMaxUsd);
+    });
+  }
+
+  function drawBoxPlot(cid, tier, color, dMinUsd, dMaxUsd) {
+    var el = document.getElementById(cid);
+    if (!el) return;
+    var W = el.parentElement.clientWidth - 52;
+    var H = 92, mL=6, mR=6, mT=22, mB=22;
+    var iW = W-mL-mR, iH = H-mT-mB, cy = iH/2;
+
+    var svg = d3.select('#' + cid).append('svg').attr('width',W).attr('height',H);
+    var g   = svg.append('g').attr('transform','translate(' + mL + ',' + mT + ')');
+
+    var x = d3.scaleLinear().domain([cv(dMinUsd), cv(dMaxUsd)]).range([0, iW]);
+
+    // Grid + axis
+    d3.scaleLinear().domain([dMinUsd, dMaxUsd]).ticks(6).forEach(function(t) {
+      var px = x(cv(t));
+      g.append('line').attr('x1',px).attr('x2',px).attr('y1',0).attr('y2',iH)
+        .attr('stroke','#E5E2D9').attr('stroke-width',1);
+      g.append('text').text(fmt(t))
+        .attr('x',px).attr('y',iH+14).attr('text-anchor','middle')
+        .attr('fill','#A09C96').attr('font-size',9).attr('font-family','IBM Plex Mono');
+    });
+
+    // Whisker
+    g.append('line')
+      .attr('x1',x(cv(tier.min))).attr('x2',x(cv(tier.max))).attr('y1',cy).attr('y2',cy)
+      .attr('stroke',color).attr('stroke-width',2).attr('opacity',0.28);
+    [tier.min, tier.max].forEach(function(v) {
+      g.append('line')
+        .attr('x1',x(cv(v))).attr('x2',x(cv(v))).attr('y1',cy-9).attr('y2',cy+9)
+        .attr('stroke',color).attr('stroke-width',2).attr('opacity',0.45);
+    });
+
+    // IQR box fill
+    var bH = 26;
+    g.append('rect')
+      .attr('x',x(cv(tier.q1))).attr('y',cy-bH/2)
+      .attr('width',x(cv(tier.q3))-x(cv(tier.q1))).attr('height',bH)
+      .attr('fill',color).attr('opacity',0.12).attr('rx',4);
+    // IQR box border (interactive)
+    g.append('rect')
+      .attr('x',x(cv(tier.q1))).attr('y',cy-bH/2)
+      .attr('width',x(cv(tier.q3))-x(cv(tier.q1))).attr('height',bH)
+      .attr('fill','none').attr('stroke',color).attr('stroke-width',1.5).attr('rx',4)
+      .style('cursor','pointer')
+      .on('mouseenter', function(evt) {
+        var lines = tier.examples.map(function(e) { return e.name + ' (' + e.city + '): ' + fmt(e.price_usd) + '/mo'; });
+        showTooltip(evt, tier.label, 'Typical: ' + fmt(tier.q1) + '–' + fmt(tier.q3) + '/mo', lines);
+      })
+      .on('mouseleave', hideTooltip);
+
+    // Median line + label
+    g.append('line')
+      .attr('x1',x(cv(tier.median))).attr('x2',x(cv(tier.median)))
+      .attr('y1',cy-bH/2-2).attr('y2',cy+bH/2+2)
+      .attr('stroke',color).attr('stroke-width',2.5);
+    g.append('text').text(fmt(tier.median))
+      .attr('x',x(cv(tier.median))).attr('y',cy-bH/2-5)
+      .attr('text-anchor','middle').attr('fill',color)
+      .attr('font-size',11).attr('font-weight','600').attr('font-family','IBM Plex Mono');
+
+    // Outliers
+    tier.outliers.forEach(function(v) {
+      g.append('circle')
+        .attr('cx',x(cv(v))).attr('cy',cy).attr('r',5)
+        .attr('fill','none').attr('stroke','#EF4444').attr('stroke-width',2)
+        .style('cursor','pointer')
+        .on('mouseenter', function(evt) { showTooltip(evt,'Outlier', fmt(v)+'/mo',
+          ['Premium / superstar-affiliated gym','Above typical market rate']); })
+        .on('mouseleave', hideTooltip);
+    });
+
+    // Min/Max labels below whiskers
+    [tier.min, tier.max].forEach(function(v) {
+      g.append('text').text(fmt(v))
+        .attr('x',x(cv(v))).attr('y',cy+bH/2+14)
+        .attr('text-anchor','middle').attr('fill','#B0ACA6')
+        .attr('font-size',9).attr('font-family','IBM Plex Mono');
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // SEMINARS
+  // ─────────────────────────────────────────────
+  function buildSeminars() {
+    var grid = document.getElementById('seminar-grid');
+    var dataset = SEMINAR_DATASETS[currentSeminarView].tiers;
+    var dMaxUsd = Math.max.apply(null, dataset.map(function(s) { return s.max; })) + 30;
+
+    dataset.forEach(function(s, i) {
+      var tags = s.examples_usd.map(function(e) {
+        var str = e.min === e.max
+          ? e.label + ': ' + fmt(e.min)
+          : e.label + ': ' + fmt(e.min) + '–' + fmt(e.max);
+        return '<span class="seminar-tag" style="background:' + s.badgeBg + ';color:' + s.badgeColor + '">' + str + '</span>';
+      }).join('');
+
+      var row = document.createElement('div');
+      row.className = 'seminar-row';
+      row.innerHTML = '\
+        <div class="seminar-row-header">\
+          <div class="seminar-rank-badge" style="background:' + s.badgeBg + '">' + s.badge + '</div>\
+          <div class="seminar-row-info">\
+            <h3>' + s.tier + '</h3>\
+            <p>' + s.description + '</p>\
+          </div>\
+        </div>\
+        <div id="sem-chart-' + i + '"></div>\
+        <div style="margin-top:10px;font-size:11px;color:var(--text-secondary);font-style:italic;padding-top:10px;border-top:1px solid var(--border)">' + s.note + '</div>\
+        <div class="seminar-tags">' + tags + '</div>';
+      grid.appendChild(row);
+      drawSeminarBar('sem-chart-' + i, s, dMaxUsd);
+    });
+  }
+
+  function drawSeminarBar(cid, s, dMaxUsd) {
+    var el = document.getElementById(cid);
+    if (!el) return;
+    var W = el.parentElement.clientWidth - 52;
+    var H = 75, mL=6, mR=6, mT=18, mB=22;
+    var iW = W-mL-mR, iH = H-mT-mB, cy = iH/2;
+
+    var svg = d3.select('#' + cid).append('svg').attr('width',W).attr('height',H);
+    var g   = svg.append('g').attr('transform','translate(' + mL + ',' + mT + ')');
+
+    var x = d3.scaleLinear().domain([cv(0), cv(dMaxUsd)]).range([0, iW]);
+
+    // Axis ticks
+    [0,50,100,150,200,250,300].filter(function(t) { return t <= dMaxUsd+10; }).forEach(function(t) {
+      var px = x(cv(t));
+      if (t > 0)
+        g.append('line').attr('x1',px).attr('x2',px).attr('y1',0).attr('y2',iH)
+          .attr('stroke','#E5E2D9').attr('stroke-width',1);
+      g.append('text').text(t === 0 ? '' : fmt(t))
+        .attr('x',px).attr('y',iH+14).attr('text-anchor','middle')
+        .attr('fill','#A09C96').attr('font-size',9).attr('font-family','IBM Plex Mono');
+    });
+
+    // Background track
+    g.append('rect').attr('x',0).attr('y',cy-5).attr('width',iW).attr('height',10)
+      .attr('fill',s.barBgColor).attr('rx',5);
+    // Full range
+    g.append('rect')
+      .attr('x',x(cv(s.min))).attr('y',cy-5)
+      .attr('width',x(cv(s.max))-x(cv(s.min))).attr('height',10)
+      .attr('fill',s.barColor).attr('opacity',0.18).attr('rx',5);
+    // Typical range
+    g.append('rect')
+      .attr('x',x(cv(s.typical_low))).attr('y',cy-9)
+      .attr('width',x(cv(s.typical_high))-x(cv(s.typical_low))).attr('height',18)
+      .attr('fill',s.barColor).attr('opacity',0.55).attr('rx',5)
+      .style('cursor','pointer')
+      .on('mouseenter', function(evt) {
+        var lines = s.examples_usd.map(function(e) {
+          return e.min===e.max ? e.label + ': ' + fmt(e.min) : e.label + ': ' + fmt(e.min) + '–' + fmt(e.max);
+        });
+        showTooltip(evt, s.tier, fmt(s.typical_low) + '–' + fmt(s.typical_high) + '/person', lines);
+      })
+      .on('mouseleave', hideTooltip);
+
+    // Median
+    g.append('line')
+      .attr('x1',x(cv(s.median))).attr('x2',x(cv(s.median)))
+      .attr('y1',cy-14).attr('y2',cy+14)
+      .attr('stroke',s.barColor).attr('stroke-width',3);
+    g.append('text').text(fmt(s.median))
+      .attr('x',x(cv(s.median))).attr('y',cy-17)
+      .attr('text-anchor','middle').attr('fill',s.barColor)
+      .attr('font-size',11).attr('font-weight','600').attr('font-family','IBM Plex Mono');
+  }
+
+  // ─────────────────────────────────────────────
+  // INIT
+  // ─────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', function() {
+    buildSummaryStrip();
+    buildMap();
+    buildSeminars();
+  });
+
+  window.setCurrency      = setCurrency;
+  window.switchTab        = switchTab;
+  window.switchSeminarTab = switchSeminarTab;
+  window.clearRegion      = clearRegion;
+  window.selectRegion     = selectRegion;
+  </script>
+
+</BaseLayout>

@@ -83,6 +83,13 @@ const modules = [
     tag: 'TOOLS',
   },
   {
+    title: 'BJJ Pricing',
+    description: 'Monthly memberships and seminar fees worldwide — interactive maps, box plots, and currency conversion across US, UK, EU, Brazil, and Japan.',
+    href: `${base}/modules/pricing`,
+    status: 'live' as const,
+    tag: 'DATA',
+  },
+  {
     title: 'Breathing Cycles',
     description: 'Guided breathing exercises for pre/post training recovery.',
     href: `${base}/modules/breathing`,
@@ -97,28 +104,16 @@ const modules = [
 
     <!-- Header -->
     <div class="mb-12 fade-up">
-      <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">v2.0 — Astro Build</p>
+      <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">v2.0 — Astro Build · <span class="text-text-dim">bdce381</span></p>
       <h1 class="text-3xl font-bold tracking-tight text-text-primary mb-3 glow-blue">
         Grappling Primitives
       </h1>
       <p class="text-sm text-text-muted max-w-xl leading-relaxed">
-        An interactive atlas of grappling concepts — structured, visual, and searchable.
-        277 concepts across 23 categories, mapped on a shared framework.
+        An interactive collection of <span class="text-accent font-semibold">277</span> concepts split into <span class="text-accent font-semibold">23</span> categories that an older black belt has accumulated over the years.
+        Through various visualizations I am trying to make sense of this complex passion of ours; grappling and pinning and escaping and counter-attacking and controlling and killing the space and submitting fellow enthusiasts.
+        Still very much a WIP, some modules are dead-ends, others are R&D.
+        <span class="italic text-text-dim">All models are wrong, some are useful. Same for modules I suppose.</span>
       </p>
-    </div>
-
-    <!-- Stats row -->
-    <div class="grid grid-cols-3 gap-px bg-border mb-12 fade-up">
-      {[
-        { n: '277', label: 'Concepts' },
-        { n: '23',  label: 'Categories' },
-        { n: '2×2', label: 'Framework' },
-      ].map(({ n, label }) => (
-        <div class="bg-surface px-4 py-3 text-center">
-          <div class="text-xl font-bold text-accent">{n}</div>
-          <div class="text-[9px] tracking-[2px] text-text-dim uppercase mt-0.5">{label}</div>
-        </div>
-      ))}
     </div>
 
     <!-- Module grid -->
