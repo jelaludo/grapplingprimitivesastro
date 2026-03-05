@@ -327,10 +327,26 @@ function makeCatHeader(text, color) {
 // ─── Archetype bar chart ──────────────────────────────────────────────────────
 function renderAttrBars(scores, color) {
   attrBarsEl.innerHTML = '';
-  let lastCat = '';
+  const cats = {}, catOrder = [];
   ATTRIBUTES.forEach(attr => {
-    if (attr.cat !== lastCat) { lastCat = attr.cat; attrBarsEl.appendChild(makeCatHeader(attr.cat, color)); }
-    attrBarsEl.appendChild(makeBarRow(attr.label, scores[attr.id]??0, color, attr.tooltip, attr.inverted));
+    if (!cats[attr.cat]) { cats[attr.cat] = []; catOrder.push(attr.cat); }
+    cats[attr.cat].push(attr);
+  });
+  catOrder.forEach((cat, ci) => {
+    const group = document.createElement('div');
+    group.style.cssText = `display:flex;align-items:stretch;${ci > 0 ? 'margin-top:5px;' : ''}`;
+
+    const hdr = document.createElement('div');
+    hdr.style.cssText = `writing-mode:vertical-rl;transform:rotate(180deg);font-size:${fc().catPx}px;font-weight:700;letter-spacing:0.1em;color:${color};display:flex;align-items:center;justify-content:center;padding:0 4px;border-right:1px solid #1a1f2e;flex-shrink:0;min-width:18px;user-select:none;`;
+    hdr.textContent = cat;
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'flex:1;padding-left:8px;padding-top:2px;padding-bottom:2px;';
+    cats[cat].forEach(attr => wrap.appendChild(makeBarRow(attr.label, scores[attr.id]??0, color, attr.tooltip, attr.inverted)));
+
+    group.appendChild(hdr);
+    group.appendChild(wrap);
+    attrBarsEl.appendChild(group);
   });
   requestAnimationFrame(() => requestAnimationFrame(drawSparkline));
 }
@@ -386,67 +402,85 @@ new ResizeObserver(() => {
 function buildSelfSliders() {
   selfSlidersEl.innerHTML = '';
   selfSlidersEl.style.position = 'relative';
-  let lastCat = '';
+  const cats = {}, catOrder = [];
   ATTRIBUTES.forEach(attr => {
-    if (attr.cat !== lastCat) { lastCat = attr.cat; selfSlidersEl.appendChild(makeCatHeader(attr.cat, '#00d4ff')); }
-    const cfg = fc();
-    const v = selfScores[attr.id];
-    const fcolor = fillColor(attr.inverted ? 10 - v : v);
+    if (!cats[attr.cat]) { cats[attr.cat] = []; catOrder.push(attr.cat); }
+    cats[attr.cat].push(attr);
+  });
+  catOrder.forEach((cat, ci) => {
+    const group = document.createElement('div');
+    group.style.cssText = `display:flex;align-items:stretch;${ci > 0 ? 'margin-top:5px;' : ''}`;
 
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;margin-bottom:5px;';
+    const hdr = document.createElement('div');
+    hdr.style.cssText = `writing-mode:vertical-rl;transform:rotate(180deg);font-size:${fc().catPx}px;font-weight:700;letter-spacing:0.1em;color:#00d4ff;display:flex;align-items:center;justify-content:center;padding:0 4px;border-right:1px solid #1a1f2e;flex-shrink:0;min-width:18px;user-select:none;`;
+    hdr.textContent = cat;
 
-    const lbl = document.createElement('div');
-    lbl.style.cssText = `width:${cfg.labelW};flex-shrink:0;font-size:${cfg.attrPx}px;letter-spacing:0.04em;color:#8b949e;padding-right:12px;line-height:1.3;font-family:inherit;`;
-    lbl.textContent = attr.label;
-    if (attr.tooltip) {
-      lbl.style.cursor = 'help';
-      lbl.style.borderBottom = '1px dotted #30363d';
-      lbl.addEventListener('mouseenter', e => showTip(attr.tooltip, e));
-      lbl.addEventListener('mousemove',  e => moveTip(e));
-      lbl.addEventListener('mouseleave', hideTip);
-    }
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'flex:1;padding-left:8px;padding-top:2px;padding-bottom:2px;';
 
-    const bw = document.createElement('div');
-    bw.style.cssText = `flex:1;position:relative;height:${cfg.barH}px;border-radius:3px;background:#0c0c18;`;
+    cats[cat].forEach(attr => {
+      const cfg = fc();
+      const v = selfScores[attr.id];
+      const fcolor = fillColor(attr.inverted ? 10 - v : v);
 
-    // Zone background (gradient strip)
-    const zoneDiv = document.createElement('div');
-    zoneDiv.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;background:${zoneBg(attr.inverted)};pointer-events:none;`;
-    bw.appendChild(zoneDiv);
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;margin-bottom:5px;';
 
-    const fill = document.createElement('div');
-    fill.style.cssText = `position:absolute;top:0;left:0;width:${v*10}%;height:100%;background:${fcolor};opacity:0.72;pointer-events:none;`;
+      const lbl = document.createElement('div');
+      lbl.style.cssText = `width:${cfg.labelW};flex-shrink:0;font-size:${cfg.attrPx}px;letter-spacing:0.04em;color:#8b949e;padding-right:12px;line-height:1.3;font-family:inherit;`;
+      lbl.textContent = attr.label;
+      if (attr.tooltip) {
+        lbl.style.cursor = 'help';
+        lbl.style.borderBottom = '1px dotted #30363d';
+        lbl.addEventListener('mouseenter', e => showTip(attr.tooltip, e));
+        lbl.addEventListener('mousemove',  e => moveTip(e));
+        lbl.addEventListener('mouseleave', hideTip);
+      }
 
-    const dot = document.createElement('div');
-    dot.setAttribute('data-self-dot','1');
-    dot.style.cssText = `position:absolute;top:50%;left:${v*10}%;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);background:#0c0c18;border:2.5px solid ${fcolor};box-shadow:0 0 4px ${fcolor}88;z-index:3;pointer-events:none;transition:left 0.1s,border-color 0.1s;`;
+      const bw = document.createElement('div');
+      bw.style.cssText = `flex:1;position:relative;height:${cfg.barH}px;border-radius:3px;background:#0c0c18;`;
 
-    const numEl = document.createElement('div');
-    numEl.style.cssText = `position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:${fcolor};z-index:4;font-family:inherit;pointer-events:none;`;
-    numEl.textContent = v;
+      const zoneDiv = document.createElement('div');
+      zoneDiv.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;background:${zoneBg(attr.inverted)};pointer-events:none;`;
+      bw.appendChild(zoneDiv);
 
-    const slider = document.createElement('input');
-    slider.type='range'; slider.min='0'; slider.max='10'; slider.step='1'; slider.value=v;
-    slider.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:5;margin:0;';
-    slider.addEventListener('input', () => {
-      const nv = +slider.value;
-      selfScores[attr.id] = nv;
-      const nfc = fillColor(attr.inverted ? 10 - nv : nv);
-      fill.style.width = (nv*10)+'%';
-      fill.style.background = nfc;
-      dot.style.left = (nv*10)+'%';
-      dot.style.borderColor = nfc;
-      dot.style.boxShadow = `0 0 4px ${nfc}88`;
-      numEl.style.color = nfc;
-      numEl.textContent = nv;
-      updateSelfProfile();
-      requestAnimationFrame(drawSelfSparkline);
+      const fill = document.createElement('div');
+      fill.style.cssText = `position:absolute;top:0;left:0;width:${v*10}%;height:100%;background:${fcolor};opacity:0.72;pointer-events:none;`;
+
+      const dot = document.createElement('div');
+      dot.setAttribute('data-self-dot','1');
+      dot.style.cssText = `position:absolute;top:50%;left:${v*10}%;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);background:#0c0c18;border:2.5px solid ${fcolor};box-shadow:0 0 4px ${fcolor}88;z-index:3;pointer-events:none;transition:left 0.1s,border-color 0.1s;`;
+
+      const numEl = document.createElement('div');
+      numEl.style.cssText = `position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:${fcolor};z-index:4;font-family:inherit;pointer-events:none;`;
+      numEl.textContent = v;
+
+      const slider = document.createElement('input');
+      slider.type='range'; slider.min='0'; slider.max='10'; slider.step='1'; slider.value=v;
+      slider.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:5;margin:0;';
+      slider.addEventListener('input', () => {
+        const nv = +slider.value;
+        selfScores[attr.id] = nv;
+        const nfc = fillColor(attr.inverted ? 10 - nv : nv);
+        fill.style.width = (nv*10)+'%';
+        fill.style.background = nfc;
+        dot.style.left = (nv*10)+'%';
+        dot.style.borderColor = nfc;
+        dot.style.boxShadow = `0 0 4px ${nfc}88`;
+        numEl.style.color = nfc;
+        numEl.textContent = nv;
+        updateSelfProfile();
+        requestAnimationFrame(drawSelfSparkline);
+      });
+
+      bw.appendChild(fill); bw.appendChild(dot); bw.appendChild(numEl); bw.appendChild(slider);
+      row.appendChild(lbl); row.appendChild(bw);
+      wrap.appendChild(row);
     });
 
-    bw.appendChild(fill); bw.appendChild(dot); bw.appendChild(numEl); bw.appendChild(slider);
-    row.appendChild(lbl); row.appendChild(bw);
-    selfSlidersEl.appendChild(row);
+    group.appendChild(hdr);
+    group.appendChild(wrap);
+    selfSlidersEl.appendChild(group);
   });
   requestAnimationFrame(() => requestAnimationFrame(drawSelfSparkline));
 }
