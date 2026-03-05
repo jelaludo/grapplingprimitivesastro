@@ -56,7 +56,7 @@ const games = [
     <!-- Header -->
     <div class="mb-10 fade-up">
       <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">Modules / Games</p>
-      <h1 class="text-3xl font-bold tracking-tight text-text-primary mb-3 glow-blue">
+      <h1 class="font-digital text-text-primary mb-3" style="font-size:clamp(2.4rem,7vw,4rem);font-weight:700;letter-spacing:0.04em;text-shadow:0 0 18px #00d4ff66,0 0 40px #00d4ff22;">
         Games Hub
       </h1>
       <p class="text-sm text-text-muted max-w-xl leading-relaxed">
@@ -73,8 +73,8 @@ const games = [
         { n: '2',   label: 'Coming Soon' },
       ].map(({ n, label }) => (
         <div class="bg-surface px-4 py-3 text-center">
-          <div class="text-xl font-bold text-accent">{n}</div>
-          <div class="text-[9px] tracking-[2px] text-text-dim uppercase mt-0.5">{label}</div>
+          <div class="font-digital text-accent" style="font-size:2rem;font-weight:700;line-height:1;text-shadow:0 0 12px #00d4ff55;">{n}</div>
+          <div class="text-[9px] tracking-[2px] text-text-dim uppercase mt-1">{label}</div>
         </div>
       ))}
     </div>

@@ -14,7 +14,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <!-- HUD (hidden until game starts) -->
     <span id="hud-round" style="display:none;font-size:10px;letter-spacing:0.1em;color:#6b7280;text-transform:uppercase;">R<span id="hud-r">0</span>/10</span>
     <span id="hud-diff" style="display:none;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#00ff88;"></span>
-    <span id="hud-timer-wrap" style="display:none;font-size:10px;letter-spacing:0.1em;color:#6b7280;">⏱ <span id="hud-timer" style="color:#00ff88;">0:00</span><span id="hud-penalty" style="color:#ff4444;display:none;"></span></span>
+    <span id="hud-timer-wrap" style="display:none;font-size:10px;letter-spacing:0.1em;color:#6b7280;">⏱ <span id="hud-timer" style="font-family:'DS-Digital',monospace;font-size:14px;font-weight:700;color:#00ff88;">0:00</span><span id="hud-penalty" style="color:#ff4444;display:none;"></span></span>
   </div>
 
   <!-- ── Main ─────────────────────────────────────────────────────────────── -->
@@ -31,7 +31,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <!-- Score row (hidden until playing) -->
       <div id="score-row" style="display:none;justify-content:center;gap:32px;text-align:center;">
         <div>
-          <div id="disp-total" style="font-size:22px;font-weight:700;color:#00d4ff;">0</div>
+          <div id="disp-total" style="font-family:'DS-Digital',monospace;font-size:36px;font-weight:700;color:#00d4ff;line-height:1;text-shadow:0 0 12px #00d4ff55;">0</div>
           <div style="font-size:9px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;margin-top:2px;">Total</div>
         </div>
       </div>
@@ -40,10 +40,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <div id="canvas-wrapper" style="display:none;position:relative;align-self:center;">
         <canvas id="grid-canvas" style="display:block;border:1px solid #21262d;border-radius:4px;cursor:crosshair;"></canvas>
         <!-- Points flash -->
-        <div id="pts-flash" style="display:none;position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:34px;font-weight:700;color:#ff6b6b;z-index:10;text-shadow:0 0 16px #ff4444;pointer-events:none;white-space:nowrap;"></div>
+        <div id="pts-flash" style="display:none;position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:'DS-Digital',monospace;font-size:34px;font-weight:700;color:#ff6b6b;z-index:10;text-shadow:0 0 16px #ff4444;pointer-events:none;white-space:nowrap;"></div>
         <!-- Countdown overlay -->
         <div id="countdown-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;z-index:20;border-radius:4px;">
-          <span id="countdown-text" style="font-size:38px;font-weight:700;color:#c9d1d9;letter-spacing:0.08em;"></span>
+          <span id="countdown-text" style="font-family:'DS-Digital',monospace;font-size:72px;font-weight:700;color:#c9d1d9;text-shadow:0 0 24px #c9d1d966;"></span>
         </div>
       </div>
 

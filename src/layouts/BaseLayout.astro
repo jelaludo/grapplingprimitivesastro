@@ -24,6 +24,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <Fragment set:html={`<style>
+      @font-face { font-family:'DS-Digital'; src:url('${base}/fonts/DS_Digital/DS-DIGI.TTF')  format('truetype'); font-weight:400; font-style:normal; }
+      @font-face { font-family:'DS-Digital'; src:url('${base}/fonts/DS_Digital/DS-DIGIB.TTF') format('truetype'); font-weight:700; font-style:normal; }
+      @font-face { font-family:'DS-Digital'; src:url('${base}/fonts/DS_Digital/DS-DIGII.TTF') format('truetype'); font-weight:400; font-style:italic; }
+      @font-face { font-family:'DS-Digital'; src:url('${base}/fonts/DS_Digital/DS-DIGIT.TTF') format('truetype'); font-weight:300; font-style:normal; }
+    </style>`} />
   </head>
 
   <body class="bg-bg text-text-primary font-mono min-h-screen flex flex-col">
