@@ -2,8 +2,8 @@
 id: "BJJ-034"
 concept: "Funnel"
 category: "Tactics"
-axis_self_opponent: 0.68
-axis_mental_physical: -0.58
+axis_self_opponent: -0.1722
+axis_mental_physical: 0.6101
 color: "#8A2BE2"
 short_description: "Make them play your game on your terms, avoid playing theirs."
 tags: []

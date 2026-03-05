@@ -2,8 +2,8 @@
 id: "BJJ-181"
 concept: "Sandbag tournaments"
 category: "Do's & Don'ts"
-axis_self_opponent: -0.12
-axis_mental_physical: -0.2
+axis_self_opponent: -0.4481
+axis_mental_physical: -0.8784
 color: "#b26b2a"
 short_description: "why... go up to blue belt or purple belt already.\n\n\"winning without peril, one triumphs without glory\""
 tags: []

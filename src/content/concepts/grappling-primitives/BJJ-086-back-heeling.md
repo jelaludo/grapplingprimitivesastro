@@ -2,8 +2,8 @@
 id: "BJJ-086"
 concept: "Back-Heeling"
 category: "Grappling Primitives"
-axis_self_opponent: -0.74
-axis_mental_physical: 0
+axis_self_opponent: 0.2282
+axis_mental_physical: -0.5734
 color: "#848a94"
 short_description: "retracting your heel backward into your own body to generate clamping pressure.  Hamstrings for knee flexion.  Tension and rotational torque.\n\narmbars; back-heel is a primary control of the torso/shoulder, to get your hips closer to their center of mass.\n\nleglocks; back-heel above their knee to lock it into place.\n\ntriangle, body triangle, leg clamps; back-heeling is everywhere.\n\ncommon mistake; extend or relax the legs too much, this can open space and reduce pressure."
 tags: []

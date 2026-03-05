@@ -2,8 +2,8 @@
 id: "BJJ-238"
 concept: "Initiate Movement"
 category: "Tactics"
-axis_self_opponent: -0.54
-axis_mental_physical: 0.32
+axis_self_opponent: 0.4274
+axis_mental_physical: 0.6835
 color: "#8A2BE2"
 short_description: "Sometimes it can pay off to initiate a movement that looks like a mistake they want to capitalize on, but be ready with the full force of your strong posture and back-up plans.\n\ne.g. They want you to post your hand from closed guard so they can get a Kimura from bottom?  shift your weight, post your hand and make it heavy and straight, watch them open up elsewhere are they go for something that is not here.\n\n(Disclaimer : This can go either way, sometimes from a neutral position it is better to let *them make the first move.  Nothing is 100% of the time here.  Heuristics, Ideas, models which are wrong yet sometimes useful blablabla)\n\n"
 tags: []

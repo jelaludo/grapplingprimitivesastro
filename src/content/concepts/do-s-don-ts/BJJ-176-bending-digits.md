@@ -2,8 +2,8 @@
 id: "BJJ-176"
 concept: "Bending Digits"
 category: "Do's & Don'ts"
-axis_self_opponent: -0.6
-axis_mental_physical: 0.58
+axis_self_opponent: 0.2199
+axis_mental_physical: -0.4220
 color: "#b26b2a"
 short_description: "Bending individual fingers is a big no-no in training. \n\nIf you can twist and break a partner's fingers, surely they can retaliate by twisting and breaking one of yours.  Finger for Finger and the whole world has broken hands.\n\nyou can grab the palm.\ngrabbing four fingers is ok to break a grip.\nthe IBJJF rule is \"three or more fingers\" is generally ok to grab."
 tags: []

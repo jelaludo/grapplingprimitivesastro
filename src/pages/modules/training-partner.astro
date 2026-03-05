@@ -1,0 +1,777 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const imgBase = base + '/images/partners/';
+---
+
+<BaseLayout title="Training Partners — Grappling Primitives" fullscreen={true}>
+
+<!-- ── Toolbar ──────────────────────────────────────────────────────────────── -->
+<div id="toolbar" style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
+  <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+  <span style="color:#21262d;">|</span>
+  <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;">Training Partners</span>
+  <div style="flex:1;"></div>
+  <!-- Font size -->
+  <span id="btn-sm"  title="Small text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;">小</span>
+  <span id="btn-med" title="Medium text" style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#00d4ff;border:1px solid #00d4ff;border-radius:2px;line-height:1;user-select:none;">中</span>
+  <span id="btn-lg"  title="Large text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;">大</span>
+  <span style="color:#21262d;">|</span>
+  <!-- Download (self-assess only) -->
+  <button id="btn-download" style="display:none;font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" title="Click to download an image of your self-assessment">↓ Save</button>
+  <!-- Mode buttons -->
+  <button id="btn-archetypes" style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;">Archetypes</button>
+  <button id="btn-self"       style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;">Self-Assess</button>
+  <!-- Admin — injected by JS on localhost only -->
+</div>
+
+<!-- ── Pill rail ─────────────────────────────────────────────────────────────── -->
+<div id="pill-rail" style="position:fixed;top:36px;left:0;right:0;z-index:40;display:flex;align-items:center;gap:6px;padding:7px 12px;border-bottom:1px solid #0d1117;background:#050509;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;"></div>
+
+<!-- ── App layout ────────────────────────────────────────────────────────────── -->
+<div id="app" style="position:fixed;top:80px;left:0;right:0;bottom:0;display:flex;overflow:hidden;font-family:'Courier New',Consolas,Monaco,monospace;background:#050509;">
+
+  <!-- Left panel ──────────────────────────────────────────────────────────── -->
+  <div id="panel-left" style="width:260px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid #0d1117;overflow-y:auto;background:#070710;">
+    <div style="position:relative;height:220px;flex-shrink:0;background:#0d1117;overflow:hidden;">
+      <img id="char-img" src="" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0.9;transition:opacity 0.3s;" />
+      <div id="char-color-bar" style="position:absolute;bottom:0;left:0;right:0;height:3px;"></div>
+      <div id="char-overall" style="position:absolute;bottom:10px;right:10px;font-size:8px;letter-spacing:0.14em;color:rgba(255,255,255,0.75);text-transform:uppercase;background:rgba(0,0,0,0.7);padding:3px 8px;border-radius:2px;"></div>
+    </div>
+    <div style="padding:14px 14px 6px;flex-shrink:0;">
+      <div id="char-name"    style="font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c9d1d9;margin-bottom:3px;"></div>
+      <div id="char-tagline" style="font-size:8px;letter-spacing:0.14em;color:#6b7280;text-transform:uppercase;margin-bottom:10px;font-style:italic;"></div>
+      <div id="char-desc"    style="font-size:10px;color:#8b949e;line-height:1.75;"></div>
+    </div>
+    <!-- Self-assess: closest match -->
+    <div id="match-panel" style="display:none;margin:10px 12px 12px;padding:11px 12px;border:1px solid #21262d;border-radius:3px;flex-shrink:0;">
+      <div style="font-size:7px;letter-spacing:0.18em;color:#6b7280;text-transform:uppercase;margin-bottom:8px;">Closest match</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <img id="match-img" src="" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:2px;flex-shrink:0;" />
+        <div>
+          <div id="match-name" style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2px;"></div>
+          <div id="match-pct"  style="font-size:9px;color:#6b7280;"></div>
+        </div>
+      </div>
+      <div id="match-msg" style="font-size:9px;color:#8b949e;line-height:1.65;font-style:italic;"></div>
+    </div>
+    <div id="self-portrait" style="display:none;padding:12px 14px;">
+      <div style="font-size:7px;letter-spacing:0.2em;color:#30363d;text-transform:uppercase;margin-bottom:8px;">YOUR PROFILE</div>
+      <div style="font-size:9px;color:#6b7280;line-height:1.75;font-style:italic;">Rate yourself honestly on each attribute.</div>
+    </div>
+  </div>
+
+  <!-- Right panel ─────────────────────────────────────────────────────────── -->
+  <div id="panel-right" style="flex:1;overflow-y:auto;padding:14px 20px 32px;">
+    <div style="display:flex;gap:16px;margin-bottom:14px;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:#6b7280;flex-wrap:wrap;">
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(230,100,80,0.6);display:inline-block;border-radius:1px;"></span>Needs Work (1–3)</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(210,170,50,0.6);display:inline-block;border-radius:1px;"></span>Developing (4–7)</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(30,180,150,0.6);display:inline-block;border-radius:1px;"></span>Excellent (8–10)</span>
+    </div>
+    <div id="bars-view">
+      <div id="attr-bars-container" style="position:relative;"></div>
+    </div>
+    <div id="self-view" style="display:none;">
+      <div id="self-sliders-container" style="position:relative;"></div>
+      <!-- Quote -->
+      <div style="margin-top:32px;padding:20px 0 8px;border-top:1px solid #0d1117;text-align:center;">
+        <div style="font-size:13px;font-style:italic;color:rgba(200,210,220,0.45);letter-spacing:0.06em;line-height:1.6;">
+          "Be the Training Partner you wish you had"
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #pill-rail::-webkit-scrollbar   { display:none; }
+  #panel-left::-webkit-scrollbar  { width:3px; }
+  #panel-left::-webkit-scrollbar-track  { background:#050509; }
+  #panel-left::-webkit-scrollbar-thumb  { background:#21262d; border-radius:2px; }
+  #panel-right::-webkit-scrollbar { width:4px; }
+  #panel-right::-webkit-scrollbar-track { background:#050509; }
+  #panel-right::-webkit-scrollbar-thumb { background:#21262d; border-radius:2px; }
+  #kanri-panel::-webkit-scrollbar { width:4px; }
+  #kanri-panel::-webkit-scrollbar-track { background:#070710; }
+  #kanri-panel::-webkit-scrollbar-thumb { background:#21262d; border-radius:2px; }
+  @media (max-width:640px) {
+    #panel-left { width:100% !important; border-right:none !important; border-bottom:1px solid #0d1117; max-height:50vh; }
+    #app { flex-direction:column !important; }
+  }
+</style>
+
+<script define:vars={{ imgBase }}>
+'use strict';
+
+// ─── Attributes (fixed) ───────────────────────────────────────────────────────
+const ATTRIBUTES = [
+  { id:'ctrl_mov',  label:'Controlled Movements',                     cat:'Technical Attributes' },
+  { id:'ctrl_sub',  label:'Controlled Submissions',                   cat:'Technical Attributes' },
+  { id:'intensity', label:'Modular Intensity',                        cat:'Technical Attributes' },
+  { id:'knowledge', label:'Depth of Knowledge',                       cat:'Technical Attributes' },
+  { id:'inj_know',  label:'Knowledgeable about injury patterns',      cat:'Technical Attributes' },
+  { id:'looks',     label:'Ability to give "looks" / work specifics', cat:'Technical Attributes' },
+  { id:'ego',       label:'Controlled Ego',                           cat:'Mindset & Attitude' },
+  { id:'playful',   label:'Agreeableness',                            cat:'Mindset & Attitude' },
+  { id:'rnd',       label:'R&D mindset (discover & troubleshoot)',    cat:'Mindset & Attitude' },
+  { id:'concise',   label:'Not overtalking / over-explaining',        cat:'Mindset & Attitude' },
+  { id:'comms',     label:'Communicative about boundaries & injuries',cat:'Mindset & Attitude' },
+  { id:'feedback',  label:'Feedback receptivity',                     cat:'Mindset & Attitude' },
+  { id:'safety',    label:'Safety consciousness',                     cat:'Mindset & Attitude' },
+  { id:'recovery',  label:'Recovery awareness',                       cat:'Mindset & Attitude' },
+  { id:'self_aware',label:'Ability to identify own weaknesses',       cat:'Mindset & Attitude' },
+  { id:'hygiene',     label:'Hygiene',                                  cat:'Others' },
+  { id:'reliable',    label:'Reliability',                              cat:'Others' },
+  { id:'dark_triad',  label:'Dark Triad',   cat:'Others', inverted:true, tooltip:'Narcissism: Grandiosity, entitlement, lack of empathy.\n\nMachiavellianism: Cunning, strategic exploitation, moral disengagement.\n\nPsychopathy: Impulsivity, callousness, antisocial tendencies.' },
+  { id:'extraversion',label:'Extraversion', cat:'Others' },
+  { id:'neuroticism', label:'Neuroticism',  cat:'Others', inverted:true },
+];
+
+// ─── Archetypes (loaded from localStorage if edited) ─────────────────────────
+const DEFAULT_ARCHETYPES = [
+  { id:'spaz',       name:'THE SPAZ',                 img:'PTP_TheSpaz512x.png',            color:'#ff7043', tagline:'All gas, no brakes',                       desc:'Enthusiastic and well-meaning — but with zero body awareness. Training with them is a survival exercise. Injuries happen not from malice, but from pure uncontrolled chaos.',                              scores:{ ctrl_mov:1,ctrl_sub:2,intensity:1,knowledge:3,inj_know:2,looks:3,ego:6,playful:9,rnd:5,concise:7,comms:3,feedback:6,safety:1,recovery:3,self_aware:3,hygiene:5,reliable:8,dark_triad:2,extraversion:9,neuroticism:8 } },
+  { id:'injury',     name:'INJURY COLLECTOR',         img:'PTP_InjuryCollector512x.png',    color:'#ef5350', tagline:'Refuses to tap. Refuses to rest.',            desc:'Always injured, always training anyway. Won\'t communicate limits. Pushes through at full capacity and takes you with them. The most genuinely dangerous partner on this list.',                            scores:{ ctrl_mov:2,ctrl_sub:2,intensity:3,knowledge:5,inj_know:1,looks:4,ego:3,playful:5,rnd:4,concise:5,comms:1,feedback:2,safety:1,recovery:1,self_aware:2,hygiene:5,reliable:5,dark_triad:3,extraversion:5,neuroticism:7 } },
+  { id:'ig',         name:'IG BLUE BELT',             img:'PTP_IGBlueBelt256x.png',         color:'#42a5f5', tagline:'The mat is a backdrop. Content is the goal.',desc:'Has the gear, the aesthetics, and takes the photos. Instagram game is elite. Actual game varies. Ego is fragile — especially when the cameras are off.',                                              scores:{ ctrl_mov:5,ctrl_sub:5,intensity:4,knowledge:3,inj_know:5,looks:6,ego:2,playful:5,rnd:2,concise:4,comms:6,feedback:2,safety:5,recovery:6,self_aware:3,hygiene:9,reliable:6,dark_triad:6,extraversion:9,neuroticism:7 } },
+  { id:'troll',      name:'STINKY TROLL',             img:'PTP_StinkyTroll512x.png',        color:'#9ccc65', tagline:'Great game. Please shower.',                 desc:'Technical, collaborative, safe — genuinely one of the best partners on the mat. If only they\'d fix the one issue. You want to roll with them. You also want a hazmat suit.',                           scores:{ ctrl_mov:8,ctrl_sub:8,intensity:8,knowledge:8,inj_know:8,looks:8,ego:8,playful:8,rnd:8,concise:8,comms:8,feedback:8,safety:8,recovery:7,self_aware:8,hygiene:1,reliable:8,dark_triad:1,extraversion:7,neuroticism:3 }, noMatch:true },
+  { id:'gandalf',    name:'GANDALF THE WHITE BELT',   img:'PTP_GandalfTheWhiteBelt256x.png',color:'#cfd8dc', tagline:'You shall not pass — but I\'m fine with that', desc:'New to BJJ but decades of life wisdom. Ego-free, curious, safe, genuinely grateful for every round. Loses constantly and couldn\'t care less. The dojo needs more Gandalfs.',                          scores:{ ctrl_mov:4,ctrl_sub:5,intensity:6,knowledge:2,inj_know:5,looks:3,ego:10,playful:9,rnd:9,concise:7,comms:9,feedback:10,safety:9,recovery:8,self_aware:8,hygiene:8,reliable:9,dark_triad:1,extraversion:8,neuroticism:2 } },
+  { id:'brute',      name:'THE BRUTE',                img:'PTP_TheBrute512x.png',            color:'#ffb74d', tagline:'Strength is the only answer',               desc:'Athletic, powerful, well-meaning — but has never met a technical problem they didn\'t try to muscle through. They don\'t mean to hurt you. They just don\'t know what they\'re doing yet.',             scores:{ ctrl_mov:2,ctrl_sub:2,intensity:1,knowledge:2,inj_know:2,looks:2,ego:5,playful:7,rnd:3,concise:7,comms:5,feedback:6,safety:2,recovery:5,self_aware:3,hygiene:7,reliable:8,dark_triad:2,extraversion:7,neuroticism:5 } },
+  { id:'competitor', name:'THE COMPETITOR',           img:'PTP_TheCompetitor256x.png',      color:'#29b6f6', tagline:'Every round is a championship final',        desc:'Skilled, disciplined, and reliable. But the dial never leaves 100%. No context for casual drilling, no ability to pace for a smaller or injured partner. Treats open mat like podium pressure.',      scores:{ ctrl_mov:6,ctrl_sub:3,intensity:1,knowledge:8,inj_know:6,looks:5,ego:4,playful:3,rnd:6,concise:6,comms:5,feedback:5,safety:3,recovery:7,self_aware:6,hygiene:9,reliable:10,dark_triad:4,extraversion:6,neuroticism:8 } },
+];
+
+// Load from localStorage if modified by KANRI
+const LS_KEY = 'gp-tp-archetypes';
+let ARCHETYPES;
+try {
+  const saved = localStorage.getItem(LS_KEY);
+  ARCHETYPES = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_ARCHETYPES));
+} catch(e) {
+  ARCHETYPES = JSON.parse(JSON.stringify(DEFAULT_ARCHETYPES));
+}
+function saveArchetypes() { localStorage.setItem(LS_KEY, JSON.stringify(ARCHETYPES)); }
+
+// ─── Font size config ─────────────────────────────────────────────────────────
+const FONT_CFG = {
+  sm:  { attrPx:7,  catPx:9,  labelW:'145px' },
+  med: { attrPx:9,  catPx:11, labelW:'186px' },
+  lg:  { attrPx:11, catPx:13, labelW:'220px' },
+};
+let fontKey = 'med';
+function fc() { return FONT_CFG[fontKey]; }
+
+// ─── Color helpers ────────────────────────────────────────────────────────────
+// 11-entry array indexed by score 0–10: dark red → orange → amber → yellow-green → teal
+const SCORE_COLORS = [
+  '#7f0000', // 0  — very dark red
+  '#c62828', // 1  — dark red
+  '#e53935', // 2  — red
+  '#f4511e', // 3  — deep orange
+  '#fb8c00', // 4  — orange
+  '#fdd835', // 5  — yellow
+  '#c0ca33', // 6  — lime
+  '#7cb342', // 7  — green
+  '#26a69a', // 8  — teal
+  '#00acc1', // 9  — cyan
+  '#00d4ff', // 10 — bright cyan
+];
+function fillColor(v) { return SCORE_COLORS[Math.max(0, Math.min(10, Math.round(v)))]; }
+// Single gradient strip background (replaces 3-band system)
+const ZONE_GRADIENT     = 'linear-gradient(to right,rgba(198,40,40,0.18),rgba(253,216,53,0.12) 50%,rgba(0,212,255,0.18))';
+const ZONE_GRADIENT_INV = 'linear-gradient(to right,rgba(0,212,255,0.18),rgba(253,216,53,0.12) 50%,rgba(198,40,40,0.18))';
+function zoneBg(inv) { return inv ? ZONE_GRADIENT_INV : ZONE_GRADIENT; }
+function avgScore(scores) {
+  return (ATTRIBUTES.reduce((s,a) => s + (scores[a.id]??0), 0) / ATTRIBUTES.length).toFixed(1);
+}
+
+// ─── DOM refs ─────────────────────────────────────────────────────────────────
+const pillRail      = document.getElementById('pill-rail');
+const charImg       = document.getElementById('char-img');
+const charColorBar  = document.getElementById('char-color-bar');
+const charOverall   = document.getElementById('char-overall');
+const charName      = document.getElementById('char-name');
+const charTagline   = document.getElementById('char-tagline');
+const charDesc      = document.getElementById('char-desc');
+const matchPanel    = document.getElementById('match-panel');
+const matchImg      = document.getElementById('match-img');
+const matchName     = document.getElementById('match-name');
+const matchPct      = document.getElementById('match-pct');
+const matchMsg      = document.getElementById('match-msg');
+const selfPortrait  = document.getElementById('self-portrait');
+const barsView      = document.getElementById('bars-view');
+const selfView      = document.getElementById('self-view');
+const attrBarsEl    = document.getElementById('attr-bars-container');
+const selfSlidersEl = document.getElementById('self-sliders-container');
+const panelRight    = document.getElementById('panel-right');
+const btnArch       = document.getElementById('btn-archetypes');
+const btnSelf       = document.getElementById('btn-self');
+const btnDl         = document.getElementById('btn-download');
+const toolbar       = document.getElementById('toolbar');
+
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+const tip = document.createElement('div');
+tip.style.cssText = 'position:fixed;z-index:9000;background:#0d1117;border:1px solid #30363d;border-radius:3px;padding:9px 12px;font-size:9px;line-height:1.7;color:#8b949e;font-family:inherit;pointer-events:none;max-width:260px;white-space:pre-wrap;letter-spacing:0.03em;opacity:0;transition:opacity 0.15s;box-shadow:0 4px 16px rgba(0,0,0,0.6);';
+document.body.appendChild(tip);
+function showTip(text, e) {
+  tip.textContent = text;
+  tip.style.opacity = '1';
+  moveTip(e);
+}
+function moveTip(e) {
+  const pad = 12, tw = tip.offsetWidth, th = tip.offsetHeight;
+  let x = e.clientX + pad, y = e.clientY + pad;
+  if (x + tw > window.innerWidth  - pad) x = e.clientX - tw - pad;
+  if (y + th > window.innerHeight - pad) y = e.clientY - th - pad;
+  tip.style.left = x + 'px';
+  tip.style.top  = y + 'px';
+}
+function hideTip() { tip.style.opacity = '0'; }
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let mode        = 'archetypes';
+let currentArch = ARCHETYPES[0];
+const selfScores = {};
+ATTRIBUTES.forEach(a => { selfScores[a.id] = 5; });
+
+// ─── Font size buttons ────────────────────────────────────────────────────────
+function applyFontSize(key) {
+  fontKey = key;
+  ['sm','med','lg'].forEach(k => {
+    const b = document.getElementById('btn-'+k);
+    if (!b) return;
+    const active = k === key;
+    b.style.color       = active ? '#00d4ff' : '#6b7280';
+    b.style.borderColor = active ? '#00d4ff' : 'transparent';
+  });
+  // Re-render active view
+  if (mode === 'archetypes') renderAttrBars(currentArch.scores, currentArch.color);
+  else                       buildSelfSliders();
+}
+document.getElementById('btn-sm') .addEventListener('click', () => applyFontSize('sm'));
+document.getElementById('btn-med').addEventListener('click', () => applyFontSize('med'));
+document.getElementById('btn-lg') .addEventListener('click', () => applyFontSize('lg'));
+
+// ─── Pill rail ────────────────────────────────────────────────────────────────
+function buildPills() {
+  pillRail.innerHTML = '';
+  ARCHETYPES.forEach(arch => {
+    const btn = document.createElement('button');
+    btn.id = 'pill-' + arch.id;
+    btn.textContent = arch.name;
+    btn.style.cssText = 'font-family:inherit;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 9px;border-radius:2px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s;';
+    btn.addEventListener('click', () => selectArchetype(arch));
+    pillRail.appendChild(btn);
+  });
+}
+function updatePills() {
+  ARCHETYPES.forEach(arch => {
+    const btn = document.getElementById('pill-' + arch.id);
+    if (!btn) return;
+    const active = arch.id === currentArch.id;
+    btn.style.borderColor = active ? arch.color : '#21262d';
+    btn.style.background  = active ? arch.color + '22' : 'transparent';
+    btn.style.color       = active ? arch.color : '#6b7280';
+  });
+}
+
+// ─── Bar row builder (shared by archetype + download canvas) ─────────────────
+function makeBarRow(attrLabel, v, color, tooltip, inverted) {
+  const cfg = fc();
+  const pct = v * 10;
+  const fcolor = fillColor(inverted ? 10 - v : v);
+
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;align-items:center;margin-bottom:8px;';
+
+  const lbl = document.createElement('div');
+  lbl.style.cssText = `width:${cfg.labelW};flex-shrink:0;font-size:${cfg.attrPx}px;letter-spacing:0.04em;color:#8b949e;padding-right:12px;line-height:1.3;font-family:inherit;`;
+  lbl.textContent = attrLabel;
+  if (tooltip) {
+    lbl.style.cursor = 'help';
+    lbl.style.borderBottom = '1px dotted #30363d';
+    lbl.addEventListener('mouseenter', e => showTip(tooltip, e));
+    lbl.addEventListener('mousemove',  e => moveTip(e));
+    lbl.addEventListener('mouseleave', hideTip);
+  }
+
+  const bw = document.createElement('div');
+  bw.style.cssText = `flex:1;position:relative;height:22px;border-radius:3px;overflow:hidden;background:#0c0c18;`;
+
+  bw.innerHTML = `
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:${zoneBg(inverted)};pointer-events:none;"></div>
+    <div style="position:absolute;top:0;left:0;width:${pct}%;height:100%;background:${fcolor};opacity:0.75;z-index:1;"></div>
+    <div data-dot="1" style="position:absolute;top:50%;left:${pct}%;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);background:#0c0c18;border:2.5px solid ${fcolor};box-shadow:0 0 4px ${fcolor}88;z-index:3;"></div>
+    <div style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:${fcolor};z-index:4;font-family:inherit;">${v}</div>
+  `;
+
+  row.appendChild(lbl);
+  row.appendChild(bw);
+  return row;
+}
+
+function makeCatHeader(text, color) {
+  const h = document.createElement('div');
+  h.style.cssText = `font-size:${fc().catPx}px;font-weight:700;letter-spacing:0.06em;padding:16px 0 7px;border-bottom:1px solid #0d1117;margin-bottom:6px;color:${color};font-family:inherit;`;
+  h.textContent = text;
+  return h;
+}
+
+// ─── Archetype bar chart ──────────────────────────────────────────────────────
+function renderAttrBars(scores, color) {
+  attrBarsEl.innerHTML = '';
+  let lastCat = '';
+  ATTRIBUTES.forEach(attr => {
+    if (attr.cat !== lastCat) { lastCat = attr.cat; attrBarsEl.appendChild(makeCatHeader(attr.cat, color)); }
+    attrBarsEl.appendChild(makeBarRow(attr.label, scores[attr.id]??0, color, attr.tooltip, attr.inverted));
+  });
+  requestAnimationFrame(() => requestAnimationFrame(drawSparkline));
+}
+
+// ─── Sparkline helper (offset-based — layout-relative, resize-safe) ───────────
+function dotPosInContainer(dot, container) {
+  let x = dot.offsetLeft, y = dot.offsetTop;
+  let cur = dot.offsetParent;
+  while (cur && cur !== container) { x += cur.offsetLeft; y += cur.offsetTop; cur = cur.offsetParent; }
+  return { x, y };
+}
+function buildSparklineSVG(dots, container, id, stroke) {
+  const old = document.getElementById(id);
+  if (old) old.remove();
+  if (dots.length < 2) return;
+  const pts = dots.map(d => {
+    const {x,y} = dotPosInContainer(d, container);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.id = id;
+  svg.style.cssText = `position:absolute;top:0;left:0;width:100%;height:${container.scrollHeight}px;pointer-events:none;z-index:5;overflow:visible;`;
+  const poly = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+  poly.setAttribute('points', pts);
+  poly.setAttribute('stroke', stroke);
+  poly.setAttribute('stroke-width','1.5');
+  poly.setAttribute('fill','none');
+  poly.setAttribute('stroke-linejoin','round');
+  svg.appendChild(poly);
+  container.appendChild(svg);
+}
+
+function drawSparkline() {
+  buildSparklineSVG(
+    Array.from(attrBarsEl.querySelectorAll('[data-dot]')),
+    attrBarsEl, 'sparkline-svg', 'rgba(180,200,220,0.4)'
+  );
+}
+function drawSelfSparkline() {
+  buildSparklineSVG(
+    Array.from(selfSlidersEl.querySelectorAll('[data-self-dot]')),
+    selfSlidersEl, 'self-sparkline-svg', 'rgba(0,212,255,0.35)'
+  );
+}
+
+// Resize → redraw
+new ResizeObserver(() => {
+  if (mode === 'archetypes') requestAnimationFrame(drawSparkline);
+  else requestAnimationFrame(drawSelfSparkline);
+}).observe(panelRight);
+
+// ─── Self-assess sliders ──────────────────────────────────────────────────────
+function buildSelfSliders() {
+  selfSlidersEl.innerHTML = '';
+  selfSlidersEl.style.position = 'relative';
+  let lastCat = '';
+  ATTRIBUTES.forEach(attr => {
+    if (attr.cat !== lastCat) { lastCat = attr.cat; selfSlidersEl.appendChild(makeCatHeader(attr.cat, '#00d4ff')); }
+    const cfg = fc();
+    const v = selfScores[attr.id];
+    const fcolor = fillColor(attr.inverted ? 10 - v : v);
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;margin-bottom:8px;';
+
+    const lbl = document.createElement('div');
+    lbl.style.cssText = `width:${cfg.labelW};flex-shrink:0;font-size:${cfg.attrPx}px;letter-spacing:0.04em;color:#8b949e;padding-right:12px;line-height:1.3;font-family:inherit;`;
+    lbl.textContent = attr.label;
+    if (attr.tooltip) {
+      lbl.style.cursor = 'help';
+      lbl.style.borderBottom = '1px dotted #30363d';
+      lbl.addEventListener('mouseenter', e => showTip(attr.tooltip, e));
+      lbl.addEventListener('mousemove',  e => moveTip(e));
+      lbl.addEventListener('mouseleave', hideTip);
+    }
+
+    const bw = document.createElement('div');
+    bw.style.cssText = 'flex:1;position:relative;height:22px;border-radius:3px;background:#0c0c18;';
+
+    // Zone background (gradient strip)
+    const zoneDiv = document.createElement('div');
+    zoneDiv.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;background:${zoneBg(attr.inverted)};pointer-events:none;`;
+    bw.appendChild(zoneDiv);
+
+    const fill = document.createElement('div');
+    fill.style.cssText = `position:absolute;top:0;left:0;width:${v*10}%;height:100%;background:${fcolor};opacity:0.72;pointer-events:none;`;
+
+    const dot = document.createElement('div');
+    dot.setAttribute('data-self-dot','1');
+    dot.style.cssText = `position:absolute;top:50%;left:${v*10}%;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);background:#0c0c18;border:2.5px solid ${fcolor};box-shadow:0 0 4px ${fcolor}88;z-index:3;pointer-events:none;transition:left 0.1s,border-color 0.1s;`;
+
+    const numEl = document.createElement('div');
+    numEl.style.cssText = `position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:700;color:${fcolor};z-index:4;font-family:inherit;pointer-events:none;`;
+    numEl.textContent = v;
+
+    const slider = document.createElement('input');
+    slider.type='range'; slider.min='0'; slider.max='10'; slider.step='1'; slider.value=v;
+    slider.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:5;margin:0;';
+    slider.addEventListener('input', () => {
+      const nv = +slider.value;
+      selfScores[attr.id] = nv;
+      const nfc = fillColor(attr.inverted ? 10 - nv : nv);
+      fill.style.width = (nv*10)+'%';
+      fill.style.background = nfc;
+      dot.style.left = (nv*10)+'%';
+      dot.style.borderColor = nfc;
+      dot.style.boxShadow = `0 0 4px ${nfc}88`;
+      numEl.style.color = nfc;
+      numEl.textContent = nv;
+      updateSelfProfile();
+      requestAnimationFrame(drawSelfSparkline);
+    });
+
+    bw.appendChild(fill); bw.appendChild(dot); bw.appendChild(numEl); bw.appendChild(slider);
+    row.appendChild(lbl); row.appendChild(bw);
+    selfSlidersEl.appendChild(row);
+  });
+  requestAnimationFrame(() => requestAnimationFrame(drawSelfSparkline));
+}
+
+// ─── Closest match ────────────────────────────────────────────────────────────
+const MATCH_MSGS = {
+  spaz:'Slow down. Awareness before speed.',
+  injury:'Communicate your limits. Tap early. Rest when needed.',
+  ig:'The gram won\'t help your guard. Train like no one\'s watching.',
+  troll:'One fix away from excellent. You know which one.',
+  gandalf:'Wisdom + technique = the ideal partner. You\'re almost there.',
+  brute:'Technique is leverage. Strength fades. Learn to feel pressure.',
+  competitor:'Dial it down. Not every round needs to be the finals.',
+};
+function findClosest(scores) {
+  const candidates = ARCHETYPES.filter(a => !a.noMatch);
+  let best=candidates[0]??ARCHETYPES[0], bestD=Infinity;
+  candidates.forEach(a => {
+    const d = Math.sqrt(ATTRIBUTES.reduce((s,attr) => { const diff=(scores[attr.id]??0)-(a.scores[attr.id]??0); return s+diff*diff; },0));
+    if (d<bestD) { bestD=d; best=a; }
+  });
+  return { arch:best, pct:Math.round((1-bestD/Math.sqrt(ATTRIBUTES.length*100))*100) };
+}
+function updateSelfProfile() {
+  const {arch,pct} = findClosest(selfScores);
+  matchImg.src           = imgBase + arch.img;
+  matchImg.alt           = arch.name;
+  matchName.textContent  = arch.name;
+  matchName.style.color  = arch.color;
+  matchPct.textContent   = `${pct}% similar`;
+  matchMsg.textContent   = MATCH_MSGS[arch.id] || '';
+  charOverall.textContent= `AVG ${avgScore(selfScores)}`;
+}
+
+// ─── Archetype selection ──────────────────────────────────────────────────────
+function selectArchetype(arch) {
+  currentArch = arch;
+  updatePills();
+  charImg.src                   = imgBase + arch.img;
+  charImg.alt                   = arch.name;
+  charColorBar.style.background = arch.color;
+  charName.textContent          = arch.name;
+  charName.style.color          = arch.color;
+  charTagline.textContent       = arch.tagline;
+  charTagline.style.color       = arch.color + 'bb';
+  charDesc.textContent          = arch.desc;
+  charOverall.textContent       = `AVG ${avgScore(arch.scores)}`;
+  renderAttrBars(arch.scores, arch.color);
+}
+
+// ─── Mode switch ──────────────────────────────────────────────────────────────
+function setMode(m) {
+  mode = m;
+  const A = m==='archetypes';
+  btnArch.style.cssText = `font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid ${A?'#00d4ff':'#21262d'};background:${A?'rgba(0,212,255,0.1)':'transparent'};color:${A?'#00d4ff':'#6b7280'};`;
+  btnSelf.style.cssText = `font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid ${!A?'#00d4ff':'#21262d'};background:${!A?'rgba(0,212,255,0.1)':'transparent'};color:${!A?'#00d4ff':'#6b7280'};`;
+  pillRail.style.display     = A ? 'flex' : 'none';
+  barsView.style.display     = A ? ''     : 'none';
+  selfView.style.display     = A ? 'none' : '';
+  matchPanel.style.display   = A ? 'none' : '';
+  selfPortrait.style.display = A ? 'none' : '';
+  charImg.style.display      = A ? ''     : 'none';
+  charColorBar.style.display = A ? ''     : 'none';
+  btnDl.style.display        = A ? 'none' : '';
+  if (A) {
+    selectArchetype(currentArch);
+  } else {
+    charName.textContent    = 'YOUR PROFILE';
+    charName.style.color    = '#c9d1d9';
+    charTagline.textContent = 'How do you show up on the mat?';
+    charTagline.style.color = '#6b7280';
+    charDesc.textContent    = '';
+    updateSelfProfile();
+  }
+}
+btnArch.addEventListener('click', () => setMode('archetypes'));
+btnSelf.addEventListener('click', () => setMode('self'));
+
+// ─── Download (canvas render) ─────────────────────────────────────────────────
+btnDl.addEventListener('click', downloadSelf);
+function downloadSelf() {
+  const DPR=2, W=820, LP=20, LW=200, BW=W-LP-LW-LP-28, BH=20, RH=30, HDR=44, TP=60;
+  let H=TP, lc='';
+  ATTRIBUTES.forEach(a => { if(a.cat!==lc){lc=a.cat;H+=HDR;} H+=RH; });
+  H+=90;
+  const cv=document.createElement('canvas');
+  cv.width=W*DPR; cv.height=H*DPR;
+  const ctx=cv.getContext('2d'); ctx.scale(DPR,DPR);
+  ctx.fillStyle='#050509'; ctx.fillRect(0,0,W,H);
+
+  // Title
+  ctx.font=`bold 15px 'Courier New',monospace`; ctx.fillStyle='#c9d1d9'; ctx.textAlign='left';
+  ctx.fillText('TRAINING PARTNER  ·  SELF-ASSESSMENT',LP,26);
+  ctx.font=`9px 'Courier New',monospace`; ctx.fillStyle='#6b7280';
+  const {arch,pct}=findClosest(selfScores);
+  ctx.fillText(`AVG ${avgScore(selfScores)}  ·  Closest match: ${arch.name} (${pct}%)`,LP,44);
+
+  let y=TP, lastC=''; const dots=[];
+  ATTRIBUTES.forEach(attr => {
+    if(attr.cat!==lastC){
+      lastC=attr.cat; y+=6;
+      ctx.font=`bold 10px 'Courier New',monospace`; ctx.fillStyle='#00d4ff'; ctx.textAlign='left';
+      ctx.fillText(attr.cat.toUpperCase(),LP,y+16);
+      ctx.strokeStyle='#0d1117'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(LP,y+22); ctx.lineTo(W-LP,y+22); ctx.stroke();
+      y+=HDR;
+    }
+    const v=selfScores[attr.id]??0, pct2=v/10;
+    const barX=LP+LW, barY=y+(RH-BH)/2;
+    // label
+    ctx.font=`9px 'Courier New',monospace`; ctx.fillStyle='#8b949e'; ctx.textAlign='right';
+    ctx.fillText(attr.label, barX-8, barY+BH/2+3);
+    // zone gradient strip
+    ctx.globalAlpha=1;
+    const zg=ctx.createLinearGradient(barX,0,barX+BW,0);
+    if(attr.inverted){zg.addColorStop(0,'rgba(0,212,255,0.18)');zg.addColorStop(0.5,'rgba(253,216,53,0.12)');zg.addColorStop(1,'rgba(198,40,40,0.18)');}
+    else{zg.addColorStop(0,'rgba(198,40,40,0.18)');zg.addColorStop(0.5,'rgba(253,216,53,0.12)');zg.addColorStop(1,'rgba(0,212,255,0.18)');}
+    ctx.fillStyle=zg;ctx.fillRect(barX,barY,BW,BH);
+    // fill
+    const fc2=fillColor(attr.inverted?10-v:v); ctx.globalAlpha=0.72; ctx.fillStyle=fc2;
+    ctx.fillRect(barX,barY,BW*pct2,BH); ctx.globalAlpha=1;
+    // number
+    ctx.font=`bold 9px 'Courier New',monospace`; ctx.fillStyle=fc2; ctx.textAlign='right';
+    ctx.fillText(String(v),barX+BW-4,barY+BH/2+3);
+    // dot pos
+    dots.push({x:barX+BW*pct2, y:barY+BH/2, c:fc2});
+    y+=RH;
+  });
+  // sparkline
+  ctx.strokeStyle='rgba(0,212,255,0.35)'; ctx.lineWidth=1.5; ctx.lineJoin='round';
+  ctx.beginPath();
+  dots.forEach((d,i)=>{ i===0?ctx.moveTo(d.x,d.y):ctx.lineTo(d.x,d.y); });
+  ctx.stroke();
+  // dots
+  dots.forEach(d=>{
+    ctx.beginPath(); ctx.arc(d.x,d.y,3.5,0,Math.PI*2);
+    ctx.fillStyle='#050509'; ctx.fill();
+    ctx.strokeStyle=d.c; ctx.lineWidth=2; ctx.stroke();
+  });
+  // quote
+  ctx.font=`italic 13px 'Courier New',monospace`; ctx.fillStyle='rgba(200,210,220,0.45)'; ctx.textAlign='center';
+  ctx.fillText('"Be the Training Partner you wish you had"',W/2,H-28);
+
+  const link=document.createElement('a');
+  link.download='training-partner-self-assessment.png';
+  link.href=cv.toDataURL('image/png'); link.click();
+}
+
+// ─── KANRI admin (localhost only) ─────────────────────────────────────────────
+const isLocal = ['localhost','127.0.0.1',''].includes(window.location.hostname);
+if (isLocal) {
+  // Add 管 button to toolbar
+  const kanriBtn = document.createElement('button');
+  kanriBtn.id = 'btn-kanri';
+  kanriBtn.textContent = '管';
+  kanriBtn.title = 'KANRI — Edit archetypes';
+  kanriBtn.style.cssText = 'font-family:inherit;font-size:13px;padding:1px 6px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;margin-left:4px;';
+  kanriBtn.addEventListener('click', openKanri);
+  toolbar.appendChild(kanriBtn);
+
+  let kanriArch = ARCHETYPES[0];
+
+  function openKanri() {
+    let overlay = document.getElementById('kanri-overlay');
+    if (overlay) { overlay.style.display='flex'; renderKanriPanel(); return; }
+
+    overlay = document.createElement('div');
+    overlay.id = 'kanri-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:200;display:flex;justify-content:flex-end;font-family:"Courier New",monospace;';
+
+    const backdrop = document.createElement('div');
+    backdrop.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0.55);';
+    backdrop.addEventListener('click', () => { overlay.style.display='none'; });
+
+    const panel = document.createElement('div');
+    panel.id = 'kanri-panel';
+    panel.style.cssText = 'position:relative;width:460px;max-width:100vw;height:100%;background:#070710;border-left:1px solid #21262d;overflow-y:auto;z-index:1;display:flex;flex-direction:column;';
+
+    overlay.appendChild(backdrop);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    renderKanriPanel();
+  }
+
+  function renderKanriPanel() {
+    const panel = document.getElementById('kanri-panel');
+    panel.innerHTML = '';
+
+    // Header
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #21262d;flex-shrink:0;';
+    hdr.innerHTML = `<span style="font-size:18px;color:#ffd54f;">管</span><span style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;flex:1;">KANRI — Training Partners</span>`;
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent='✕'; closeBtn.style.cssText='font-family:inherit;font-size:11px;padding:2px 6px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;border-radius:2px;';
+    closeBtn.addEventListener('click',()=>{ document.getElementById('kanri-overlay').style.display='none'; });
+    hdr.appendChild(closeBtn); panel.appendChild(hdr);
+
+    // Controls
+    const ctrl = document.createElement('div');
+    ctrl.style.cssText = 'display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid #0d1117;flex-shrink:0;flex-wrap:wrap;';
+
+    function makeCtrlBtn(label,title,onClick,color='#6b7280') {
+      const b=document.createElement('button');
+      b.textContent=label; b.title=title||'';
+      b.style.cssText=`font-family:inherit;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 9px;border-radius:2px;border:1px solid ${color}44;background:transparent;color:${color};cursor:pointer;`;
+      b.addEventListener('click',onClick); return b;
+    }
+    ctrl.appendChild(makeCtrlBtn('+ Add','Clone selected archetype',()=>{
+      const clone = JSON.parse(JSON.stringify(kanriArch));
+      clone.id = 'arch_' + Date.now();
+      clone.name = 'NEW ARCHETYPE';
+      ARCHETYPES.push(clone); kanriArch = clone;
+      saveArchetypes(); buildPills(); renderKanriPanel();
+    },'#00d4ff'));
+    ctrl.appendChild(makeCtrlBtn('🗑 Delete','Delete selected archetype',()=>{
+      if(ARCHETYPES.length<=1){alert('Cannot delete last archetype.');return;}
+      if(!confirm(`Delete "${kanriArch.name}"?`)) return;
+      const idx=ARCHETYPES.findIndex(a=>a.id===kanriArch.id);
+      ARCHETYPES.splice(idx,1); kanriArch=ARCHETYPES[0];
+      saveArchetypes(); buildPills();
+      if(mode==='archetypes') selectArchetype(currentArch);
+      renderKanriPanel();
+    },'#ef5350'));
+    ctrl.appendChild(makeCtrlBtn('📋 Copy JSON','Copy full archetypes JSON to clipboard',()=>{
+      navigator.clipboard.writeText(JSON.stringify(ARCHETYPES,null,2))
+        .then(()=>{ const t=ctrl.querySelector('[data-toast]'); if(t){t.style.opacity='1';setTimeout(()=>{t.style.opacity='0';},1500);} });
+    },'#9ccc65'));
+    ctrl.appendChild(makeCtrlBtn('↺ Reset','Reset to defaults',()=>{
+      if(!confirm('Reset all archetypes to defaults?')) return;
+      ARCHETYPES.length=0; JSON.parse(JSON.stringify(DEFAULT_ARCHETYPES)).forEach(a=>ARCHETYPES.push(a));
+      kanriArch=ARCHETYPES[0]; saveArchetypes(); buildPills();
+      if(mode==='archetypes') selectArchetype(currentArch);
+      renderKanriPanel();
+    },'#6b7280'));
+    const toast=document.createElement('span'); toast.setAttribute('data-toast','1');
+    toast.textContent='Copied!'; toast.style.cssText='font-size:8px;color:#9ccc65;opacity:0;transition:opacity 0.3s;align-self:center;';
+    ctrl.appendChild(toast); panel.appendChild(ctrl);
+
+    // Archetype selector pills
+    const pills = document.createElement('div');
+    pills.style.cssText = 'display:flex;flex-wrap:wrap;gap:5px;padding:10px 14px;border-bottom:1px solid #0d1117;flex-shrink:0;';
+    ARCHETYPES.forEach(arch => {
+      const b=document.createElement('button');
+      b.textContent=arch.name;
+      const active=arch.id===kanriArch.id;
+      b.style.cssText=`font-family:inherit;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid ${active?arch.color:'#21262d'};background:${active?arch.color+'22':'transparent'};color:${active?arch.color:'#6b7280'};cursor:pointer;`;
+      b.addEventListener('click',()=>{ kanriArch=arch; selectArchetype(arch); renderKanriPanel(); });
+      pills.appendChild(b);
+    }); panel.appendChild(pills);
+
+    // Edit form
+    const form = document.createElement('div');
+    form.style.cssText = 'padding:14px;flex:1;overflow-y:auto;';
+
+    function field(label,val,onInput,type='text',opts={}) {
+      const wrap=document.createElement('div'); wrap.style.cssText='margin-bottom:10px;';
+      const lbl2=document.createElement('div'); lbl2.textContent=label; lbl2.style.cssText='font-size:7px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:4px;';
+      let inp;
+      if(type==='textarea'){
+        inp=document.createElement('textarea');
+        inp.style.cssText='width:100%;box-sizing:border-box;background:#0a0a12;color:#c9d1d9;border:1px solid #21262d;border-radius:2px;padding:5px 7px;font-family:inherit;font-size:9px;line-height:1.5;resize:vertical;min-height:60px;';
+      } else {
+        inp=document.createElement('input'); inp.type=type;
+        inp.style.cssText='width:100%;box-sizing:border-box;background:#0a0a12;color:#c9d1d9;border:1px solid #21262d;border-radius:2px;padding:5px 7px;font-family:inherit;font-size:9px;';
+      }
+      inp.value=val;
+      if(type==='color') inp.style.cssText='height:28px;background:#0a0a12;border:1px solid #21262d;border-radius:2px;cursor:pointer;padding:2px;';
+      inp.addEventListener('input',()=>onInput(inp.value));
+      wrap.appendChild(lbl2); wrap.appendChild(inp);
+      return wrap;
+    }
+
+    form.appendChild(field('Name', kanriArch.name, v => {
+      kanriArch.name=v.toUpperCase();
+      const pill=document.getElementById('pill-'+kanriArch.id); if(pill) pill.textContent=kanriArch.name;
+      if(currentArch.id===kanriArch.id) { charName.textContent=kanriArch.name; }
+      saveArchetypes();
+    }));
+    form.appendChild(field('Color', kanriArch.color, v => {
+      kanriArch.color=v; saveArchetypes();
+      const pill=document.getElementById('pill-'+kanriArch.id);
+      if(pill){ pill.style.borderColor=v; pill.style.color=v; }
+      if(currentArch.id===kanriArch.id){charColorBar.style.background=v;charName.style.color=v;charTagline.style.color=v+'bb';}
+    },'color'));
+    form.appendChild(field('Image filename', kanriArch.img, v => {
+      kanriArch.img=v; saveArchetypes();
+      if(currentArch.id===kanriArch.id) charImg.src=imgBase+v;
+    }));
+    form.appendChild(field('Tagline', kanriArch.tagline, v => {
+      kanriArch.tagline=v; saveArchetypes();
+      if(currentArch.id===kanriArch.id) charTagline.textContent=v;
+    }));
+    form.appendChild(field('Description', kanriArch.desc, v => {
+      kanriArch.desc=v; saveArchetypes();
+      if(currentArch.id===kanriArch.id) charDesc.textContent=v;
+    },'textarea'));
+
+    // Score sliders
+    const scoreHdr=document.createElement('div');
+    scoreHdr.style.cssText='font-size:7px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin:14px 0 8px;padding-top:10px;border-top:1px solid #0d1117;';
+    scoreHdr.textContent='Attribute Scores'; form.appendChild(scoreHdr);
+
+    let lastScoreCat='';
+    ATTRIBUTES.forEach(attr => {
+      if(attr.cat!==lastScoreCat){
+        lastScoreCat=attr.cat;
+        const ch=document.createElement('div');
+        ch.style.cssText='font-size:8px;font-weight:700;color:#42a5f5;margin:10px 0 5px;';
+        ch.textContent=attr.cat; form.appendChild(ch);
+      }
+      const sv = kanriArch.scores[attr.id]??0;
+      const srow=document.createElement('div'); srow.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:6px;';
+      const slbl=document.createElement('div'); slbl.style.cssText='flex:1;font-size:8px;color:#8b949e;'; slbl.textContent=attr.label;
+      const snum=document.createElement('div'); snum.style.cssText='width:18px;text-align:right;font-size:9px;font-weight:700;color:'+fillColor(attr.inverted?10-sv:sv)+';'; snum.textContent=sv;
+      const sslider=document.createElement('input'); sslider.type='range'; sslider.min='0'; sslider.max='10'; sslider.step='1'; sslider.value=sv;
+      sslider.style.cssText='width:80px;flex-shrink:0;accent-color:#00d4ff;cursor:pointer;';
+      sslider.addEventListener('input',()=>{
+        const nv=+sslider.value;
+        kanriArch.scores[attr.id]=nv;
+        snum.textContent=nv; snum.style.color=fillColor(attr.inverted?10-nv:nv);
+        saveArchetypes();
+        if(mode==='archetypes'&&currentArch.id===kanriArch.id) renderAttrBars(kanriArch.scores,kanriArch.color);
+      });
+      srow.appendChild(slbl); srow.appendChild(sslider); srow.appendChild(snum);
+      form.appendChild(srow);
+    });
+
+    panel.appendChild(form);
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+buildPills();
+buildSelfSliders();
+setMode('archetypes');
+</script>
+
+</BaseLayout>

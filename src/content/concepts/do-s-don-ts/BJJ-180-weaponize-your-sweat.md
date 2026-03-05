@@ -2,8 +2,8 @@
 id: "BJJ-180"
 concept: "Weaponize your sweat"
 category: "Do's & Don'ts"
-axis_self_opponent: -0.62
-axis_mental_physical: -0.62
+axis_self_opponent: -0.6805
+axis_mental_physical: -0.3739
 color: "#b26b2a"
 short_description: "it's gross.  don't.  We're primitives and savages, not monsters."
 tags: []
