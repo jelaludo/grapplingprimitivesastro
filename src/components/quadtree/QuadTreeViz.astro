@@ -68,6 +68,9 @@ const isDev = import.meta.env.DEV;
     <!-- Save toast -->
     <span id="qt-toast" class="hidden text-[10px] tracking-[2px] uppercase" style="color:#00ff88"></span>
 
+    <button id="qt-deeplink" class="text-[11px] tracking-[1px] text-text-dim border border-border px-2 h-6 hover:border-accent/50 hover:text-accent transition-all uppercase">
+      Link
+    </button>
     <button id="qt-back" class="hidden text-[11px] tracking-[1px] text-accent border border-accent/40 px-2 h-6 hover:bg-accent/10 transition-all uppercase">
       ← Back
     </button>
@@ -668,6 +671,7 @@ function zoomIntoCategory(name) {
   backBtn.classList.remove('hidden');
   canvas.style.cursor = kanriMode && isDev ? 'cell' : 'crosshair';
   if (breadcrumb) breadcrumb.style.cursor = 'pointer';
+  history.replaceState(null, '', location.pathname + location.search + '#cat=' + encodeURIComponent(name));
   markDirty();
 }
 
@@ -682,12 +686,30 @@ function zoomOut() {
   resetCamera();
   canvas.style.cursor = 'crosshair';
   if (breadcrumb) breadcrumb.style.cursor = 'default';
+  history.replaceState(null, '', location.pathname + location.search);
   markDirty();
 }
 
 backBtn.addEventListener('click', zoomOut);
 resetBtn.addEventListener('click', () => { if (!zoomedCat) { resetCamera(); markDirty(); } else zoomOut(); });
 if (breadcrumb) breadcrumb.addEventListener('click', () => { if (zoomedCat) zoomOut(); });
+
+// ── Deep Link button ──────────────────────────────────────────────────────────
+const deepLinkBtn = document.getElementById('qt-deeplink');
+if (deepLinkBtn) {
+  deepLinkBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(location.href).then(() => {
+      deepLinkBtn.textContent = 'Copied!';
+      deepLinkBtn.style.color = 'var(--color-accent,#00d4ff)';
+      deepLinkBtn.style.borderColor = 'rgba(0,212,255,0.4)';
+      setTimeout(() => {
+        deepLinkBtn.textContent = 'Link';
+        deepLinkBtn.style.color = '';
+        deepLinkBtn.style.borderColor = '';
+      }, 1500);
+    });
+  });
+}
 
 // ── Search ────────────────────────────────────────────────────────────────────
 searchInput.addEventListener('input', e => {
@@ -955,5 +977,10 @@ canvas.addEventListener('touchend', e => {
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
 resize();                  // builds hierarchy, sizes canvas
 restoreKanriState();       // re-enter zoomed cat + kanri mode if page was reloaded
+// Restore from URL hash (deep link) — only if KANRI session didn't already set a cat
+if (!zoomedCat) {
+  const hashMatch = location.hash.match(/^#cat=(.+)/);
+  if (hashMatch) zoomIntoCategory(decodeURIComponent(hashMatch[1]));
+}
 requestAnimationFrame(drawLoop);
 </script>

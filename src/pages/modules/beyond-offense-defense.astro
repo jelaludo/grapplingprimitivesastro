@@ -59,6 +59,8 @@ const rows = STEPS.map((_, i) => {
     <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
     <span style="color:#21262d;">|</span>
     <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Beyond Offense &amp; Defense</span>
+    <div style="flex:1;"></div>
+    <button id="btn-deeplink" style="font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;">Link</button>
   </div>
 
   <!-- ── Content ──────────────────────────────────────────────────────────── -->
@@ -208,6 +210,7 @@ const rows = STEPS.map((_, i) => {
       document.querySelectorAll('.step-row.active').forEach(el => el.classList.remove('active'));
       if (infoPanel) infoPanel.style.display = 'none';
       activeRow = null;
+      history.replaceState(null, '', location.pathname);
     }
 
     function activate(i: number) {
@@ -236,6 +239,7 @@ const rows = STEPS.map((_, i) => {
       }
 
       activeRow = i;
+      history.replaceState(null, '', location.pathname + '#row=' + i);
     }
 
     document.querySelectorAll('.step-row').forEach(row => {
@@ -248,6 +252,27 @@ const rows = STEPS.map((_, i) => {
         }
       });
     });
+
+    // Deep Link button
+    const dlBtn = document.getElementById('btn-deeplink');
+    if (dlBtn) {
+      dlBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(location.href).then(() => {
+          dlBtn.textContent = 'Copied!';
+          (dlBtn as HTMLElement).style.color = '#00d4ff';
+          (dlBtn as HTMLElement).style.borderColor = '#00d4ff';
+          setTimeout(() => {
+            dlBtn.textContent = 'Link';
+            (dlBtn as HTMLElement).style.color = '#6b7280';
+            (dlBtn as HTMLElement).style.borderColor = '#21262d';
+          }, 1500);
+        });
+      });
+    }
+
+    // Restore from URL hash
+    const hashRow = location.hash.match(/^#row=(\d+)/);
+    if (hashRow) activate(parseInt(hashRow[1], 10));
   </script>
 
 </BaseLayout>

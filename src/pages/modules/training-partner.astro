@@ -13,6 +13,9 @@ const imgBase = base + '/images/partners/';
   <span style="color:#21262d;">|</span>
   <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;">Training Partners</span>
   <div style="flex:1;"></div>
+  <!-- Deep Link -->
+  <button id="btn-deeplink" style="font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;">Link</button>
+  <span style="color:#21262d;">|</span>
   <!-- Font size -->
   <span id="btn-sm"  title="Small text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;">小</span>
   <span id="btn-med" title="Medium text" style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#00d4ff;border:1px solid #00d4ff;border-radius:2px;line-height:1;user-select:none;">中</span>
@@ -512,6 +515,7 @@ function updateSelfProfile() {
 function selectArchetype(arch) {
   pillRail.style.display = 'none';
   currentArch = arch;
+  history.replaceState(null, '', location.pathname + '#arch=' + arch.id);
   updatePills();
   charImg.src                   = imgBase + arch.img;
   charImg.alt                   = arch.name;
@@ -531,7 +535,7 @@ function setMode(m) {
   const A = m==='archetypes';
   btnArch.style.cssText = `font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid ${A?'#00d4ff':'#21262d'};background:${A?'rgba(0,212,255,0.1)':'transparent'};color:${A?'#00d4ff':'#6b7280'};`;
   btnSelf.style.cssText = `font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid ${!A?'#00d4ff':'#21262d'};background:${!A?'rgba(0,212,255,0.1)':'transparent'};color:${!A?'#00d4ff':'#6b7280'};`;
-  if (!A) pillRail.style.display = 'none';
+  if (!A) { pillRail.style.display = 'none'; history.replaceState(null, '', location.pathname + '#mode=self'); }
   barsView.style.display     = A ? ''     : 'none';
   selfView.style.display     = A ? 'none' : '';
   matchPanel.style.display   = A ? 'none' : '';
@@ -917,6 +921,23 @@ if (isLocal) {
   }
 }
 
+// ─── Deep Link button ─────────────────────────────────────────────────────────
+const deepLinkBtn = document.getElementById('btn-deeplink');
+if (deepLinkBtn) {
+  deepLinkBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(location.href).then(() => {
+      deepLinkBtn.textContent = 'Copied!';
+      deepLinkBtn.style.color = '#00d4ff';
+      deepLinkBtn.style.borderColor = '#00d4ff';
+      setTimeout(() => {
+        deepLinkBtn.textContent = 'Link';
+        deepLinkBtn.style.color = '#6b7280';
+        deepLinkBtn.style.borderColor = '#21262d';
+      }, 1500);
+    });
+  });
+}
+
 // ─── Close pill dropdown on outside click ─────────────────────────────────────
 document.addEventListener('click', (e) => {
   if (pillRail.style.display === 'flex' && !pillRail.contains(e.target) && e.target !== btnArch) {
@@ -928,6 +949,16 @@ document.addEventListener('click', (e) => {
 buildPills();
 buildSelfSliders();
 setMode('archetypes');
+// Restore from URL hash (deep link)
+(function() {
+  const h = location.hash;
+  if (h.startsWith('#arch=')) {
+    const arch = ARCHETYPES.find(a => a.id === h.slice(6));
+    if (arch) selectArchetype(arch);
+  } else if (h === '#mode=self') {
+    setMode('self');
+  }
+})();
 </script>
 
 </BaseLayout>
