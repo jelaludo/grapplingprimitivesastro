@@ -1,0 +1,139 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('Articles');
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await article.render();
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const title = article.data.title || article.slug.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+---
+
+<BaseLayout title={`${title} - Grappling Primitives`}>
+  <div class="max-w-3xl mx-auto px-4 py-12 fade-up">
+
+    <a href={`${base}/modules/articles`} class="text-[9px] tracking-[3px] text-text-dim uppercase hover:text-accent transition-colors mb-6 inline-block">
+      &larr; ALL ARTICLES
+    </a>
+
+    <article class="article-prose">
+      <h1 class="text-2xl font-bold tracking-tight text-text-primary mb-8 glow-blue">
+        {title}
+      </h1>
+
+      <Content />
+    </article>
+
+    <div class="mt-12 pt-6 border-t border-border">
+      <a href={`${base}/modules/articles`} class="text-[9px] tracking-[3px] text-text-dim uppercase hover:text-accent transition-colors">
+        &larr; ALL ARTICLES
+      </a>
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .article-prose {
+    line-height: 1.8;
+    color: #D1D5DB;
+  }
+
+  .article-prose p {
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .article-prose strong {
+    color: #E5E7EB;
+    font-weight: 700;
+  }
+
+  .article-prose em {
+    color: #9CA3AF;
+  }
+
+  .article-prose a {
+    color: #4C8DFF;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s;
+  }
+  .article-prose a:hover {
+    color: #7BABFF;
+  }
+
+  .article-prose h2,
+  .article-prose h3,
+  .article-prose h4 {
+    color: #E5E7EB;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .article-prose h2 { font-size: 1.25rem; }
+  .article-prose h3 { font-size: 1.1rem; }
+
+  .article-prose ul,
+  .article-prose ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+  .article-prose ul { list-style-type: disc; }
+  .article-prose ol { list-style-type: decimal; }
+
+  .article-prose li {
+    margin-bottom: 0.35rem;
+    font-size: 0.875rem;
+  }
+
+  .article-prose blockquote {
+    border-left: 2px solid #4C8DFF44;
+    padding-left: 1rem;
+    margin: 1.25rem 0;
+    color: #9CA3AF;
+    font-style: italic;
+  }
+
+  .article-prose img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 2px;
+    border: 1px solid #1C1F26;
+    margin: 1.5rem 0;
+  }
+
+  .article-prose code {
+    background: #1C1F26;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    font-size: 0.8rem;
+  }
+
+  .article-prose pre {
+    background: #0E1014;
+    border: 1px solid #1C1F26;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    border-radius: 2px;
+  }
+  .article-prose pre code {
+    background: none;
+    padding: 0;
+  }
+
+  .article-prose hr {
+    border: none;
+    border-top: 1px solid #1C1F26;
+    margin: 2rem 0;
+  }
+</style>

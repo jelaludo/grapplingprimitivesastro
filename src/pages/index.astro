@@ -41,6 +41,13 @@ const modules = [
     tag: 'GAMES',
   },
   {
+    title: 'Articles',
+    description: 'Long-form writings on grappling concepts, heuristics, training philosophy, and more. Sourced from the Obsidian vault.',
+    href: `${base}/modules/articles`,
+    status: 'live' as const,
+    tag: 'ARTICLES',
+  },
+  {
     title: 'Visual Notes',
     description: 'Hand-drawn diagrams and sketches collected over years of training.',
     href: `${base}/modules/visual-notes`,
@@ -106,7 +113,7 @@ const modules = [
     <div class="mb-12 fade-up">
       <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">v2.0 — Astro Build · <span class="text-text-dim">bdce381</span></p>
       <h1 class="text-3xl font-bold tracking-tight text-text-primary mb-3 glow-blue">
-        Grappling Primitives
+        Grappling Primitives <span class="text-[#00ff41] text-2xl tracking-wide" style="text-shadow:0 0 16px rgba(0,255,65,0.5);">Work-in-Progress</span>
       </h1>
       <p class="text-sm text-text-muted max-w-xl leading-relaxed">
         An interactive collection of <span class="text-accent font-semibold">277</span> concepts split into <span class="text-accent font-semibold">23</span> categories that an older black belt has accumulated over the years.
@@ -128,34 +135,96 @@ const modules = [
 
   </div>
 
-  <!-- WIP Splash Overlay -->
-  <div id="wip-splash" style="position:fixed;inset:0;z-index:9999;background:rgba(5,5,9,0.97);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Courier New',Consolas,Monaco,monospace;transition:opacity 0.6s ease;">
-    <div style="text-align:left;padding:2rem;max-width:90vw;">
-      <div style="color:#00ff41;font-size:clamp(10px,2vw,13px);letter-spacing:0.18em;line-height:2.2;opacity:0.45;">&gt; GRAPPLING PRIMITIVES — v2.0</div>
-      <div style="color:#00ff41;font-size:clamp(10px,2vw,13px);letter-spacing:0.18em;line-height:2.2;opacity:0.45;">&gt; STATUS ─────────────────────────────</div>
-      <div style="color:#00ff41;font-size:clamp(28px,7vw,72px);font-weight:700;letter-spacing:0.06em;margin:0.15em 0 0;text-shadow:0 0 24px rgba(0,255,65,0.55),0 0 60px rgba(0,255,65,0.18);">WORK IN PROGRESS</div>
-      <div style="color:#00ff41;font-size:clamp(14px,3.5vw,32px);letter-spacing:0.22em;opacity:0.85;margin-bottom:0.1em;">by @Jelaludo</div>
-      <div style="color:#00ff41;font-size:clamp(10px,2vw,13px);letter-spacing:0.18em;line-height:2.2;opacity:0.45;">&gt; ─────────────────────────────────────</div>
-      <div style="color:#00ff41;font-size:clamp(9px,1.8vw,12px);letter-spacing:0.22em;opacity:0.4;margin-top:1.2em;">[ CLICK ANYWHERE TO ENTER ]<span id="wip-cursor">█</span></div>
+  <!-- Retro Terminal Overlay -->
+  <div id="retro-terminal" style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Courier New',Consolas,Monaco,monospace;transition:opacity 0.6s ease;">
+    <div style="width:min(600px,90vw);text-align:left;padding:2rem;">
+      <div id="rt-prompt" style="color:#fff;font-size:clamp(12px,2.5vw,16px);white-space:nowrap;margin-bottom:0.5em;">root@grapplingprimitives:~$</div>
+      <div id="rt-en" style="color:#00ff41;font-size:clamp(14px,3vw,18px);line-height:1.5;min-height:1.6em;"></div>
+      <div id="rt-jp" style="color:#00ff41;font-size:clamp(13px,2.5vw,16px);line-height:1.5;min-height:1.6em;opacity:0.8;margin-top:0.25em;"></div>
+      <div id="rt-cursor" style="color:#00ff41;display:inline-block;font-size:clamp(14px,3vw,18px);">|</div>
+      <div style="position:fixed;bottom:1.2rem;right:1.5rem;font-size:clamp(9px,1.6vw,11px);letter-spacing:0.18em;color:rgba(255,255,255,0.35);font-style:italic;">click anywhere to continue</div>
     </div>
   </div>
 
   <style>
-    @keyframes wip-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-    #wip-cursor { display:inline-block; margin-left:4px; animation: wip-blink 1s step-end infinite; }
-    #wip-splash.wip-gone { opacity: 0; pointer-events: none; }
+    @keyframes rt-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    #rt-cursor { animation: rt-blink 1s step-end infinite; }
+    #retro-terminal.rt-gone { opacity:0; pointer-events:none; }
   </style>
 
   <script>
     (function () {
-      const splash = document.getElementById('wip-splash');
-      if (!splash) return;
-      if (sessionStorage.getItem('gp-wip-dismissed')) { splash.style.display = 'none'; return; }
-      splash.addEventListener('click', () => {
-        splash.classList.add('wip-gone');
-        sessionStorage.setItem('gp-wip-dismissed', '1');
-        setTimeout(() => { splash.style.display = 'none'; }, 650);
-      });
+      const overlay = document.getElementById('retro-terminal');
+      if (!overlay) return;
+      if (sessionStorage.getItem('gp-splash-dismissed')) { overlay.style.display = 'none'; return; }
+
+      const messages = [
+        { en: "All models are wrong, some are useful", jp: "すべてのモデルは間違っているが、いくつかは役に立つ" },
+        { en: "Build Yourself", jp: "自分を作れ" },
+        { en: "Speak Friend, and Enter", jp: "唱えよ、友、そして入れ" },
+        { en: "Flow, Pressure, Finish", jp: "流れ、圧、極め" },
+        { en: "Keep Training", jp: "練習を続けろ" },
+        { en: "Don't Quit", jp: "諦めるな" },
+        { en: "Mindful Practice", jp: "意識しながら練習" },
+        { en: "Switch your brain on", jp: "脳をオンにしろ" },
+        { en: "Think. Practice. Repeat", jp: "思考。練習。反復。" },
+        { en: "Theory is nothing without mat time", jp: "マット時間なければ理論だけは役に立たない" },
+        { en: "Read less, roll more", jp: "見学よりも、動こう" },
+        { en: "Daily beats Perfect", jp: "完璧より毎日" },
+        { en: "Mat Time > Screen Time", jp: "マット時間 > スクリーン時間" },
+        { en: "Keep Showing up", jp: "現れ続けろ" },
+        { en: "Don't let thinking replace doing", jp: "考えることで行動を置き換えるな" },
+        { en: "Breathe, feel, adjust", jp: "呼吸、感覚、調整" },
+        { en: "Build those neuromuscular pathways", jp: "神経筋経路を構築せよ" },
+        { en: "Etch Grappling Grooves in your brain", jp: "脳にグラップリングの溝を刻め" },
+        { en: "Proof of Work on the mats", jp: "マット上でも作業証明" },
+        { en: "Take care of your training partners", jp: "練習相手を大切に" },
+        { en: "Tsukuri precedes Kuzushi", jp: "崩しより作り" }
+      ];
+
+      const elEn = document.getElementById('rt-en');
+      const elJp = document.getElementById('rt-jp');
+      const TYPING_SPEED = 40;
+      const DISPLAY_TIME = 2000;
+      let msgIdx = 0;
+
+      function typeMessage() {
+        const msg = messages[msgIdx];
+        const full = msg.en;
+        let i = 0;
+        elEn.textContent = '';
+        elJp.textContent = '';
+
+        function tick() {
+          if (i < full.length) {
+            elEn.textContent = full.slice(0, i + 1);
+            i++;
+            setTimeout(tick, TYPING_SPEED);
+          } else {
+            // English done, show Japanese immediately below
+            elJp.textContent = msg.jp;
+            // Wait, then cycle
+            setTimeout(() => {
+              msgIdx = (msgIdx + 1) % messages.length;
+              typeMessage();
+            }, DISPLAY_TIME);
+          }
+        }
+        tick();
+      }
+
+      typeMessage();
+
+      function dismiss() {
+        overlay.classList.add('rt-gone');
+        sessionStorage.setItem('gp-splash-dismissed', '1');
+        setTimeout(() => { overlay.style.display = 'none'; }, 650);
+      }
+
+      overlay.addEventListener('click', dismiss);
+      ['keydown', 'scroll', 'wheel'].forEach(evt =>
+        window.addEventListener(evt, dismiss, { once: true })
+      );
     })();
   </script>
 

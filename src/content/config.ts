@@ -31,4 +31,15 @@ const categories = defineCollection({
   }),
 });
 
-export const collections = { concepts, categories };
+// ── Articles ─────────────────────────────────────────────────────────────────
+// Obsidian-authored long-form articles. No required frontmatter.
+const Articles = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string().optional(),
+    date: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { concepts, categories, Articles };

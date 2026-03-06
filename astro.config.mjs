@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import rehypeObsidianImages from './src/lib/remark-obsidian-images.mjs';
 import fs   from 'node:fs/promises';
 import path from 'node:path';
 
@@ -84,6 +85,9 @@ export default defineConfig({
   integrations: [tailwind()],
   site: 'https://jelaludo.github.io',
   base: '/grapplingprimitivesastro',
+  markdown: {
+    rehypePlugins: [rehypeObsidianImages],
+  },
   vite: {
     plugins: [kanriPlugin],
   },

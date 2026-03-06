@@ -1,0 +1,54 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const articles = await getCollection('Articles');
+
+// Sort alphabetically by filename (slug)
+articles.sort((a, b) => a.slug.localeCompare(b.slug));
+---
+
+<BaseLayout title="Articles - Grappling Primitives">
+  <div class="max-w-3xl mx-auto px-4 py-12 fade-up">
+
+    <a href={`${base}/`} class="text-[9px] tracking-[3px] text-text-dim uppercase hover:text-accent transition-colors mb-6 inline-block">
+      &larr; BACK TO MODULES
+    </a>
+
+    <h1 class="text-2xl font-bold tracking-tight text-text-primary mb-2 glow-blue">
+      Articles
+    </h1>
+    <p class="text-xs text-text-muted mb-8 leading-relaxed max-w-xl">
+      Long-form writings on grappling concepts, heuristics, training philosophy, and the occasional tangent.
+      Written over the years, mostly from the Obsidian vault.
+    </p>
+
+    <p class="text-[9px] tracking-[3px] text-text-dim uppercase mb-4">
+      {articles.length} articles
+    </p>
+
+    <div class="flex flex-col gap-2">
+      {articles.map((article) => {
+        const title = article.data.title || article.slug.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+        return (
+          <a
+            href={`${base}/modules/articles/${article.slug}`}
+            class="block p-4 border border-border bg-surface rounded-sm hover:border-accent/40 hover:bg-[#0E1014] transition-all duration-200 group"
+          >
+            <h3 class="text-sm font-bold tracking-wide text-text-primary group-hover:text-accent transition-colors">
+              {title}
+            </h3>
+            {article.data.date && (
+              <span class="text-[9px] tracking-[2px] text-text-dim mt-1 inline-block">
+                {article.data.date}
+              </span>
+            )}
+          </a>
+        );
+      })}
+    </div>
+
+  </div>
+</BaseLayout>
