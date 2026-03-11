@@ -5,7 +5,7 @@ category: Do's & Don'ts
 axis_self_opponent: 0.9108
 axis_mental_physical: -0.9587
 color: "#b26b2a"
-short_description: testing if LRTB works correctly
+short_description: Dangers of uncontrolled weight in throws and jumps
 tags: []
 related: []
 ---

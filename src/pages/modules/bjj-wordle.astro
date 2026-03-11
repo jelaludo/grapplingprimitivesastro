@@ -1,0 +1,406 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Parse word lists at build time
+function parseWordList(filePath: string) {
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  const lines = raw.split('\n').filter(l => l.includes('|') && !l.startsWith('word '));
+  return lines.map(line => {
+    const [word, lang, tier, definition] = line.split('|').map(s => s.trim());
+    return { word: word.toLowerCase(), lang, tier, definition };
+  }).filter(e => e.word && e.lang);
+}
+
+const listsDir = path.resolve('src/content/WordLists');
+const allWords = [
+  ...parseWordList(path.join(listsDir, '4-letter-words.md')),
+  ...parseWordList(path.join(listsDir, '5-letter-words.md')),
+  ...parseWordList(path.join(listsDir, '6-letter-words.md')),
+  ...parseWordList(path.join(listsDir, '7-letter-words.md')),
+];
+---
+
+<BaseLayout title="BJJ Wordle - Grappling Primitives">
+  <div class="max-w-lg mx-auto px-4 py-8 fade-up select-none">
+
+    <a href={`${base}/`} class="text-[9px] tracking-[3px] text-text-dim uppercase hover:text-accent transition-colors mb-4 inline-block">
+      &larr; BACK TO MODULES
+    </a>
+
+    <h1 class="text-2xl font-bold tracking-tight text-text-primary mb-1 glow-blue">
+      BJJ Wordle
+    </h1>
+    <p class="text-xs text-text-muted mb-5 leading-relaxed">
+      Guess the grappling term. 6 tries. Green = right spot, yellow = wrong spot, gray = not in the word.
+    </p>
+
+    <!-- Settings row -->
+    <div class="flex items-center gap-3 mb-5 flex-wrap">
+      <div>
+        <label class="text-[9px] tracking-[2px] text-text-dim uppercase block mb-1">Letters</label>
+        <div class="flex border border-border rounded-sm overflow-hidden">
+          <button class="wdl-opt px-2.5 py-1 text-xs" data-group="len" data-val="4">4</button>
+          <button class="wdl-opt px-2.5 py-1 text-xs active" data-group="len" data-val="5">5</button>
+          <button class="wdl-opt px-2.5 py-1 text-xs" data-group="len" data-val="6">6</button>
+          <button class="wdl-opt px-2.5 py-1 text-xs" data-group="len" data-val="7">7</button>
+        </div>
+      </div>
+      <div>
+        <label class="text-[9px] tracking-[2px] text-text-dim uppercase block mb-1">Language</label>
+        <div class="flex border border-border rounded-sm overflow-hidden">
+          <button class="wdl-opt px-2.5 py-1 text-xs active" data-group="lang" data-val="all">All</button>
+          <button class="wdl-opt px-2.5 py-1 text-xs" data-group="lang" data-val="en">EN</button>
+          <button class="wdl-opt px-2.5 py-1 text-xs" data-group="lang" data-val="ja">JA</button>
+          <button class="wdl-opt px-2.5 py-1 text-xs" data-group="lang" data-val="pt">PT</button>
+        </div>
+      </div>
+      <div class="ml-auto">
+        <button id="btn-new" class="px-3 py-1.5 text-[10px] tracking-[2px] uppercase border border-accent/40 text-accent hover:bg-accent/10 rounded-sm transition-colors">
+          New Game
+        </button>
+      </div>
+    </div>
+
+    <!-- Game board -->
+    <div id="board" class="flex flex-col items-center gap-[5px] mb-5"></div>
+
+    <!-- Message area -->
+    <div id="message" class="text-center text-sm min-h-[2.5rem] mb-4"></div>
+
+    <!-- Keyboard -->
+    <div id="keyboard" class="flex flex-col items-center gap-[5px]"></div>
+
+  </div>
+
+  <style is:global>
+    .wdl-opt {
+      background: transparent;
+      color: #6B7280;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .wdl-opt.active {
+      background: #4C8DFF22;
+      color: #4C8DFF;
+    }
+    .wdl-opt:hover:not(.active) { color: #9CA3AF; }
+
+    .tile {
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      border: 2px solid #3a3a3c;
+      color: #fff;
+      font-family: 'Courier New', Consolas, monospace;
+      transition: transform 0.1s;
+    }
+    .tile.filled {
+      border-color: #565656;
+    }
+    .tile.pop {
+      animation: pop 0.1s ease-in-out;
+    }
+    @keyframes pop {
+      50% { transform: scale(1.12); }
+    }
+    .tile.correct {
+      background: #538d4e;
+      border-color: #538d4e;
+      animation: flip 0.5s ease forwards;
+    }
+    .tile.present {
+      background: #b59f3b;
+      border-color: #b59f3b;
+      animation: flip 0.5s ease forwards;
+    }
+    .tile.absent {
+      background: #3a3a3c;
+      border-color: #3a3a3c;
+      animation: flip 0.5s ease forwards;
+    }
+    @keyframes flip {
+      0% { transform: rotateX(0); }
+      50% { transform: rotateX(90deg); }
+      100% { transform: rotateX(0); }
+    }
+
+    .key {
+      height: 50px;
+      min-width: 30px;
+      padding: 0 6px;
+      border-radius: 4px;
+      background: #818384;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: 'Courier New', Consolas, monospace;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .key:active { transform: scale(0.95); }
+    .key.correct { background: #538d4e; }
+    .key.present { background: #b59f3b; }
+    .key.absent { background: #3a3a3c; color: #666; }
+    .key.wide { min-width: 56px; font-size: 0.65rem; }
+  </style>
+
+  <div id="word-data" data-words={JSON.stringify(allWords)} class="hidden"></div>
+  <script is:inline>
+    (function () {
+      const WORDS = JSON.parse(document.getElementById('word-data').dataset.words);
+      const MAX_GUESSES = 6;
+      const KEYBOARD_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+
+      let wordLen = 5;
+      let langFilter = 'all';
+      let target = null;
+      let targetDef = '';
+      let guesses = [];
+      let currentGuess = '';
+      let gameOver = false;
+
+      const boardEl = document.getElementById('board');
+      const kbEl = document.getElementById('keyboard');
+      const msgEl = document.getElementById('message');
+
+      // --- Option toggles ---
+      document.querySelectorAll('.wdl-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const group = btn.dataset.group;
+          document.querySelectorAll(`.wdl-opt[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          if (group === 'len') wordLen = Number(btn.dataset.val);
+          if (group === 'lang') langFilter = btn.dataset.val;
+          newGame();
+        });
+      });
+      document.getElementById('btn-new').addEventListener('click', newGame);
+
+      // --- Filtering ---
+      function getPool() {
+        return WORDS.filter(w => {
+          if (w.word.length !== wordLen) return false;
+          if (langFilter !== 'all' && w.lang !== langFilter) return false;
+          return true;
+        });
+      }
+
+      // --- New game ---
+      function newGame() {
+        const pool = getPool();
+        if (pool.length === 0) {
+          msgEl.innerHTML = '<span class="text-red-400">No words match this filter. Try different settings.</span>';
+          boardEl.innerHTML = '';
+          return;
+        }
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        target = pick.word;
+        targetDef = pick.definition;
+        guesses = [];
+        currentGuess = '';
+        gameOver = false;
+        msgEl.innerHTML = '';
+        renderBoard();
+        renderKeyboard();
+      }
+
+      // --- Render board ---
+      function renderBoard() {
+        boardEl.innerHTML = '';
+        for (let r = 0; r < MAX_GUESSES; r++) {
+          const row = document.createElement('div');
+          row.style.display = 'flex';
+          row.style.gap = '5px';
+          for (let c = 0; c < wordLen; c++) {
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.id = `t-${r}-${c}`;
+
+            if (r < guesses.length) {
+              // Revealed row
+              tile.textContent = guesses[r].letters[c];
+              const state = guesses[r].states[c];
+              if (r === guesses.length - 1 && !guesses[r].revealed) {
+                // Animate only the just-submitted row
+                tile.classList.add(state);
+                tile.style.animationDelay = (c * 0.15) + 's';
+              } else {
+                // Previous rows: set colors without animation
+                tile.style.background = state === 'correct' ? '#538d4e' : state === 'present' ? '#b59f3b' : '#3a3a3c';
+                tile.style.borderColor = tile.style.background;
+              }
+            } else if (r === guesses.length) {
+              // Current input row
+              if (c < currentGuess.length) {
+                tile.textContent = currentGuess[c];
+                tile.classList.add('filled');
+              }
+            }
+            row.appendChild(tile);
+          }
+          boardEl.appendChild(row);
+        }
+      }
+
+      // --- Evaluate guess ---
+      function evaluate(guess) {
+        const states = Array(wordLen).fill('absent');
+        const targetArr = target.split('');
+        const guessArr = guess.split('');
+        const used = Array(wordLen).fill(false);
+
+        // Green pass
+        for (let i = 0; i < wordLen; i++) {
+          if (guessArr[i] === targetArr[i]) {
+            states[i] = 'correct';
+            used[i] = true;
+          }
+        }
+        // Yellow pass
+        for (let i = 0; i < wordLen; i++) {
+          if (states[i] === 'correct') continue;
+          for (let j = 0; j < wordLen; j++) {
+            if (!used[j] && guessArr[i] === targetArr[j]) {
+              states[i] = 'present';
+              used[j] = true;
+              break;
+            }
+          }
+        }
+        return states;
+      }
+
+      // --- Submit guess ---
+      function submitGuess() {
+        if (gameOver) return;
+        if (currentGuess.length !== wordLen) {
+          msgEl.innerHTML = '<span class="text-yellow-400">Not enough letters</span>';
+          setTimeout(() => { if (!gameOver) msgEl.innerHTML = ''; }, 1200);
+          return;
+        }
+
+        const guess = currentGuess.toLowerCase();
+        const states = evaluate(guess);
+        guesses.push({ letters: guess.split(''), states });
+        currentGuess = '';
+        renderBoard();
+        // Mark row as revealed after flip animation finishes
+        setTimeout(() => { guesses[guesses.length - 1].revealed = true; }, wordLen * 150 + 500);
+        updateKeyboard(guess, states);
+
+        if (guess === target) {
+          gameOver = true;
+          setTimeout(() => {
+            msgEl.innerHTML = `<span class="text-[#538d4e] font-bold">${target.toUpperCase()}</span> <span class="text-text-muted">— ${targetDef}</span>`;
+          }, wordLen * 150 + 300);
+        } else if (guesses.length >= MAX_GUESSES) {
+          gameOver = true;
+          setTimeout(() => {
+            msgEl.innerHTML = `<span class="text-red-400 font-bold">${target.toUpperCase()}</span> <span class="text-text-muted">— ${targetDef}</span>`;
+          }, wordLen * 150 + 300);
+        }
+      }
+
+      // --- Keyboard ---
+      const keyStates = {};
+
+      function renderKeyboard() {
+        kbEl.innerHTML = '';
+        Object.keys(keyStates).forEach(k => delete keyStates[k]);
+        KEYBOARD_ROWS.forEach((row, ri) => {
+          const rowEl = document.createElement('div');
+          rowEl.style.display = 'flex';
+          rowEl.style.gap = '4px';
+          rowEl.style.justifyContent = 'center';
+
+          if (ri === 2) {
+            const enter = document.createElement('button');
+            enter.className = 'key wide';
+            enter.textContent = 'ENTER';
+            enter.addEventListener('click', submitGuess);
+            rowEl.appendChild(enter);
+          }
+
+          for (const ch of row) {
+            const key = document.createElement('button');
+            key.className = 'key';
+            key.textContent = ch;
+            key.dataset.key = ch;
+            key.addEventListener('click', () => typeLetter(ch));
+            rowEl.appendChild(key);
+          }
+
+          if (ri === 2) {
+            const del = document.createElement('button');
+            del.className = 'key wide';
+            del.textContent = 'DEL';
+            del.addEventListener('click', deleteLetter);
+            rowEl.appendChild(del);
+          }
+
+          kbEl.appendChild(rowEl);
+        });
+      }
+
+      function updateKeyboard(guess, states) {
+        const priority = { correct: 3, present: 2, absent: 1 };
+        for (let i = 0; i < guess.length; i++) {
+          const ch = guess[i];
+          const newState = states[i];
+          const old = keyStates[ch];
+          if (!old || priority[newState] > priority[old]) {
+            keyStates[ch] = newState;
+          }
+          const keyBtn = kbEl.querySelector(`[data-key="${ch}"]`);
+          if (keyBtn) {
+            keyBtn.className = 'key ' + keyStates[ch];
+          }
+        }
+      }
+
+      // --- Input ---
+      function typeLetter(ch) {
+        if (gameOver || currentGuess.length >= wordLen) return;
+        currentGuess += ch;
+        renderBoard();
+        // Pop animation
+        const tile = document.getElementById(`t-${guesses.length}-${currentGuess.length - 1}`);
+        if (tile) { tile.classList.add('pop'); setTimeout(() => tile.classList.remove('pop'), 100); }
+      }
+
+      function deleteLetter() {
+        if (gameOver || currentGuess.length === 0) return;
+        currentGuess = currentGuess.slice(0, -1);
+        renderBoard();
+      }
+
+      // Physical keyboard — preventDefault stops Enter from activating
+      // a focused link/button and Backspace from navigating back
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (e.key === 'Enter') { e.preventDefault(); submitGuess(); return; }
+        if (e.key === 'Backspace') { e.preventDefault(); deleteLetter(); return; }
+        if (/^[a-zA-Z]$/.test(e.key)) { typeLetter(e.key.toLowerCase()); }
+      });
+
+      // Init
+      newGame();
+    })();
+  </script>
+</BaseLayout>

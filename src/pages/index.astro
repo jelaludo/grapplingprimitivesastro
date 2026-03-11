@@ -1,8 +1,14 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ModuleCard from '@/components/ui/ModuleCard.astro';
+import { getCollection } from 'astro:content';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const allConcepts = await getCollection('concepts');
+const allCategories = await getCollection('categories');
+const conceptCount = allConcepts.length;
+const categoryCount = allCategories.length;
 
 const modules = [
   {
@@ -21,7 +27,7 @@ const modules = [
   },
   {
     title: 'Flash Cards',
-    description: 'Study and review all 277 concepts with Anki-style flash cards. Filter by category, flip, stage for later.',
+    description: `Study and review all ${conceptCount} concepts with Anki-style flash cards. Filter by category, flip, stage for later.`,
     href: `${base}/modules/cards`,
     status: 'wip' as const,
     tag: 'STUDY',
@@ -37,6 +43,13 @@ const modules = [
     title: 'Games Hub',
     description: 'Gamified drills and decision tools: pressure scenarios, memory match, centroid estimation, and more.',
     href: `${base}/modules/games`,
+    status: 'live' as const,
+    tag: 'GAMES',
+  },
+  {
+    title: 'BJJ Wordle',
+    description: 'Guess the grappling term in 6 tries. Supports 4-7 letter words in English, Japanese, and Portuguese.',
+    href: `${base}/modules/bjj-wordle`,
     status: 'live' as const,
     tag: 'GAMES',
   },
@@ -60,6 +73,13 @@ const modules = [
     href: `${base}/modules/gif-training`,
     status: 'soon' as const,
     tag: 'MEDIA',
+  },
+  {
+    title: 'Weight Classes',
+    description: 'Find your division across IBJJF (Gi & No-Gi), ADCC, and WNO. Includes kg/lbs conversion and gi size calculator.',
+    href: `${base}/modules/weight-class`,
+    status: 'live' as const,
+    tag: 'TOOLS',
   },
   {
     title: 'Belt Dropout',
@@ -111,12 +131,12 @@ const modules = [
 
     <!-- Header -->
     <div class="mb-12 fade-up">
-      <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">v2.0 — Astro Build · <span class="text-text-dim">bdce381</span></p>
+      <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">v2.0 — Astro Build</p>
       <h1 class="text-3xl font-bold tracking-tight text-text-primary mb-3 glow-blue">
         Grappling Primitives <span class="text-[#00ff41] text-2xl tracking-wide" style="text-shadow:0 0 16px rgba(0,255,65,0.5);">Work-in-Progress</span>
       </h1>
       <p class="text-sm text-text-muted max-w-xl leading-relaxed">
-        An interactive collection of <span class="text-accent font-semibold">277</span> concepts split into <span class="text-accent font-semibold">23</span> categories that an older black belt has accumulated over the years.
+        An interactive collection of <span class="text-accent font-semibold">{conceptCount}</span> concepts split into <span class="text-accent font-semibold">{categoryCount}</span> categories that an older black belt has accumulated over the years.
         Through various visualizations I am trying to make sense of this complex passion of ours; grappling and pinning and escaping and counter-attacking and controlling and killing the space and submitting fellow enthusiasts.
         Still very much a WIP, some modules are dead-ends, others are R&D.
         <span class="italic text-text-dim">All models are wrong, some are useful. Same for modules I suppose.</span>

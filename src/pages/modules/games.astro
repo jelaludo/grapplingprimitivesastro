@@ -34,11 +34,11 @@ const games = [
     tag: 'DECISION',
   },
   {
-    title: 'TBD Game 4',
-    description: 'Coming soon.',
-    href: '#',
-    status: 'soon' as const,
-    tag: 'TBD',
+    title: 'BJJ Word Hunt',
+    description: 'Guess the grappling term in 6 tries. Supports 4–7 letter words in English, Japanese, and Portuguese.',
+    href: `${base}/modules/bjj-wordle`,
+    status: 'live' as const,
+    tag: 'WORD',
   },
   {
     title: 'TBD Game 5',
@@ -68,9 +68,9 @@ const games = [
     <!-- Stats row -->
     <div class="grid grid-cols-3 gap-px bg-border mb-10 fade-up">
       {[
-        { n: '3',   label: 'Live' },
+        { n: '4',   label: 'Live' },
         { n: '1',   label: 'In Progress' },
-        { n: '2',   label: 'Coming Soon' },
+        { n: '1',   label: 'Coming Soon' },
       ].map(({ n, label }) => (
         <div class="bg-surface px-4 py-3 text-center">
           <div class="font-digital text-accent" style="font-size:2rem;font-weight:700;line-height:1;text-shadow:0 0 12px #00d4ff55;">{n}</div>

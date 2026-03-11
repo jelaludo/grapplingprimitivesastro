@@ -83,8 +83,7 @@ async function findConceptFile (dir, id) {
 
 export default defineConfig({
   integrations: [tailwind()],
-  site: 'https://jelaludo.github.io',
-  base: '/grapplingprimitivesastro',
+  site: 'https://www.grapplingprimitives.com',
   markdown: {
     rehypePlugins: [rehypeObsidianImages],
   },

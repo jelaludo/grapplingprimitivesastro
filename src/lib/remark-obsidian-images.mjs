@@ -10,7 +10,7 @@ export default function rehypeObsidianImages() {
         node.value = node.value.replace(
           /!\[\[(.+?\.(png|jpg|jpeg|gif|webp))\]\]/gi,
           (_, filename) =>
-            `<img src="/grapplingprimitivesastro/images/articles/${filename}" alt="${filename}" />`
+            `<img src="/images/articles/${filename}" alt="${filename}" />`
         );
       }
     });
