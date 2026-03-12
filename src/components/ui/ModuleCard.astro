@@ -1,13 +1,28 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
+
 interface Props {
   title: string;
   description: string;
   href: string;
   status?: 'live' | 'wip' | 'soon';
   tag?: string;
+  thumb?: string;
+  featured?: boolean;
 }
 
-const { title, description, href, status = 'live', tag } = Astro.props;
+const { title, description, href, status = 'live', tag, thumb: thumbProp, featured = false } = Astro.props;
+
+// Only use thumb if the file actually exists on disk
+let thumb: string | undefined;
+if (thumbProp) {
+  const publicDir = path.resolve(process.cwd(), 'public');
+  const thumbPath = path.join(publicDir, thumbProp.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), ''));
+  if (fs.existsSync(thumbPath)) {
+    thumb = thumbProp;
+  }
+}
 
 const statusLabel: Record<string, string> = {
   live:  'LIVE',
@@ -15,39 +30,94 @@ const statusLabel: Record<string, string> = {
   soon:  'COMING SOON',
 };
 const statusColor: Record<string, string> = {
-  live:  'text-accent border-accent/30',
-  wip:   'text-accent-soft border-accent-soft/30',
-  soon:  'text-text-dim border-border',
+  live:  'bg-accent/20 text-accent border-accent/40',
+  wip:   'bg-accent-soft/20 text-accent-soft border-accent-soft/40',
+  soon:  'bg-surface text-text-dim border-border',
 };
+
+const gradientSeeds: Record<string, [string, string]> = {
+  'Concept Matrix':           ['#1a1040', '#0a1628'],
+  'QuadTree Map':             ['#0a1628', '#1a1040'],
+  'Flash Cards':              ['#0d1117', '#161b22'],
+  'Skill Assessment':         ['#0f1923', '#0a1628'],
+  'Games Hub':                ['#1a0a28', '#0a1628'],
+  'BJJ Wordle':               ['#0a281a', '#0d1117'],
+  'Articles':                 ['#1a1510', '#0d1117'],
+  'Visual Notes':             ['#281a0a', '#1a1040'],
+  'GIF Training':             ['#0d1117', '#0a281a'],
+  'Weight Classes':           ['#0f1923', '#0d1117'],
+  'Belt Dropout':             ['#28140a', '#1a1040'],
+  'Beyond Offense & Defense': ['#0a1628', '#0f1923'],
+  'Training Partners':        ['#1a1040', '#28140a'],
+  'Ideal Training Partner':   ['#0a281a', '#1a1040'],
+  'Grappling Timer':          ['#0d1117', '#0f1923'],
+  'BJJ Pricing':              ['#1a1510', '#0f1923'],
+  'Breathing Cycles':         ['#0a1628', '#0a281a'],
+};
+const [gradFrom, gradTo] = gradientSeeds[title] || ['#0d1117', '#161b22'];
+const isDisabled = status !== 'live';
 ---
 
 <a
-  href={status === 'live' ? href : '#'}
+  href={isDisabled ? '#' : href}
   class:list={[
-    'block p-5 border border-border bg-surface rounded-sm',
-    'hover:border-accent/40 hover:bg-[#0E1014] transition-all duration-200',
+    'block border border-border bg-surface rounded-sm',
     'group relative overflow-hidden fade-up',
-    status !== 'live' && 'opacity-50 pointer-events-none',
+    'transition-all duration-200',
+    isDisabled
+      ? 'opacity-45 pointer-events-none'
+      : 'hover:border-accent/40 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(76,141,255,0.12)]',
   ]}
 >
-  <!-- subtle left accent bar -->
-  <div class="absolute left-0 top-0 bottom-0 w-[2px] bg-accent opacity-0 group-hover:opacity-100 transition-opacity" />
+  <!-- Thumbnail area -->
+  <div class:list={[
+    'relative w-full overflow-hidden',
+    featured ? 'aspect-[21/9]' : 'aspect-[16/10]',
+  ]}>
+    {thumb ? (
+      <img
+        src={thumb}
+        alt={`${title} preview`}
+        loading={featured ? 'eager' : 'lazy'}
+        decoding="async"
+        class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+      />
+    ) : (
+      <div
+        class="w-full h-full flex items-center justify-center"
+        style={`background:linear-gradient(135deg,${gradFrom},${gradTo})`}
+      >
+        <div class="absolute inset-0 opacity-[0.03]" style="background-image:url('data:image/svg+xml,%3Csvg width=&quot;40&quot; height=&quot;40&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cpath d=&quot;M0 0h40v40H0z&quot; fill=&quot;none&quot;/%3E%3Cpath d=&quot;M0 40L40 0&quot; stroke=&quot;%23fff&quot; stroke-width=&quot;0.5&quot;/%3E%3C/svg%3E');background-size:40px 40px;" />
+        <span class="text-text-dim/50 text-xs tracking-[3px] uppercase font-mono select-none">{title}</span>
+      </div>
+    )}
 
-  <div class="flex items-start justify-between gap-3 mb-2">
-    <h3 class="text-sm font-bold tracking-wide text-text-primary group-hover:text-accent transition-colors">
-      {title}
-    </h3>
-    <div class="flex items-center gap-2 flex-shrink-0">
+    <!-- Status badge (top-right over thumbnail) -->
+    <span class:list={[
+      'absolute top-2 right-2 text-[9px] tracking-[2px] border px-1.5 py-0.5 backdrop-blur-sm',
+      statusColor[status],
+    ]}>
+      {statusLabel[status]}
+    </span>
+
+    <!-- Disabled overlay -->
+    {isDisabled && (
+      <div class="absolute inset-0 bg-bg/50" />
+    )}
+  </div>
+
+  <!-- Info bar -->
+  <div class="px-4 py-3">
+    <div class="flex items-center justify-between gap-2 mb-1">
+      <h3 class="text-sm font-bold tracking-wide text-text-primary group-hover:text-accent transition-colors truncate">
+        {title}
+      </h3>
       {tag && (
-        <span class="text-[9px] tracking-[2px] text-text-dim border border-border px-1.5 py-0.5">
+        <span class="text-[9px] tracking-[2px] text-text-dim border border-border px-1.5 py-0.5 flex-shrink-0">
           {tag}
         </span>
       )}
-      <span class:list={['text-[9px] tracking-[2px] border px-1.5 py-0.5', statusColor[status]]}>
-        {statusLabel[status]}
-      </span>
     </div>
+    <p class="text-xs text-text-muted leading-relaxed line-clamp-1">{description}</p>
   </div>
-
-  <p class="text-xs text-text-muted leading-relaxed">{description}</p>
 </a>

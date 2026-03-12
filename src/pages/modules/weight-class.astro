@@ -193,151 +193,149 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <script>
     (function () {
       // =====================================================================
-      // CORRECTED IBJJF DATA (from weight-class-data-corrected.tsx)
-      // Weights in lbs. Gi includes gi weight. No-Gi is body weight only.
+      // All data stored as maxKg thresholds. Lookup: first class where
+      // weight <= maxKg. No min/max pairs, no gaps, no float-conversion bugs.
+      //
+      // IBJJF kg values are authoritative (official rulebook).
+      // ADCC in kg. WNO stored as maxLbs (converted to kg for lookup).
       // =====================================================================
+
+      const KG_TO_LBS = 2.20462;
+      const LBS_TO_KG = 0.453592;
+
+      // IBJJF — maxKg is the upper limit for that class
+      // Gi includes gi weight (~2 kg). No-Gi is body weight only.
       const ibjjf = {
         male: {
-          juvenile: {
-            gi: [
-              { name: 'Rooster', min: 0, max: 118, portuguese: 'Galo' },
-              { name: 'Light Feather', min: 118.1, max: 129, portuguese: 'Pluma' },
-              { name: 'Feather', min: 129.1, max: 141, portuguese: 'Pena' },
-              { name: 'Light', min: 141.1, max: 152, portuguese: 'Leve' },
-              { name: 'Middle', min: 152.1, max: 163, portuguese: 'Medio' },
-              { name: 'Medium Heavy', min: 163.1, max: 175, portuguese: 'Meio-Pesado' },
-              { name: 'Heavy', min: 175.1, max: 186, portuguese: 'Pesado' },
-              { name: 'Super Heavy', min: 186.1, max: 197, portuguese: 'Super Pesado' },
-              { name: 'Ultra Heavy', min: 197.1, max: 999, portuguese: 'Pesadissimo' },
-            ],
-            nogi: [
-              { name: 'Rooster', min: 0, max: 114, portuguese: 'Galo' },
-              { name: 'Light Feather', min: 114.1, max: 125, portuguese: 'Pluma' },
-              { name: 'Feather', min: 125.1, max: 136, portuguese: 'Pena' },
-              { name: 'Light', min: 136.1, max: 147, portuguese: 'Leve' },
-              { name: 'Middle', min: 147.1, max: 158, portuguese: 'Medio' },
-              { name: 'Medium Heavy', min: 158.1, max: 169, portuguese: 'Meio-Pesado' },
-              { name: 'Heavy', min: 169.1, max: 180, portuguese: 'Pesado' },
-              { name: 'Super Heavy', min: 180.1, max: 191, portuguese: 'Super Pesado' },
-              { name: 'Ultra Heavy', min: 191.1, max: 999, portuguese: 'Pesadissimo' },
-            ],
-          },
           adult: {
             gi: [
-              { name: 'Rooster', min: 0, max: 127, portuguese: 'Galo' },
-              { name: 'Light Feather', min: 127.1, max: 141, portuguese: 'Pluma' },
-              { name: 'Feather', min: 141.1, max: 154, portuguese: 'Pena' },
-              { name: 'Light', min: 154.1, max: 167.5, portuguese: 'Leve' },
-              { name: 'Middle', min: 167.6, max: 181, portuguese: 'Medio' },
-              { name: 'Medium Heavy', min: 181.1, max: 194.5, portuguese: 'Meio-Pesado' },
-              { name: 'Heavy', min: 194.6, max: 207.5, portuguese: 'Pesado' },
-              { name: 'Super Heavy', min: 207.6, max: 221, portuguese: 'Super Pesado' },
-              { name: 'Ultra Heavy', min: 221.1, max: 999, portuguese: 'Pesadissimo' },
+              { name: 'Rooster',      maxKg: 57.50, portuguese: 'Galo' },
+              { name: 'Light Feather', maxKg: 64.00, portuguese: 'Pluma' },
+              { name: 'Feather',       maxKg: 70.00, portuguese: 'Pena' },
+              { name: 'Light',         maxKg: 76.00, portuguese: 'Leve' },
+              { name: 'Middle',        maxKg: 82.30, portuguese: 'Médio' },
+              { name: 'Medium Heavy',  maxKg: 88.30, portuguese: 'Meio-Pesado' },
+              { name: 'Heavy',         maxKg: 94.30, portuguese: 'Pesado' },
+              { name: 'Super Heavy',   maxKg: 100.50, portuguese: 'Super Pesado' },
+              { name: 'Ultra Heavy',   maxKg: Infinity, portuguese: 'Pesadíssimo' },
             ],
             nogi: [
-              { name: 'Rooster', min: 0, max: 122.5, portuguese: 'Galo' },
-              { name: 'Light Feather', min: 122.6, max: 135.5, portuguese: 'Pluma' },
-              { name: 'Feather', min: 135.6, max: 148.5, portuguese: 'Pena' },
-              { name: 'Light', min: 148.6, max: 162, portuguese: 'Leve' },
-              { name: 'Middle', min: 162.1, max: 175.5, portuguese: 'Medio' },
-              { name: 'Medium Heavy', min: 175.6, max: 188.5, portuguese: 'Meio-Pesado' },
-              { name: 'Heavy', min: 188.6, max: 201.5, portuguese: 'Pesado' },
-              { name: 'Super Heavy', min: 201.6, max: 215, portuguese: 'Super Pesado' },
-              { name: 'Ultra Heavy', min: 215.1, max: 999, portuguese: 'Pesadissimo' },
+              { name: 'Rooster',      maxKg: 55.50, portuguese: 'Galo' },
+              { name: 'Light Feather', maxKg: 61.50, portuguese: 'Pluma' },
+              { name: 'Feather',       maxKg: 67.50, portuguese: 'Pena' },
+              { name: 'Light',         maxKg: 73.50, portuguese: 'Leve' },
+              { name: 'Middle',        maxKg: 79.50, portuguese: 'Médio' },
+              { name: 'Medium Heavy',  maxKg: 85.50, portuguese: 'Meio-Pesado' },
+              { name: 'Heavy',         maxKg: 91.50, portuguese: 'Pesado' },
+              { name: 'Super Heavy',   maxKg: 97.50, portuguese: 'Super Pesado' },
+              { name: 'Ultra Heavy',   maxKg: Infinity, portuguese: 'Pesadíssimo' },
+            ],
+          },
+          juvenile: {
+            gi: [
+              { name: 'Rooster',      maxKg: 53.50, portuguese: 'Galo' },
+              { name: 'Light Feather', maxKg: 58.50, portuguese: 'Pluma' },
+              { name: 'Feather',       maxKg: 64.00, portuguese: 'Pena' },
+              { name: 'Light',         maxKg: 69.00, portuguese: 'Leve' },
+              { name: 'Middle',        maxKg: 74.00, portuguese: 'Médio' },
+              { name: 'Medium Heavy',  maxKg: 79.50, portuguese: 'Meio-Pesado' },
+              { name: 'Heavy',         maxKg: 84.50, portuguese: 'Pesado' },
+              { name: 'Super Heavy',   maxKg: 89.50, portuguese: 'Super Pesado' },
+              { name: 'Ultra Heavy',   maxKg: Infinity, portuguese: 'Pesadíssimo' },
+            ],
+            nogi: [
+              { name: 'Rooster',      maxKg: 51.50, portuguese: 'Galo' },
+              { name: 'Light Feather', maxKg: 56.50, portuguese: 'Pluma' },
+              { name: 'Feather',       maxKg: 61.50, portuguese: 'Pena' },
+              { name: 'Light',         maxKg: 66.50, portuguese: 'Leve' },
+              { name: 'Middle',        maxKg: 71.50, portuguese: 'Médio' },
+              { name: 'Medium Heavy',  maxKg: 76.50, portuguese: 'Meio-Pesado' },
+              { name: 'Heavy',         maxKg: 81.50, portuguese: 'Pesado' },
+              { name: 'Super Heavy',   maxKg: 86.50, portuguese: 'Super Pesado' },
+              { name: 'Ultra Heavy',   maxKg: Infinity, portuguese: 'Pesadíssimo' },
             ],
           },
         },
         female: {
-          juvenile: {
-            gi: [
-              { name: 'Rooster', min: 0, max: 98, portuguese: 'Galo' },
-              { name: 'Light Feather', min: 98.1, max: 106.5, portuguese: 'Pluma' },
-              { name: 'Feather', min: 106.6, max: 116, portuguese: 'Pena' },
-              { name: 'Light', min: 116.1, max: 125, portuguese: 'Leve' },
-              { name: 'Middle', min: 125.1, max: 133.5, portuguese: 'Medio' },
-              { name: 'Medium Heavy', min: 133.6, max: 143, portuguese: 'Meio-Pesado' },
-              { name: 'Heavy', min: 143.1, max: 999, portuguese: 'Pesado' },
-            ],
-            nogi: [
-              { name: 'Rooster', min: 0, max: 94, portuguese: 'Galo' },
-              { name: 'Light Feather', min: 94.1, max: 103, portuguese: 'Pluma' },
-              { name: 'Feather', min: 103.1, max: 111, portuguese: 'Pena' },
-              { name: 'Light', min: 111.1, max: 120, portuguese: 'Leve' },
-              { name: 'Middle', min: 120.1, max: 129, portuguese: 'Medio' },
-              { name: 'Medium Heavy', min: 129.1, max: 138, portuguese: 'Meio-Pesado' },
-              { name: 'Heavy', min: 138.1, max: 147, portuguese: 'Pesado' },
-              { name: 'Super Heavy', min: 147.1, max: 999, portuguese: 'Super Pesado' },
-            ],
-          },
           adult: {
             gi: [
-              { name: 'Rooster', min: 0, max: 107, portuguese: 'Galo' },
-              { name: 'Light Feather', min: 107.1, max: 118, portuguese: 'Pluma' },
-              { name: 'Feather', min: 118.1, max: 129, portuguese: 'Pena' },
-              { name: 'Light', min: 129.1, max: 141, portuguese: 'Leve' },
-              { name: 'Middle', min: 141.1, max: 152, portuguese: 'Medio' },
-              { name: 'Medium Heavy', min: 152.1, max: 163, portuguese: 'Meio-Pesado' },
-              { name: 'Heavy', min: 163.1, max: 999, portuguese: 'Pesado' },
+              { name: 'Rooster',      maxKg: 48.50, portuguese: 'Galo' },
+              { name: 'Light Feather', maxKg: 53.50, portuguese: 'Pluma' },
+              { name: 'Feather',       maxKg: 58.50, portuguese: 'Pena' },
+              { name: 'Light',         maxKg: 64.00, portuguese: 'Leve' },
+              { name: 'Middle',        maxKg: 69.00, portuguese: 'Médio' },
+              { name: 'Medium Heavy',  maxKg: 74.00, portuguese: 'Meio-Pesado' },
+              { name: 'Heavy',         maxKg: Infinity, portuguese: 'Pesado' },
             ],
             nogi: [
-              { name: 'Rooster', min: 0, max: 107, portuguese: 'Galo' },
-              { name: 'Light Feather', min: 107.1, max: 118, portuguese: 'Pluma' },
-              { name: 'Feather', min: 118.1, max: 129, portuguese: 'Pena' },
-              { name: 'Light', min: 129.1, max: 141, portuguese: 'Leve' },
-              { name: 'Middle', min: 141.1, max: 152, portuguese: 'Medio' },
-              { name: 'Medium Heavy', min: 152.1, max: 163, portuguese: 'Meio-Pesado' },
-              { name: 'Heavy', min: 163.1, max: 999, portuguese: 'Pesado' },
+              { name: 'Rooster',      maxKg: 46.50, portuguese: 'Galo' },
+              { name: 'Light Feather', maxKg: 51.50, portuguese: 'Pluma' },
+              { name: 'Feather',       maxKg: 56.50, portuguese: 'Pena' },
+              { name: 'Light',         maxKg: 62.00, portuguese: 'Leve' },
+              { name: 'Middle',        maxKg: 67.00, portuguese: 'Médio' },
+              { name: 'Medium Heavy',  maxKg: 72.00, portuguese: 'Meio-Pesado' },
+              { name: 'Heavy',         maxKg: Infinity, portuguese: 'Pesado' },
+            ],
+          },
+          juvenile: {
+            gi: [
+              { name: 'Rooster',      maxKg: 44.50, portuguese: 'Galo' },
+              { name: 'Light Feather', maxKg: 48.50, portuguese: 'Pluma' },
+              { name: 'Feather',       maxKg: 52.50, portuguese: 'Pena' },
+              { name: 'Light',         maxKg: 56.50, portuguese: 'Leve' },
+              { name: 'Middle',        maxKg: 60.50, portuguese: 'Médio' },
+              { name: 'Medium Heavy',  maxKg: 65.00, portuguese: 'Meio-Pesado' },
+              { name: 'Heavy',         maxKg: Infinity, portuguese: 'Pesado' },
+            ],
+            nogi: [
+              { name: 'Rooster',      maxKg: 42.50, portuguese: 'Galo' },
+              { name: 'Light Feather', maxKg: 46.50, portuguese: 'Pluma' },
+              { name: 'Feather',       maxKg: 50.50, portuguese: 'Pena' },
+              { name: 'Light',         maxKg: 54.50, portuguese: 'Leve' },
+              { name: 'Middle',        maxKg: 58.50, portuguese: 'Médio' },
+              { name: 'Medium Heavy',  maxKg: 62.50, portuguese: 'Meio-Pesado' },
+              { name: 'Heavy',         maxKg: 66.50, portuguese: 'Pesado' },
+              { name: 'Super Heavy',   maxKg: Infinity, portuguese: 'Super Pesado' },
             ],
           },
         },
       };
 
-      // =====================================================================
-      // ADCC — kg primary, converted to lbs for lookup
-      // Men: 66 / 77 / 88 / 99 / +99 kg
-      // Women: 60 / +60 kg
-      // =====================================================================
+      // ADCC — kg only (men: 66/77/88/99/+99, women: 60/+60)
       const adcc = {
         male: [
-          { name: '-66 kg', maxKg: 66, min: 0, max: 145.5 },
-          { name: '-77 kg', maxKg: 77, min: 145.6, max: 169.8 },
-          { name: '-88 kg', maxKg: 88, min: 169.9, max: 194 },
-          { name: '-99 kg', maxKg: 99, min: 194.1, max: 218.3 },
-          { name: '+99 kg', maxKg: 999, min: 218.4, max: 999 },
+          { name: '-66 kg',  maxKg: 66 },
+          { name: '-77 kg',  maxKg: 77 },
+          { name: '-88 kg',  maxKg: 88 },
+          { name: '-99 kg',  maxKg: 99 },
+          { name: '+99 kg',  maxKg: Infinity },
         ],
         female: [
-          { name: '-60 kg', maxKg: 60, min: 0, max: 132.3 },
-          { name: '+60 kg', maxKg: 999, min: 132.4, max: 999 },
+          { name: '-60 kg',  maxKg: 60 },
+          { name: '+60 kg',  maxKg: Infinity },
         ],
       };
 
-      // =====================================================================
-      // WNO (Who's Number One) — lbs primary
-      // Men: 145 / 155 / 170 / 185 / 205 / 205+
-      // Women: 115 / 125 / 135 / 145 / 145+
-      // =====================================================================
+      // WNO — lbs only
       const wno = {
         male: [
-          { name: '145 lbs', min: 0, max: 145 },
-          { name: '155 lbs', min: 145.1, max: 155 },
-          { name: '170 lbs', min: 155.1, max: 170 },
-          { name: '185 lbs', min: 170.1, max: 185 },
-          { name: '205 lbs', min: 185.1, max: 205 },
-          { name: '205+ lbs', min: 205.1, max: 999 },
+          { name: '145 lbs',  maxLbs: 145 },
+          { name: '155 lbs',  maxLbs: 155 },
+          { name: '170 lbs',  maxLbs: 170 },
+          { name: '185 lbs',  maxLbs: 185 },
+          { name: '205 lbs',  maxLbs: 205 },
+          { name: '205+ lbs', maxLbs: Infinity },
         ],
         female: [
-          { name: '115 lbs', min: 0, max: 115 },
-          { name: '125 lbs', min: 115.1, max: 125 },
-          { name: '135 lbs', min: 125.1, max: 135 },
-          { name: '145 lbs', min: 135.1, max: 145 },
-          { name: '145+ lbs', min: 145.1, max: 999 },
+          { name: '115 lbs',  maxLbs: 115 },
+          { name: '125 lbs',  maxLbs: 125 },
+          { name: '135 lbs',  maxLbs: 135 },
+          { name: '145 lbs',  maxLbs: 145 },
+          { name: '145+ lbs', maxLbs: Infinity },
         ],
       };
 
-      // =====================================================================
-      // GI SIZES — corrected composite from Fuji / Tatami / Valor / BJJ.Tips
-      // Heights in cm, weights in kg
-      // =====================================================================
+      // Gi sizes — heights in cm, weights in kg
       const giSizes = {
         'A0':  { hMin: 152, hMax: 165, wMin: 43, wMax: 58 },
         'A1':  { hMin: 163, hMax: 173, wMin: 57, wMax: 70 },
@@ -374,10 +372,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
               const w = Number(weightSlider.value);
               if (val === 'kg') {
                 weightSlider.min = 45; weightSlider.max = 136; weightSlider.step = 0.5;
-                weightSlider.value = Math.round(w * 0.453592);
+                weightSlider.value = Math.round(w * LBS_TO_KG);
               } else {
                 weightSlider.min = 100; weightSlider.max = 300; weightSlider.step = 1;
-                weightSlider.value = Math.round(w * 2.20462);
+                weightSlider.value = Math.round(w * KG_TO_LBS);
               }
             }
           } else if (group === 'hunits') {
@@ -386,7 +384,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
             if (old !== val) {
               const h = Number(heightSlider.value);
               if (val === 'ft') {
-                heightSlider.min = 46; heightSlider.max = 69; heightSlider.step = 1;
+                heightSlider.min = 55; heightSlider.max = 83; heightSlider.step = 1;
                 heightSlider.value = Math.round(h / 2.54);
               } else {
                 heightSlider.min = 140; heightSlider.max = 210; heightSlider.step = 1;
@@ -403,33 +401,60 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       weightSlider.addEventListener('input', update);
       heightSlider.addEventListener('input', update);
 
-      function toLbs(w) { return state.units === 'lbs' ? w : w * 2.20462; }
-      function toKg(w) { return state.units === 'kg' ? w : w * 0.453592; }
-      function heightCm() { return state.hunits === 'cm' ? Number(heightSlider.value) : Number(heightSlider.value) * 2.54; }
-      function fmtLbs(v) { return v === 999 ? 'no limit' : v + ' lbs'; }
-      function fmtKg(v) { return v === 999 ? 'no limit' : Math.round(v * 0.453592 * 10) / 10 + ' kg'; }
-      function fmtKgDirect(v) { return v === 999 ? 'no limit' : v + ' kg'; }
+      // Convert slider value to kg (always)
+      function getWeightKg() {
+        const w = Number(weightSlider.value);
+        return state.units === 'kg' ? w : w * LBS_TO_KG;
+      }
+      function getWeightLbs() {
+        const w = Number(weightSlider.value);
+        return state.units === 'lbs' ? w : w * KG_TO_LBS;
+      }
+      function heightCm() {
+        return state.hunits === 'cm' ? Number(heightSlider.value) : Number(heightSlider.value) * 2.54;
+      }
+
+      // Simple lookup: first class where weight <= maxKg
+      function findClassKg(classes, weightKg) {
+        return classes.find(c => weightKg <= c.maxKg) || classes[classes.length - 1];
+      }
+      function findClassLbs(classes, weightLbs) {
+        return classes.find(c => weightLbs <= c.maxLbs) || classes[classes.length - 1];
+      }
+
+      // Formatting helpers
+      function fmtKg(kg) { return !isFinite(kg) ? 'no limit' : kg + ' kg'; }
+      function fmtLbs(kg) { return !isFinite(kg) ? 'no limit' : Math.round(kg * KG_TO_LBS * 10) / 10 + ' lbs'; }
+      function fmtLbsDirect(lbs) { return !isFinite(lbs) ? 'no limit' : lbs + ' lbs'; }
+      function fmtKgFromLbs(lbs) { return !isFinite(lbs) ? 'no limit' : Math.round(lbs * LBS_TO_KG * 10) / 10 + ' kg'; }
       function inchesToFtIn(inches) {
         const ft = Math.floor(inches / 12);
         const rem = inches % 12;
         return ft + "'" + rem + '"';
       }
 
-      function findClass(classes, weightLbs) {
-        return classes.find(c => weightLbs >= c.min && weightLbs <= c.max) || classes[classes.length - 1];
+      // Range string: "prev.maxKg – this.maxKg" (or "0 – maxKg" for first)
+      function rangeStrKg(classes, idx) {
+        const cls = classes[idx];
+        const prevMax = idx > 0 ? classes[idx - 1].maxKg : 0;
+        const lo = prevMax > 0 ? '>' + fmtKg(prevMax) : '0';
+        const hi = fmtKg(cls.maxKg);
+        return lo + '  –  ' + hi;
       }
 
       function update() {
         const w = Number(weightSlider.value);
-        const weightLbs = toLbs(w);
-        const weightKg = toKg(w);
+        const weightKg = getWeightKg();
+        const weightLbs = getWeightLbs();
         const hCm = heightCm();
 
         // Weight display
-        const wDisp = document.getElementById('weight-display');
         const u = state.units;
-        const altW = u === 'lbs' ? Math.round(w * 0.453592) + ' kg' : Math.round(w * 2.20462) + ' lbs';
-        wDisp.innerHTML = w + ' ' + u + ' <span class="text-xs font-normal text-text-dim">(' + altW + ')</span>';
+        const altW = u === 'lbs'
+          ? Math.round(w * LBS_TO_KG * 10) / 10 + ' kg'
+          : Math.round(w * KG_TO_LBS) + ' lbs';
+        document.getElementById('weight-display').innerHTML =
+          w + ' ' + u + ' <span class="text-xs font-normal text-text-dim">(' + altW + ')</span>';
         document.getElementById('weight-min-label').textContent = weightSlider.min + ' ' + u;
         document.getElementById('weight-max-label').textContent = weightSlider.max + ' ' + u;
 
@@ -452,20 +477,21 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           giSection.classList.remove('hidden');
 
           const classes = ibjjf[state.gender][state.age];
-          const gi = findClass(classes.gi, weightLbs);
-          const nogi = findClass(classes.nogi, weightLbs);
+          const gi = findClassKg(classes.gi, weightKg);
+          const nogi = findClassKg(classes.nogi, weightKg);
+          const giIdx = classes.gi.indexOf(gi);
+          const nogiIdx = classes.nogi.indexOf(nogi);
 
           document.getElementById('gi-name').textContent = gi.name;
           document.getElementById('gi-portuguese').textContent = '(' + gi.portuguese + ')';
           document.getElementById('gi-range').textContent =
-            fmtLbs(gi.min) + ' - ' + fmtLbs(gi.max) + '  (' + fmtKg(gi.min) + ' - ' + fmtKg(gi.max) + ')  — gi weight included';
+            rangeStrKg(classes.gi, giIdx) + '  (' + fmtLbs(gi.maxKg) + ')  — gi weight included';
 
           document.getElementById('nogi-name').textContent = nogi.name;
           document.getElementById('nogi-portuguese').textContent = '(' + nogi.portuguese + ')';
           document.getElementById('nogi-range').textContent =
-            fmtLbs(nogi.min) + ' - ' + fmtLbs(nogi.max) + '  (' + fmtKg(nogi.min) + ' - ' + fmtKg(nogi.max) + ')';
+            rangeStrKg(classes.nogi, nogiIdx) + '  (' + fmtLbs(nogi.maxKg) + ')';
 
-          // All classes table
           renderTable(classes);
 
         } else if (state.org === 'adcc') {
@@ -474,15 +500,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           giSection.classList.add('hidden');
 
           const classes = adcc[state.gender];
-          const cls = findClass(classes, weightLbs);
+          const cls = findClassKg(classes, weightKg);
           document.getElementById('single-org-label').textContent = 'ADCC Division (No-Gi only)';
           document.getElementById('single-name').textContent = cls.name;
-          const kgMax = cls.maxKg === 999 ? 'no limit' : cls.maxKg + ' kg';
-          const lbsMax = cls.max === 999 ? 'no limit' : Math.round(cls.max) + ' lbs';
-          document.getElementById('single-range').textContent = kgMax + '  (' + lbsMax + ')';
+          document.getElementById('single-range').textContent = fmtKg(cls.maxKg) + '  (' + fmtLbs(cls.maxKg) + ')';
           document.getElementById('single-note').textContent = 'Abu Dhabi Combat Club — biennial worlds, most prestigious no-gi event. Weigh-in in kg.';
 
-          renderTableSimple(classes, 'ADCC', true);
+          renderTableSimpleKg(classes, 'ADCC');
 
         } else if (state.org === 'wno') {
           resultsGrid.classList.add('hidden');
@@ -490,15 +514,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           giSection.classList.add('hidden');
 
           const classes = wno[state.gender];
-          const cls = findClass(classes, weightLbs);
+          const cls = findClassLbs(classes, weightLbs);
           document.getElementById('single-org-label').textContent = 'WNO Division (No-Gi only)';
           document.getElementById('single-name').textContent = cls.name;
-          const lbsMax = cls.max === 999 ? 'no limit' : cls.max + ' lbs';
-          const kgMax = cls.max === 999 ? 'no limit' : Math.round(cls.max * 0.453592) + ' kg';
-          document.getElementById('single-range').textContent = lbsMax + '  (' + kgMax + ')';
+          document.getElementById('single-range').textContent = fmtLbsDirect(cls.maxLbs) + '  (' + fmtKgFromLbs(cls.maxLbs) + ')';
           document.getElementById('single-note').textContent = "Who's Number One — FloGrappling's pro no-gi series. Weigh-in in lbs.";
 
-          renderTableSimple(classes, 'WNO', false);
+          renderTableSimpleLbs(classes, 'WNO');
         }
 
         // Gi sizes
@@ -533,8 +555,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         const el = document.getElementById('all-classes-table');
         let html = '<table class="w-full text-[10px] mt-3"><thead><tr class="text-text-dim text-left">' +
           '<th class="py-1 pr-3">Class</th><th class="py-1 pr-3">Portuguese</th>' +
-          '<th class="py-1 pr-3">Gi (lbs)</th><th class="py-1 pr-3">Gi (kg)</th>' +
-          '<th class="py-1 pr-3">No-Gi (lbs)</th><th class="py-1">No-Gi (kg)</th></tr></thead><tbody>';
+          '<th class="py-1 pr-3">Gi max (kg)</th><th class="py-1 pr-3">Gi max (lbs)</th>' +
+          '<th class="py-1 pr-3">No-Gi max (kg)</th><th class="py-1">No-Gi max (lbs)</th></tr></thead><tbody>';
 
         const maxLen = Math.max(classes.gi.length, classes.nogi.length);
         for (let i = 0; i < maxLen; i++) {
@@ -545,30 +567,39 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           html += '<tr class="border-t border-border/30 text-text-muted">' +
             '<td class="py-1.5 pr-3 text-text-primary font-bold">' + name + '</td>' +
             '<td class="py-1.5 pr-3 italic">' + port + '</td>' +
-            '<td class="py-1.5 pr-3">' + (g ? fmtLbs(g.max) : '-') + '</td>' +
-            '<td class="py-1.5 pr-3">' + (g ? fmtKg(g.max) : '-') + '</td>' +
-            '<td class="py-1.5 pr-3">' + (n ? fmtLbs(n.max) : '-') + '</td>' +
-            '<td class="py-1.5">' + (n ? fmtKg(n.max) : '-') + '</td>' +
+            '<td class="py-1.5 pr-3">' + (g ? fmtKg(g.maxKg) : '-') + '</td>' +
+            '<td class="py-1.5 pr-3">' + (g ? fmtLbs(g.maxKg) : '-') + '</td>' +
+            '<td class="py-1.5 pr-3">' + (n ? fmtKg(n.maxKg) : '-') + '</td>' +
+            '<td class="py-1.5">' + (n ? fmtLbs(n.maxKg) : '-') + '</td>' +
             '</tr>';
         }
         html += '</tbody></table>';
         el.innerHTML = html;
       }
 
-      function renderTableSimple(classes, orgName, isKgPrimary) {
+      function renderTableSimpleKg(classes) {
         const el = document.getElementById('all-classes-table');
         let html = '<table class="w-full text-[10px] mt-3"><thead><tr class="text-text-dim text-left">' +
           '<th class="py-1 pr-3">Class</th><th class="py-1 pr-3">Max (kg)</th><th class="py-1">Max (lbs)</th></tr></thead><tbody>';
-
         for (const c of classes) {
-          const kgVal = isKgPrimary
-            ? (c.maxKg === 999 ? 'no limit' : c.maxKg + ' kg')
-            : (c.max === 999 ? 'no limit' : Math.round(c.max * 0.453592) + ' kg');
-          const lbsVal = c.max === 999 ? 'no limit' : Math.round(isKgPrimary ? c.max : c.max) + ' lbs';
           html += '<tr class="border-t border-border/30 text-text-muted">' +
             '<td class="py-1.5 pr-3 text-text-primary font-bold">' + c.name + '</td>' +
-            '<td class="py-1.5 pr-3">' + kgVal + '</td>' +
-            '<td class="py-1.5">' + lbsVal + '</td></tr>';
+            '<td class="py-1.5 pr-3">' + fmtKg(c.maxKg) + '</td>' +
+            '<td class="py-1.5">' + fmtLbs(c.maxKg) + '</td></tr>';
+        }
+        html += '</tbody></table>';
+        el.innerHTML = html;
+      }
+
+      function renderTableSimpleLbs(classes) {
+        const el = document.getElementById('all-classes-table');
+        let html = '<table class="w-full text-[10px] mt-3"><thead><tr class="text-text-dim text-left">' +
+          '<th class="py-1 pr-3">Class</th><th class="py-1 pr-3">Max (lbs)</th><th class="py-1">Max (kg)</th></tr></thead><tbody>';
+        for (const c of classes) {
+          html += '<tr class="border-t border-border/30 text-text-muted">' +
+            '<td class="py-1.5 pr-3 text-text-primary font-bold">' + c.name + '</td>' +
+            '<td class="py-1.5 pr-3">' + fmtLbsDirect(c.maxLbs) + '</td>' +
+            '<td class="py-1.5">' + fmtKgFromLbs(c.maxLbs) + '</td></tr>';
         }
         html += '</tbody></table>';
         el.innerHTML = html;

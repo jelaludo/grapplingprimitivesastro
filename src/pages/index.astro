@@ -10,131 +10,185 @@ const allCategories = await getCollection('categories');
 const conceptCount = allConcepts.length;
 const categoryCount = allCategories.length;
 
-const modules = [
+const thumbBase = `${base}/images/thumbs`;
+
+const sections = [
   {
-    title: 'Concept Matrix',
-    description: 'All grappling concepts mapped on a 2×2 grid (Self↔Opponent × Mental↔Physical). Hover, click into categories, zoom.',
-    href: `${base}/modules/matrix`,
-    status: 'live' as const,
-    tag: 'INTERACTIVE',
+    id: 'featured',
+    label: 'FEATURED',
+    featured: true,
+    modules: [
+      {
+        title: 'Ideal Training Partner',
+        description: 'An interactive essay on training intensity, mismatch danger, and ego drift. With watercolor illustrations.',
+        href: `${base}/modules/ideal-partner`,
+        status: 'live' as const,
+        tag: 'INTERACTIVE',
+        thumb: `${thumbBase}/ideal-partner.webp`,
+      },
+      {
+        title: 'QuadTree Map',
+        description: '4-quadrant treemap: THE MAT · THE MIND · THE DOJO · THE PATH. Category boxes sized by concept count — click to zoom into any category.',
+        href: `${base}/modules/quadtree`,
+        status: 'live' as const,
+        tag: 'INTERACTIVE',
+        thumb: `${thumbBase}/quadtree.webp`,
+      },
+    ],
   },
   {
-    title: 'QuadTree Map',
-    description: '4-quadrant treemap: THE MAT · THE MIND · THE DOJO · THE PATH. Category boxes sized by concept count — click to zoom into any category.',
-    href: `${base}/modules/quadtree`,
-    status: 'live' as const,
-    tag: 'INTERACTIVE',
+    id: 'learn',
+    label: 'LEARN',
+    modules: [
+      {
+        title: 'Beyond Offense & Defense',
+        description: "It's always the same: improve your relative position. Both players, simultaneously.",
+        href: `${base}/modules/beyond-offense-defense`,
+        status: 'live' as const,
+        tag: 'CONCEPTS',
+        thumb: `${thumbBase}/beyond-offense-defense.webp`,
+      },
+      {
+        title: 'Articles',
+        description: 'Long-form writings on grappling concepts, heuristics, training philosophy, and more. Sourced from the Obsidian vault.',
+        href: `${base}/modules/articles`,
+        status: 'live' as const,
+        tag: 'ARTICLES',
+        thumb: `${thumbBase}/articles.webp`,
+      },
+      {
+        title: 'Visual Notes',
+        description: 'Hand-drawn diagrams and sketches collected over years of training.',
+        href: `${base}/modules/visual-notes`,
+        status: 'live' as const,
+        tag: 'MEDIA',
+        thumb: `${thumbBase}/visual-notes.webp`,
+      },
+    ],
   },
   {
-    title: 'Flash Cards',
-    description: `Study and review all ${conceptCount} concepts with Anki-style flash cards. Filter by category, flip, stage for later.`,
-    href: `${base}/modules/cards`,
-    status: 'wip' as const,
-    tag: 'STUDY',
+    id: 'tools',
+    label: 'TOOLS',
+    modules: [
+      {
+        title: 'Skill Assessment',
+        description: 'Rate your confidence across 15 grappling areas — short (30q) or full (173q). Results as a bar chart.',
+        href: `${base}/modules/skill-check`,
+        status: 'live' as const,
+        tag: 'TOOLS',
+        thumb: `${thumbBase}/skill-check.webp`,
+      },
+      {
+        title: 'Grappling Timer',
+        description: 'Round timer with configurable duration, rest, and rounds. 3-2-1 countdown, beep cues, auto-cycle.',
+        href: `${base}/modules/timer`,
+        status: 'live' as const,
+        tag: 'TOOLS',
+        thumb: `${thumbBase}/timer.webp`,
+      },
+      {
+        title: 'Weight Classes',
+        description: 'Find your division across IBJJF (Gi & No-Gi), ADCC, and WNO. Includes kg/lbs conversion and gi size calculator.',
+        href: `${base}/modules/weight-class`,
+        status: 'live' as const,
+        tag: 'TOOLS',
+        thumb: `${thumbBase}/weight-class.webp`,
+      },
+      {
+        title: 'BJJ Pricing',
+        description: 'Monthly memberships and seminar fees worldwide — interactive maps, box plots, and currency conversion across US, UK, EU, Brazil, and Japan.',
+        href: `${base}/modules/pricing`,
+        status: 'live' as const,
+        tag: 'DATA',
+        thumb: `${thumbBase}/pricing.webp`,
+      },
+    ],
   },
   {
-    title: 'Skill Assessment',
-    description: 'Rate your confidence across 15 grappling areas — short (30q) or full (173q). Results as a bar chart.',
-    href: `${base}/modules/skill-check`,
-    status: 'live' as const,
-    tag: 'TOOLS',
+    id: 'play',
+    label: 'PLAY',
+    modules: [
+      {
+        title: 'Games Hub',
+        description: 'Gamified drills and decision tools: pressure scenarios, memory match, centroid estimation, and more.',
+        href: `${base}/modules/games`,
+        status: 'live' as const,
+        tag: 'GAMES',
+        thumb: `${thumbBase}/games.webp`,
+      },
+      {
+        title: 'BJJ Wordle',
+        description: 'Guess the grappling term in 6 tries. Supports 4-7 letter words in English, Japanese, and Portuguese.',
+        href: `${base}/modules/bjj-wordle`,
+        status: 'live' as const,
+        tag: 'GAMES',
+        thumb: `${thumbBase}/bjj-wordle.webp`,
+      },
+    ],
   },
   {
-    title: 'Games Hub',
-    description: 'Gamified drills and decision tools: pressure scenarios, memory match, centroid estimation, and more.',
-    href: `${base}/modules/games`,
-    status: 'live' as const,
-    tag: 'GAMES',
+    id: 'explore',
+    label: 'EXPLORE',
+    modules: [
+      {
+        title: 'Concept Matrix',
+        description: 'Concept Matrix (older viz, see Quadtree)',
+        href: `${base}/modules/matrix`,
+        status: 'live' as const,
+        tag: 'INTERACTIVE',
+        thumb: `${thumbBase}/matrix.webp`,
+      },
+      {
+        title: 'Training Partners',
+        description: 'Map the 10 archetypal training partners — from The Mentor to The Liability. Self-assess and find your closest match.',
+        href: `${base}/modules/training-partner`,
+        status: 'live' as const,
+        tag: 'TOOLS',
+        thumb: `${thumbBase}/training-partner.webp`,
+      },
+      {
+        title: 'Belt Dropout',
+        description: 'Visualize belt progression and dropout statistics in BJJ.',
+        href: `${base}/modules/belt-dropout`,
+        status: 'live' as const,
+        tag: 'DATA',
+        thumb: `${thumbBase}/belt-dropout.webp`,
+      },
+      {
+        title: 'Flash Cards',
+        description: `Study and review all ${conceptCount} concepts with Anki-style flash cards. Filter by category, flip, stage for later.`,
+        href: `${base}/modules/cards`,
+        status: 'wip' as const,
+        tag: 'STUDY',
+        thumb: `${thumbBase}/cards.webp`,
+      },
+    ],
   },
   {
-    title: 'BJJ Wordle',
-    description: 'Guess the grappling term in 6 tries. Supports 4-7 letter words in English, Japanese, and Portuguese.',
-    href: `${base}/modules/bjj-wordle`,
-    status: 'live' as const,
-    tag: 'GAMES',
-  },
-  {
-    title: 'Articles',
-    description: 'Long-form writings on grappling concepts, heuristics, training philosophy, and more. Sourced from the Obsidian vault.',
-    href: `${base}/modules/articles`,
-    status: 'live' as const,
-    tag: 'ARTICLES',
-  },
-  {
-    title: 'Visual Notes',
-    description: 'Hand-drawn diagrams and sketches collected over years of training.',
-    href: `${base}/modules/visual-notes`,
-    status: 'live' as const,
-    tag: 'MEDIA',
-  },
-  {
-    title: 'GIF Training',
-    description: '10+ years of technique GIFs as dynamic visual reminders.',
-    href: `${base}/modules/gif-training`,
-    status: 'soon' as const,
-    tag: 'MEDIA',
-  },
-  {
-    title: 'Weight Classes',
-    description: 'Find your division across IBJJF (Gi & No-Gi), ADCC, and WNO. Includes kg/lbs conversion and gi size calculator.',
-    href: `${base}/modules/weight-class`,
-    status: 'live' as const,
-    tag: 'TOOLS',
-  },
-  {
-    title: 'Belt Dropout',
-    description: 'Visualize belt progression and dropout statistics in BJJ.',
-    href: `${base}/modules/belt-dropout`,
-    status: 'live' as const,
-    tag: 'DATA',
-  },
-  {
-    title: 'Beyond Offense & Defense',
-    description: "It's always the same: improve your relative position. Both players, simultaneously.",
-    href: `${base}/modules/beyond-offense-defense`,
-    status: 'live' as const,
-    tag: 'CONCEPTS',
-  },
-  {
-    title: 'Training Partners',
-    description: 'Map the 10 archetypal training partners — from The Mentor to The Liability. Self-assess and find your closest match.',
-    href: `${base}/modules/training-partner`,
-    status: 'live' as const,
-    tag: 'TOOLS',
-  },
-  {
-    title: 'Ideal Training Partner',
-    description: 'An interactive essay on training intensity, mismatch danger, and ego drift. With watercolor illustrations.',
-    href: `${base}/modules/ideal-partner`,
-    status: 'live' as const,
-    tag: 'INTERACTIVE',
-  },
-  {
-    title: 'Grappling Timer',
-    description: 'Round timer with configurable duration, rest, and rounds. 3-2-1 countdown, beep cues, auto-cycle.',
-    href: `${base}/modules/timer`,
-    status: 'live' as const,
-    tag: 'TOOLS',
-  },
-  {
-    title: 'BJJ Pricing',
-    description: 'Monthly memberships and seminar fees worldwide — interactive maps, box plots, and currency conversion across US, UK, EU, Brazil, and Japan.',
-    href: `${base}/modules/pricing`,
-    status: 'live' as const,
-    tag: 'DATA',
-  },
-  {
-    title: 'Breathing Cycles',
-    description: 'Guided breathing exercises for pre/post training recovery.',
-    href: `${base}/modules/breathing`,
-    status: 'soon' as const,
-    tag: 'TOOLS',
+    id: 'coming-soon',
+    label: 'COMING SOON',
+    modules: [
+      {
+        title: 'GIF Training',
+        description: '10+ years of technique GIFs as dynamic visual reminders.',
+        href: `${base}/modules/gif-training`,
+        status: 'soon' as const,
+        tag: 'MEDIA',
+      },
+      {
+        title: 'Breathing Cycles',
+        description: 'Guided breathing exercises for pre/post training recovery.',
+        href: `${base}/modules/breathing`,
+        status: 'soon' as const,
+        tag: 'TOOLS',
+      },
+    ],
   },
 ];
 ---
 
 <BaseLayout title="Grappling Primitives">
-  <div class="max-w-4xl mx-auto px-4 py-12">
+  <div class="max-w-5xl mx-auto px-4 py-12">
 
     <!-- Header -->
     <div class="mb-12 fade-up">
@@ -143,22 +197,37 @@ const modules = [
         Grappling Primitives <span class="text-[#00ff41] text-2xl tracking-wide" style="text-shadow:0 0 16px rgba(0,255,65,0.5);">Work-in-Progress</span>
       </h1>
       <p class="text-sm text-text-muted max-w-xl leading-relaxed">
-        An interactive collection of <span class="text-accent font-semibold">{conceptCount}</span> concepts split into <span class="text-accent font-semibold">{categoryCount}</span> categories that an older black belt has accumulated over the years.
-        Through various visualizations I am trying to make sense of this complex passion of ours; grappling and pinning and escaping and counter-attacking and controlling and killing the space and submitting fellow enthusiasts.
+        A collection of thoughts over 12 years of training, organized into various visualizations.
+        The main dish is an interactive collection of <span class="text-accent font-semibold">{conceptCount}</span> concepts split into <span class="text-accent font-semibold">{categoryCount}</span> categories (<a href={`${base}/modules/quadtree`} class="text-accent underline hover:text-cyan transition-colors">Quadtree Map</a>) that this older black belt has accumulated from a starting point of <span class="italic">"there's gotta be more to BJJ than accumulating techniques!"</span> as a white belt.
+        I am trying to make sense of this passion of ours; grappling and pinning and escaping and counter-attacking and controlling and killing the space and submitting fellow enthusiasts.
         Still very much a WIP, some modules are dead-ends, others are R&D.
         <span class="italic text-text-dim">All models are wrong, some are useful. Same for modules I suppose.</span>
+        explore! ᕕ(ᐛ)ᕗ
       </p>
     </div>
 
-    <!-- Module grid -->
-    <div class="mb-4">
-      <p class="text-[9px] tracking-[3px] text-text-dim uppercase mb-4">Modules</p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {modules.map((m) => (
-          <ModuleCard {...m} />
-        ))}
-      </div>
-    </div>
+    <!-- Module sections -->
+    {sections.map((section) => (
+      <section class="mb-10">
+        <!-- Section header -->
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-[10px] tracking-[4px] text-text-dim uppercase font-mono flex-shrink-0">{section.label}</span>
+          <div class="flex-1 h-px bg-border" />
+        </div>
+
+        <!-- Grid -->
+        <div class:list={[
+          'grid gap-3',
+          section.featured
+            ? 'grid-cols-1 sm:grid-cols-2'
+            : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+        ]}>
+          {section.modules.map((m) => (
+            <ModuleCard {...m} featured={section.featured || false} />
+          ))}
+        </div>
+      </section>
+    ))}
 
   </div>
 

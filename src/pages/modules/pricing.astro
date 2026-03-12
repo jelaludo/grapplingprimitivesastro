@@ -24,6 +24,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       --accent: #2D3BCD;
       --accent-light: #EEF0FC;
       --accent-muted: #7B86E0;
+      --grid-line: #E5E2D9;
+      --grid-label: #C8C4BC;
+      --grid-divider: #D0CCC4;
       --font-display: 'Playfair Display', Georgia, serif;
       --font-body: 'IBM Plex Sans', system-ui, sans-serif;
       --font-mono: 'IBM Plex Mono', monospace;
@@ -35,6 +38,21 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       line-height: 1.6;
       min-height: 100vh;
       padding-top: 36px;
+    }
+
+    .pricing-page.dark {
+      --bg: #0A0A0F;
+      --surface: #12121A;
+      --border: #1E1E2A;
+      --text-primary: #E5E7EB;
+      --text-secondary: #9CA3AF;
+      --text-tertiary: #6B7280;
+      --accent: #6B7FFF;
+      --accent-light: #1A1A2E;
+      --accent-muted: #8B9AFF;
+      --grid-line: #1E1E2A;
+      --grid-label: #4B5563;
+      --grid-divider: #2A2A3A;
     }
 
     /* ── TOOLBAR ── */
@@ -269,17 +287,40 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     /* ── TOOLTIP ── */
     .pricing-tooltip {
-      position: fixed; background: var(--text-primary); color: white;
+      position: fixed; background: #1C1917; color: white;
       padding: 11px 15px; border-radius: 8px; font-size: 12px; line-height: 1.6;
       max-width: 260px; pointer-events: none; opacity: 0;
       transition: opacity 0.12s ease; z-index: 9999;
       box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .dark .pricing-tooltip {
+      background: #1E1E2A; border: 1px solid #2A2A3A;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
     .pricing-tooltip.visible { opacity: 1; }
     .tooltip-title { font-weight: 600; font-size: 12px; margin-bottom: 5px; }
     .tooltip-price { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: #93C5FD; margin-bottom: 5px; }
     .tooltip-examples { color: #D1D5DB; font-size: 11px; }
     .tooltip-example { display: block; padding: 1px 0; }
+
+    /* ── DARK SEMINAR OVERRIDES ── */
+    .dark .seminar-rank-badge,
+    .dark .seminar-tag {
+      filter: brightness(0.5) saturate(1.2);
+    }
+    .dark .boxplot-badge {
+      background: var(--accent-light) !important;
+      color: var(--accent) !important;
+    }
+
+    /* ── DARK MODE TOGGLE ── */
+    .theme-toggle {
+      font-family: inherit; font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 3px;
+      cursor: pointer; border: 1px solid #21262d; background: transparent;
+      color: #6b7280; transition: all 0.15s;
+    }
+    .theme-toggle:hover { border-color: rgba(0,212,255,0.4); color: #00d4ff; }
 
     /* ── FOOTER ── */
     .pricing-page footer {
@@ -302,6 +343,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <span class="sep">|</span>
     <span class="title">BJJ Pricing</span>
     <div style="flex:1;"></div>
+    <button id="btn-theme" class="theme-toggle" onclick="togglePricingTheme()">Dark</button>
     <button id="btn-deeplink" style="font-family:inherit;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)';this.style.color='#00d4ff'" onmouseout="if(this.textContent==='Link'){this.style.borderColor='#21262d';this.style.color='#6b7280'}">Link</button>
   </div>
 
@@ -831,31 +873,39 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   // ─────────────────────────────────────────────
   // MAP
   // ─────────────────────────────────────────────
+  function getThemeColor(varName) {
+    return getComputedStyle(document.querySelector('.pricing-page')).getPropertyValue(varName).trim();
+  }
+
   function buildMap() {
     var svg = d3.select('#region-map');
+    svg.selectAll('*').remove();
     var W = 900, H = 295;
+    var gridColor = getThemeColor('--grid-line');
+    var labelColor = getThemeColor('--grid-label');
+    var dividerColor = getThemeColor('--grid-divider');
 
     // Subtle grid
     var gridG = svg.append('g');
     for (var x = 0; x <= W; x += 60)
       gridG.append('line').attr('x1',x).attr('y1',0).attr('x2',x).attr('y2',H)
-        .attr('stroke','#E5E2D9').attr('stroke-width',0.5);
+        .attr('stroke',gridColor).attr('stroke-width',0.5);
     for (var y = 0; y <= H; y += 60)
       gridG.append('line').attr('x1',0).attr('y1',y).attr('x2',W).attr('y2',y)
-        .attr('stroke','#E5E2D9').attr('stroke-width',0.5);
+        .attr('stroke',gridColor).attr('stroke-width',0.5);
 
     // Continent area labels
     [{t:'AMERICAS',x:165},{t:'EUROPE',x:507},{t:'EAST ASIA',x:789}].forEach(function(l) {
       svg.append('text').text(l.t)
         .attr('x',l.x).attr('y',260)
-        .attr('fill','#C8C4BC').attr('font-size',8).attr('letter-spacing',3)
+        .attr('fill',labelColor).attr('font-size',8).attr('letter-spacing',3)
         .attr('font-family','IBM Plex Mono').attr('text-anchor','middle');
     });
 
     // Zone dividers
     [[328,18,328,248],[694,18,694,248]].forEach(function(c) {
       svg.append('line').attr('x1',c[0]).attr('y1',c[1]).attr('x2',c[2]).attr('y2',c[3])
-        .attr('stroke','#D0CCC4').attr('stroke-width',1).attr('stroke-dasharray','4,4');
+        .attr('stroke',dividerColor).attr('stroke-width',1).attr('stroke-dasharray','4,4');
     });
 
     // Region blobs
@@ -1002,13 +1052,15 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     var x = d3.scaleLinear().domain([cv(dMinUsd), cv(dMaxUsd)]).range([0, iW]);
 
     // Grid + axis
+    var axisGridColor = getThemeColor('--border');
+    var axisTextColor = getThemeColor('--text-tertiary');
     d3.scaleLinear().domain([dMinUsd, dMaxUsd]).ticks(6).forEach(function(t) {
       var px = x(cv(t));
       g.append('line').attr('x1',px).attr('x2',px).attr('y1',0).attr('y2',iH)
-        .attr('stroke','#E5E2D9').attr('stroke-width',1);
+        .attr('stroke',axisGridColor).attr('stroke-width',1);
       g.append('text').text(fmt(t))
         .attr('x',px).attr('y',iH+14).attr('text-anchor','middle')
-        .attr('fill','#A09C96').attr('font-size',9).attr('font-family','IBM Plex Mono');
+        .attr('fill',axisTextColor).attr('font-size',9).attr('font-family','IBM Plex Mono');
     });
 
     // Whisker
@@ -1061,10 +1113,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     });
 
     // Min/Max labels below whiskers
+    var whiskerColor = getThemeColor('--text-tertiary');
     [tier.min, tier.max].forEach(function(v) {
       g.append('text').text(fmt(v))
         .attr('x',x(cv(v))).attr('y',cy+bH/2+14)
-        .attr('text-anchor','middle').attr('fill','#B0ACA6')
+        .attr('text-anchor','middle').attr('fill',whiskerColor)
         .attr('font-size',9).attr('font-family','IBM Plex Mono');
     });
   }
@@ -1116,14 +1169,16 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     var x = d3.scaleLinear().domain([cv(0), cv(dMaxUsd)]).range([0, iW]);
 
     // Axis ticks
+    var semAxisGrid = getThemeColor('--border');
+    var semAxisText = getThemeColor('--text-tertiary');
     [0,50,100,150,200,250,300].filter(function(t) { return t <= dMaxUsd+10; }).forEach(function(t) {
       var px = x(cv(t));
       if (t > 0)
         g.append('line').attr('x1',px).attr('x2',px).attr('y1',0).attr('y2',iH)
-          .attr('stroke','#E5E2D9').attr('stroke-width',1);
+          .attr('stroke',semAxisGrid).attr('stroke-width',1);
       g.append('text').text(t === 0 ? '' : fmt(t))
         .attr('x',px).attr('y',iH+14).attr('text-anchor','middle')
-        .attr('fill','#A09C96').attr('font-size',9).attr('font-family','IBM Plex Mono');
+        .attr('fill',semAxisText).attr('font-size',9).attr('font-family','IBM Plex Mono');
     });
 
     // Background track
@@ -1160,19 +1215,51 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   }
 
   // ─────────────────────────────────────────────
+  // THEME TOGGLE
+  // ─────────────────────────────────────────────
+  function togglePricingTheme() {
+    var page = document.querySelector('.pricing-page');
+    var isDark = page.classList.toggle('dark');
+    localStorage.setItem('pricing-theme', isDark ? 'dark' : 'light');
+    document.getElementById('btn-theme').textContent = isDark ? 'Light' : 'Dark';
+    // Rebuild SVGs with new colors
+    rebuildVisuals();
+  }
+
+  function applyStoredTheme() {
+    var stored = localStorage.getItem('pricing-theme');
+    // Default to dark to match site aesthetic
+    var isDark = stored !== 'light';
+    var page = document.querySelector('.pricing-page');
+    if (isDark) page.classList.add('dark');
+    else page.classList.remove('dark');
+    document.getElementById('btn-theme').textContent = isDark ? 'Light' : 'Dark';
+  }
+
+  function rebuildVisuals() {
+    buildMap();
+    updateMapLabels();
+    if (selectedRegion) { updateMapState(); renderBoxPlots(); }
+    document.getElementById('seminar-grid').innerHTML = '';
+    buildSeminars();
+  }
+
+  // ─────────────────────────────────────────────
   // INIT
   // ─────────────────────────────────────────────
   window.addEventListener('DOMContentLoaded', function() {
+    applyStoredTheme();
     buildSummaryStrip();
     buildMap();
     buildSeminars();
   });
 
-  window.setCurrency      = setCurrency;
-  window.switchTab        = switchTab;
-  window.switchSeminarTab = switchSeminarTab;
-  window.clearRegion      = clearRegion;
-  window.selectRegion     = selectRegion;
+  window.setCurrency         = setCurrency;
+  window.switchTab           = switchTab;
+  window.switchSeminarTab    = switchSeminarTab;
+  window.clearRegion         = clearRegion;
+  window.selectRegion        = selectRegion;
+  window.togglePricingTheme  = togglePricingTheme;
 
   // ── Deep Link button ──
   (function(){
