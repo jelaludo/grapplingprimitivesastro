@@ -25,7 +25,11 @@ const title = article.data.title || article.slug.replace(/-/g, ' ').replace(/\b\
     </a>
 
     <article class="article-prose">
-      <h1 class="text-2xl font-bold tracking-tight text-text-primary mb-8 glow-blue">
+      <h1 class="text-2xl font-bold tracking-tight text-text-primary mb-8 glow-blue"
+        data-kanri-field="title"
+        data-kanri-collection="Articles"
+        data-kanri-file={article.slug}
+      >
         {title}
       </h1>
 

@@ -301,6 +301,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <a href={`${base}/`}>← Home</a>
     <span class="sep">|</span>
     <span class="title">BJJ Pricing</span>
+    <div style="flex:1;"></div>
+    <button id="btn-deeplink" style="font-family:inherit;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)';this.style.color='#00d4ff'" onmouseout="if(this.textContent==='Link'){this.style.borderColor='#21262d';this.style.color='#6b7280'}">Link</button>
   </div>
 
   <!-- ── Page wrapper ── -->
@@ -1171,6 +1173,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   window.switchSeminarTab = switchSeminarTab;
   window.clearRegion      = clearRegion;
   window.selectRegion     = selectRegion;
+
+  // ── Deep Link button ──
+  (function(){
+    var b=document.getElementById('btn-deeplink');
+    if(!b)return;
+    b.addEventListener('click',function(){
+      navigator.clipboard.writeText(location.href).then(function(){
+        b.textContent='Copied!';b.style.color='#00d4ff';b.style.borderColor='rgba(0,212,255,0.4)';
+        setTimeout(function(){b.textContent='Link';b.style.color='';b.style.borderColor='';},1500);
+      });
+    });
+  })();
   </script>
 
 </BaseLayout>

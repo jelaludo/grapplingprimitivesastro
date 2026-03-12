@@ -60,5 +60,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       </footer>
     )}
 
+    {import.meta.env.DEV && <script is:inline src={`${base}/js/kanri-dev.js`}></script>}
   </body>
 </html>

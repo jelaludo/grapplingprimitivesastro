@@ -6,7 +6,28 @@
     "color": "#ff7043",
     "tagline": "All gas, no brakes",
     "desc": "Enthusiastic and well-meaning — but with zero body awareness. Training with them is a survival exercise. Injuries happen not from malice, but from pure uncontrolled chaos.",
-    "scores": { "ctrl_mov":1,"ctrl_sub":2,"intensity":1,"knowledge":3,"inj_know":2,"looks":3,"ego":6,"playful":9,"rnd":5,"concise":7,"comms":3,"feedback":6,"safety":1,"recovery":3,"self_aware":3,"hygiene":5,"reliable":8,"dark_triad":2,"extraversion":9,"neuroticism":8 }
+    "scores": {
+      "ctrl_mov": 1,
+      "ctrl_sub": 2,
+      "intensity": 1,
+      "knowledge": 3,
+      "inj_know": 2,
+      "looks": 3,
+      "ego": 6,
+      "playful": 9,
+      "rnd": 5,
+      "concise": 7,
+      "comms": 3,
+      "feedback": 6,
+      "safety": 1,
+      "recovery": 3,
+      "self_aware": 3,
+      "hygiene": 5,
+      "reliable": 8,
+      "dark_triad": 2,
+      "extraversion": 9,
+      "neuroticism": 8
+    }
   },
   {
     "id": "injury",
@@ -15,7 +36,28 @@
     "color": "#ef5350",
     "tagline": "Refuses to tap. Refuses to rest.",
     "desc": "Always injured, always training anyway. Won't communicate limits. Pushes through at full capacity and takes you with them. The most genuinely dangerous partner on this list.",
-    "scores": { "ctrl_mov":2,"ctrl_sub":2,"intensity":3,"knowledge":5,"inj_know":1,"looks":4,"ego":3,"playful":5,"rnd":4,"concise":5,"comms":1,"feedback":2,"safety":1,"recovery":1,"self_aware":2,"hygiene":5,"reliable":5,"dark_triad":3,"extraversion":5,"neuroticism":7 }
+    "scores": {
+      "ctrl_mov": 2,
+      "ctrl_sub": 2,
+      "intensity": 3,
+      "knowledge": 5,
+      "inj_know": 1,
+      "looks": 4,
+      "ego": 3,
+      "playful": 5,
+      "rnd": 4,
+      "concise": 5,
+      "comms": 1,
+      "feedback": 2,
+      "safety": 1,
+      "recovery": 1,
+      "self_aware": 2,
+      "hygiene": 5,
+      "reliable": 5,
+      "dark_triad": 3,
+      "extraversion": 5,
+      "neuroticism": 7
+    }
   },
   {
     "id": "ig",
@@ -24,7 +66,28 @@
     "color": "#42a5f5",
     "tagline": "The mat is a backdrop. Content is the goal.",
     "desc": "Has the gear, the aesthetics, and takes the photos. Instagram game is elite. Actual game varies. Ego is fragile — especially when the cameras are off.",
-    "scores": { "ctrl_mov":5,"ctrl_sub":5,"intensity":4,"knowledge":3,"inj_know":5,"looks":6,"ego":2,"playful":5,"rnd":2,"concise":4,"comms":6,"feedback":2,"safety":5,"recovery":6,"self_aware":3,"hygiene":9,"reliable":6,"dark_triad":6,"extraversion":9,"neuroticism":7 }
+    "scores": {
+      "ctrl_mov": 5,
+      "ctrl_sub": 5,
+      "intensity": 4,
+      "knowledge": 3,
+      "inj_know": 5,
+      "looks": 6,
+      "ego": 2,
+      "playful": 5,
+      "rnd": 2,
+      "concise": 4,
+      "comms": 6,
+      "feedback": 2,
+      "safety": 5,
+      "recovery": 6,
+      "self_aware": 3,
+      "hygiene": 9,
+      "reliable": 6,
+      "dark_triad": 6,
+      "extraversion": 9,
+      "neuroticism": 7
+    }
   },
   {
     "id": "troll",
@@ -33,7 +96,28 @@
     "color": "#9ccc65",
     "tagline": "Great game. Please shower.",
     "desc": "Technical, collaborative, safe — genuinely one of the best partners on the mat. If only they'd fix the one issue. You want to roll with them. You also want a hazmat suit.",
-    "scores": { "ctrl_mov":8,"ctrl_sub":8,"intensity":8,"knowledge":8,"inj_know":8,"looks":8,"ego":8,"playful":8,"rnd":8,"concise":8,"comms":8,"feedback":8,"safety":8,"recovery":7,"self_aware":8,"hygiene":1,"reliable":8,"dark_triad":1,"extraversion":7,"neuroticism":3 },
+    "scores": {
+      "ctrl_mov": 8,
+      "ctrl_sub": 8,
+      "intensity": 8,
+      "knowledge": 8,
+      "inj_know": 8,
+      "looks": 8,
+      "ego": 8,
+      "playful": 8,
+      "rnd": 8,
+      "concise": 8,
+      "comms": 8,
+      "feedback": 8,
+      "safety": 8,
+      "recovery": 7,
+      "self_aware": 8,
+      "hygiene": 1,
+      "reliable": 8,
+      "dark_triad": 1,
+      "extraversion": 7,
+      "neuroticism": 3
+    },
     "noMatch": true
   },
   {
@@ -43,7 +127,28 @@
     "color": "#cfd8dc",
     "tagline": "You shall not pass — but I'm fine with that",
     "desc": "New to BJJ but decades of life wisdom. Ego-free, curious, safe, genuinely grateful for every round. Loses constantly and couldn't care less. The dojo needs more Gandalfs.",
-    "scores": { "ctrl_mov":4,"ctrl_sub":5,"intensity":6,"knowledge":2,"inj_know":5,"looks":3,"ego":10,"playful":9,"rnd":9,"concise":7,"comms":9,"feedback":10,"safety":9,"recovery":8,"self_aware":8,"hygiene":8,"reliable":9,"dark_triad":1,"extraversion":8,"neuroticism":2 }
+    "scores": {
+      "ctrl_mov": 4,
+      "ctrl_sub": 5,
+      "intensity": 6,
+      "knowledge": 2,
+      "inj_know": 5,
+      "looks": 3,
+      "ego": 10,
+      "playful": 9,
+      "rnd": 9,
+      "concise": 7,
+      "comms": 9,
+      "feedback": 10,
+      "safety": 9,
+      "recovery": 8,
+      "self_aware": 8,
+      "hygiene": 8,
+      "reliable": 9,
+      "dark_triad": 1,
+      "extraversion": 8,
+      "neuroticism": 2
+    }
   },
   {
     "id": "brute",
@@ -52,7 +157,28 @@
     "color": "#ffb74d",
     "tagline": "Strength is the only answer",
     "desc": "Athletic, powerful, well-meaning — but has never met a technical problem they didn't try to muscle through. They don't mean to hurt you. They just don't know what they're doing yet.",
-    "scores": { "ctrl_mov":2,"ctrl_sub":2,"intensity":1,"knowledge":2,"inj_know":2,"looks":2,"ego":5,"playful":7,"rnd":3,"concise":7,"comms":5,"feedback":6,"safety":2,"recovery":5,"self_aware":3,"hygiene":7,"reliable":8,"dark_triad":2,"extraversion":7,"neuroticism":5 }
+    "scores": {
+      "ctrl_mov": 2,
+      "ctrl_sub": 2,
+      "intensity": 1,
+      "knowledge": 2,
+      "inj_know": 2,
+      "looks": 2,
+      "ego": 5,
+      "playful": 7,
+      "rnd": 3,
+      "concise": 7,
+      "comms": 5,
+      "feedback": 6,
+      "safety": 2,
+      "recovery": 5,
+      "self_aware": 3,
+      "hygiene": 7,
+      "reliable": 8,
+      "dark_triad": 2,
+      "extraversion": 7,
+      "neuroticism": 5
+    }
   },
   {
     "id": "competitor",
@@ -61,6 +187,27 @@
     "color": "#29b6f6",
     "tagline": "Every round is a championship final",
     "desc": "Skilled, disciplined, and reliable. But the dial never leaves 100%. No context for casual drilling, no ability to pace for a smaller or injured partner. Treats open mat like podium pressure.",
-    "scores": { "ctrl_mov":6,"ctrl_sub":3,"intensity":1,"knowledge":8,"inj_know":6,"looks":5,"ego":4,"playful":3,"rnd":6,"concise":6,"comms":5,"feedback":5,"safety":3,"recovery":7,"self_aware":6,"hygiene":9,"reliable":10,"dark_triad":4,"extraversion":6,"neuroticism":8 }
+    "scores": {
+      "ctrl_mov": 6,
+      "ctrl_sub": 3,
+      "intensity": 1,
+      "knowledge": 8,
+      "inj_know": 6,
+      "looks": 5,
+      "ego": 4,
+      "playful": 3,
+      "rnd": 6,
+      "concise": 6,
+      "comms": 5,
+      "feedback": 5,
+      "safety": 3,
+      "recovery": 7,
+      "self_aware": 6,
+      "hygiene": 9,
+      "reliable": 10,
+      "dark_triad": 4,
+      "extraversion": 6,
+      "neuroticism": 8
+    }
   }
 ]
