@@ -21,6 +21,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <span id="tb-sep2" style="color:#21262d;">|</span>
     <span id="year-label" style="font-size:11px;letter-spacing:0.1em;color:#c9d1d9;min-width:52px;">Year 0</span>
     <div style="flex:1;"></div>
+    <button id="btn-deeplink" style="font-family:inherit;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)';this.style.color='#00d4ff'" onmouseout="if(this.textContent==='Link'){this.style.borderColor='#21262d';this.style.color='#6b7280'}">Link</button>
     <button id="btn-info" title="Context &amp; notes" style="font-family:inherit;font-size:13px;padding:2px 9px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;" onmouseover="this.style.color='#00d4ff';this.style.borderColor='#00d4ff'" onmouseout="this.style.color='#6b7280';this.style.borderColor='#21262d'">ℹ</button>
     <button id="btn-gear" title="Simulation settings" style="font-family:inherit;font-size:15px;padding:2px 9px;border-radius:3px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;" onmouseover="this.style.color='#00d4ff';this.style.borderColor='#00d4ff'" onmouseout="this.style.color='#6b7280';this.style.borderColor='#21262d'">⚙</button>
     <button id="btn-play" style="font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;cursor:pointer;">▶ Play</button>
@@ -1057,6 +1058,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     // ── Init ──────────────────────────────────────────────────────────────────
     initSim();
     requestAnimationFrame(loop);
+
+    // ── Deep Link button ──
+    (function(){
+      var b=document.getElementById('btn-deeplink');
+      if(!b)return;
+      b.addEventListener('click',function(){
+        navigator.clipboard.writeText(location.href).then(function(){
+          b.textContent='Copied!';b.style.color='#00d4ff';b.style.borderColor='rgba(0,212,255,0.4)';
+          setTimeout(function(){b.textContent='Link';b.style.color='';b.style.borderColor='';},1500);
+        });
+      });
+    })();
   </script>
 
 </BaseLayout>
