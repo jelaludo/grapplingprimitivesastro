@@ -19,7 +19,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <meta id="pg-base" content={base} />
 
   <!-- ── Canvas ─────────────────────────────────────────────────────────── -->
-  <canvas id="game-canvas" style="position:fixed;top:36px;left:0;right:0;bottom:0;width:100%;height:calc(100vh - 36px);display:block;background:#050509;"></canvas>
+  <canvas id="game-canvas" aria-label="Pressure game: steer a ball toward pressure zones on a tilting platform" style="position:fixed;top:36px;left:0;right:0;bottom:0;width:100%;height:calc(100vh - 36px);display:block;background:#050509;"></canvas>
 
   <!-- ── Setup Screen ───────────────────────────────────────────────────── -->
   <div id="setup-screen" style="position:fixed;top:36px;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:center;background:#050509;font-family:'Courier New',Consolas,Monaco,monospace;">

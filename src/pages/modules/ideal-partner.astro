@@ -1588,18 +1588,20 @@ body.lang-ja [lang="en"] { display: none; }
   border-bottom: 1px solid var(--border);
 }
 
-/* Roaming "you are here" marker */
+/* Roaming "you are here" marker — right of center bar, nudged just below the main text */
 .vspectrum-marker {
   position: absolute;
-  right: -8px;
+  left: 50%;
   top: 50%;
-  transform: translateX(100%) translateY(-50%);
+  transform: translateY(4px);
+  margin-left: 8px;
   font-size: 11px;
   letter-spacing: 0.08em;
   color: var(--cyan-dim);
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
 }
 .vspectrum-marker.visible {
   opacity: 1;
@@ -1678,7 +1680,7 @@ body.lang-ja [lang="en"] { display: none; }
   .week-day-label { font-size: 9px; }
   .vspectrum-ja { font-size: 0.7rem; padding-right: 6px; }
   .vspectrum-en { font-size: 0.72rem; padding-left: 6px; }
-  .vspectrum-marker { font-size: 9px; }
+  .vspectrum-marker { font-size: 9px; margin-left: 6px; }
   .vspectrum-zone-header { font-size: 10px; }
   .vscatter-canvas-wrap { aspect-ratio: 1; }
 }
@@ -2998,7 +3000,7 @@ function initViolenceSpectrum(containerId) {
     { zone: 'rules', color: '#FBBF24', en: 'Grappling Competition, local',          ja: 'グラップリング試合' },
     { zone: 'collab', color: '#059669', en: 'Hard Sparring',                         ja: 'ハード・スパー',           marker: { en: 'hard, not reckless', ja: '激しく、無謀にあらず' } },
     { zone: 'collab', color: '#10B981', en: 'Light Sparring',                        ja: 'ライト・スパー',           marker: { en: 'chill out', ja: 'リラックス' } },
-    { zone: 'collab', color: '#34D399', en: 'Situation Sparring / Resistance Drilling', ja: 'シチュエーション・スパー' },
+    { zone: 'collab', color: '#34D399', en: 'Situation Sparring',                        ja: 'シチュエーション・スパー' },
     { zone: 'collab', color: '#6EE7B7', en: 'Repetitions',                           ja: '打ち込み' },
     { zone: 'collab', color: '#A7F3D0', en: 'Research',                              ja: '研究' },
   ];

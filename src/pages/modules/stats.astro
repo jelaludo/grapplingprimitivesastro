@@ -1,0 +1,262 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execSync } from 'node:child_process';
+
+const isDev = import.meta.env.DEV;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = process.cwd();
+
+// All stats are only computed in dev mode
+let totalAstroFiles = 0;
+let totalLOC = 0;
+let topFiles: { file: string; lines: number }[] = [];
+let conceptCount = 0;
+let categoryCount = 0;
+let articleCount = 0;
+let totalImageCount = 0;
+let totalImageSize = 0;
+let thumbCount = 0;
+let imageSubdirs: { name: string; count: number; bytes: number }[] = [];
+let deps: [string, string][] = [];
+let astroVersion = '?';
+let nodeVersion = process.version;
+let buildTimestamp = new Date().toISOString();
+let commitCount = '?';
+let lastCommit = '?';
+
+function fmtBytes(b: number): string {
+  if (b < 1024) return b + ' B';
+  if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+  return (b / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+if (isDev) {
+  // ── Code stats ─────────────────────────────────────────────────────────────
+  function collectAstroFiles(dir: string): string[] {
+    const results: string[] = [];
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
+        results.push(...collectAstroFiles(full));
+      } else if (entry.isFile() && entry.name.endsWith('.astro')) {
+        results.push(full);
+      }
+    }
+    return results;
+  }
+
+  const srcDir = path.join(root, 'src');
+  const astroFiles = collectAstroFiles(srcDir);
+  const fileLOC = astroFiles.map(f => {
+    const lines = fs.readFileSync(f, 'utf-8').split('\n').length;
+    return { file: path.relative(root, f).replace(/\\/g, '/'), lines };
+  }).sort((a, b) => b.lines - a.lines);
+
+  totalAstroFiles = astroFiles.length;
+  totalLOC = fileLOC.reduce((sum, f) => sum + f.lines, 0);
+  topFiles = fileLOC.slice(0, 5);
+
+  // ── Content stats ──────────────────────────────────────────────────────────
+  const allConcepts = await getCollection('concepts');
+  const allCategories = await getCollection('categories');
+  const allArticles = await getCollection('Articles');
+  conceptCount = allConcepts.length;
+  categoryCount = allCategories.length;
+  articleCount = allArticles.length;
+
+  // ── Asset stats ────────────────────────────────────────────────────────────
+  function dirSize(dir: string): { count: number; bytes: number } {
+    let count = 0, bytes = 0;
+    if (!fs.existsSync(dir)) return { count, bytes };
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        const sub = dirSize(full);
+        count += sub.count;
+        bytes += sub.bytes;
+      } else if (entry.isFile()) {
+        count++;
+        bytes += fs.statSync(full).size;
+      }
+    }
+    return { count, bytes };
+  }
+
+  const imagesDir = path.join(root, 'public', 'images');
+  if (fs.existsSync(imagesDir)) {
+    imageSubdirs = fs.readdirSync(imagesDir, { withFileTypes: true })
+      .filter(e => e.isDirectory())
+      .map(e => ({ name: e.name, ...dirSize(path.join(imagesDir, e.name)) }))
+      .sort((a, b) => b.bytes - a.bytes);
+    totalImageSize = imageSubdirs.reduce((s, d) => s + d.bytes, 0);
+    totalImageCount = imageSubdirs.reduce((s, d) => s + d.count, 0);
+
+    const thumbsDir = path.join(imagesDir, 'thumbs');
+    if (fs.existsSync(thumbsDir)) {
+      thumbCount = fs.readdirSync(thumbsDir).filter(f => !f.startsWith('.')).length;
+    }
+  }
+
+  // ── Dependencies ───────────────────────────────────────────────────────────
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf-8'));
+  deps = Object.entries(pkg.dependencies || {}) as [string, string][];
+  astroVersion = pkg.dependencies?.astro?.replace(/^\^/, '') || '?';
+
+  // ── Git stats ──────────────────────────────────────────────────────────────
+  try {
+    commitCount = execSync('git rev-list --count HEAD', { cwd: root, encoding: 'utf-8' }).trim();
+    lastCommit = execSync('git log -1 --format="%h %ci"', { cwd: root, encoding: 'utf-8' }).trim();
+  } catch {}
+}
+---
+
+{isDev ? (
+<BaseLayout title="Dev Stats — Grappling Primitives">
+  <div class="max-w-4xl mx-auto px-4 py-12 fade-up">
+
+    <a href={`${base}/`} class="text-[9px] tracking-[3px] text-text-dim uppercase hover:text-accent transition-colors mb-6 inline-block">
+      &larr; BACK TO MODULES
+    </a>
+
+    <h1 class="text-2xl font-bold tracking-tight text-text-primary mb-2 glow-blue">
+      Project Stats
+    </h1>
+    <p class="text-xs text-text-muted mb-8 leading-relaxed max-w-xl">
+      Build-time metrics for the Grappling Primitives project. This page is <span class="text-[#00ff41] font-bold">dev-only</span> and will not appear in production.
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <!-- Code -->
+      <div class="p-5 border border-accent/30 bg-accent/5 rounded-sm">
+        <div class="text-[9px] tracking-[2px] text-accent uppercase mb-3">Code</div>
+        <div class="space-y-2 text-xs text-text-muted">
+          <div class="flex justify-between">
+            <span>.astro files</span>
+            <span class="text-text-primary font-bold">{totalAstroFiles}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Total LOC</span>
+            <span class="text-text-primary font-bold">{totalLOC.toLocaleString()}</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-border/30">
+            <div class="text-[9px] tracking-[2px] text-text-dim uppercase mb-2">Largest files</div>
+            {topFiles.map(f => (
+              <div class="flex justify-between text-[10px] mb-1">
+                <span class="truncate mr-2 text-text-dim">{f.file}</span>
+                <span class="flex-shrink-0">{f.lines} lines</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-5 border border-[#A970FF]/30 bg-[#A970FF]/5 rounded-sm">
+        <div class="text-[9px] tracking-[2px] text-[#A970FF] uppercase mb-3">Content</div>
+        <div class="space-y-2 text-xs text-text-muted">
+          <div class="flex justify-between">
+            <span>Concepts</span>
+            <span class="text-text-primary font-bold">{conceptCount}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Categories</span>
+            <span class="text-text-primary font-bold">{categoryCount}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Articles</span>
+            <span class="text-text-primary font-bold">{articleCount}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assets -->
+      <div class="p-5 border border-[#00ff41]/30 bg-[#00ff41]/5 rounded-sm">
+        <div class="text-[9px] tracking-[2px] text-[#00ff41] uppercase mb-3">Assets</div>
+        <div class="space-y-2 text-xs text-text-muted">
+          <div class="flex justify-between">
+            <span>Total images</span>
+            <span class="text-text-primary font-bold">{totalImageCount}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Total size</span>
+            <span class="text-text-primary font-bold">{fmtBytes(totalImageSize)}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Thumbnails</span>
+            <span class="text-text-primary font-bold">{thumbCount}</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-border/30">
+            <div class="text-[9px] tracking-[2px] text-text-dim uppercase mb-2">By directory</div>
+            {imageSubdirs.map(d => (
+              <div class="flex justify-between text-[10px] mb-1">
+                <span class="text-text-dim">{d.name}/</span>
+                <span>{d.count} files &middot; {fmtBytes(d.bytes)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Dependencies -->
+      <div class="p-5 border border-border bg-surface rounded-sm">
+        <div class="text-[9px] tracking-[2px] text-text-dim uppercase mb-3">Dependencies</div>
+        <div class="space-y-1 text-xs">
+          {deps.map(([name, version]) => (
+            <div class="flex justify-between">
+              <span class="text-text-muted">{name}</span>
+              <span class="text-text-dim">{version}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Build -->
+      <div class="p-5 border border-border bg-surface rounded-sm">
+        <div class="text-[9px] tracking-[2px] text-text-dim uppercase mb-3">Build</div>
+        <div class="space-y-2 text-xs text-text-muted">
+          <div class="flex justify-between">
+            <span>Astro</span>
+            <span class="text-text-primary">{astroVersion}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Node</span>
+            <span class="text-text-primary">{nodeVersion}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Generated</span>
+            <span class="text-text-primary text-[10px]">{buildTimestamp}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Git -->
+      <div class="p-5 border border-border bg-surface rounded-sm">
+        <div class="text-[9px] tracking-[2px] text-text-dim uppercase mb-3">Git</div>
+        <div class="space-y-2 text-xs text-text-muted">
+          <div class="flex justify-between">
+            <span>Commits</span>
+            <span class="text-text-primary font-bold">{commitCount}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Last commit</span>
+            <span class="text-text-primary text-[10px]">{lastCommit}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+) : (
+<BaseLayout title="Not Found — Grappling Primitives">
+  <div class="max-w-4xl mx-auto px-4 py-24 text-center">
+    <h1 class="text-2xl font-bold text-text-primary mb-4">404</h1>
+    <p class="text-sm text-text-muted">This page is only available in development mode.</p>
+    <a href={`${base}/`} class="text-accent text-xs mt-4 inline-block hover:underline">&larr; Back to home</a>
+  </div>
+</BaseLayout>
+)}

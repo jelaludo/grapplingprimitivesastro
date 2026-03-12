@@ -42,4 +42,11 @@ const Articles = defineCollection({
   }),
 });
 
-export const collections = { concepts, categories, Articles };
+// ── Word Lists ──────────────────────────────────────────────────────────────
+// Word lists for BJJ Wordle (4–7 letter words). No required frontmatter.
+const WordLists = defineCollection({
+  type: 'content',
+  schema: z.object({}).passthrough(),
+});
+
+export const collections = { concepts, categories, Articles, WordLists };

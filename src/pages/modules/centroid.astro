@@ -39,7 +39,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
       <!-- Canvas board (hidden until playing) -->
       <div id="canvas-wrapper" style="display:none;position:relative;align-self:center;">
-        <canvas id="grid-canvas" style="display:block;border:1px solid #21262d;border-radius:4px;cursor:crosshair;"></canvas>
+        <canvas id="grid-canvas" aria-label="Centroid estimation game: click where you think the center of the dot cluster is" style="display:block;border:1px solid #21262d;border-radius:4px;cursor:crosshair;"></canvas>
         <!-- Points flash -->
         <div id="pts-flash" style="display:none;position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:'DS-Digital',monospace;font-size:34px;font-weight:700;color:#ff6b6b;z-index:10;text-shadow:0 0 16px #ff4444;pointer-events:none;white-space:nowrap;"></div>
         <!-- Countdown overlay -->
