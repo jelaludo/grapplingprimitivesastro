@@ -8,24 +8,24 @@ const imgBase = base + '/images/partners/';
 <BaseLayout title="Training Partners — Grappling Primitives" fullscreen={true}>
 
 <!-- ── Toolbar ──────────────────────────────────────────────────────────────── -->
-<div id="toolbar" style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
-  <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
-  <span style="color:#21262d;">|</span>
-  <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;">Training Partners</span>
-  <div style="flex:1;"></div>
+<div id="toolbar" style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;">
+  <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+  <span style="color:#21262d;flex-shrink:0;">|</span>
+  <span class="toolbar-title" style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;white-space:nowrap;flex-shrink:0;">Training Partners</span>
+  <div style="flex:1;min-width:4px;flex-shrink:1;"></div>
   <!-- Deep Link -->
-  <button id="btn-deeplink" style="font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;">Link</button>
+  <button id="btn-deeplink" style="font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;white-space:nowrap;flex-shrink:0;">Link</button>
   <span style="color:#21262d;">|</span>
   <!-- Font size -->
-  <span id="btn-sm"  title="Small text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;">小</span>
-  <span id="btn-med" title="Medium text" style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#00d4ff;border:1px solid #00d4ff;border-radius:2px;line-height:1;user-select:none;">中</span>
-  <span id="btn-lg"  title="Large text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;">大</span>
+  <span id="btn-sm"  title="Small text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;flex-shrink:0;">小</span>
+  <span id="btn-med" title="Medium text" style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#00d4ff;border:1px solid #00d4ff;border-radius:2px;line-height:1;user-select:none;flex-shrink:0;">中</span>
+  <span id="btn-lg"  title="Large text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;flex-shrink:0;">大</span>
   <span style="color:#21262d;">|</span>
   <!-- Download (self-assess only) -->
   <button id="btn-download" style="display:none;font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" title="Click to download an image of your self-assessment">↓ Save</button>
   <!-- Mode buttons -->
-  <button id="btn-archetypes" style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;">Archetypes ▾</button>
-  <button id="btn-self"       style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;">Self-Assess</button>
+  <button id="btn-archetypes" style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;white-space:nowrap;flex-shrink:0;">Archetypes ▾</button>
+  <button id="btn-self"       style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;white-space:nowrap;flex-shrink:0;">Self-Assess</button>
   <!-- Admin — injected by JS on localhost only -->
 </div>
 
@@ -89,6 +89,8 @@ const imgBase = base + '/images/partners/';
 </div>
 
 <style>
+  #toolbar::-webkit-scrollbar { display:none; }
+  #toolbar { scrollbar-width:none; }
   #pill-rail::-webkit-scrollbar   { display:none; }
   #panel-left::-webkit-scrollbar  { width:3px; }
   #panel-left::-webkit-scrollbar-track  { background:#050509; }
@@ -107,6 +109,8 @@ const imgBase = base + '/images/partners/';
     #char-tagline { font-size:7px !important; margin-bottom:4px !important; }
     #char-name { font-size:11px !important; margin-bottom:2px !important; }
     #match-panel { margin:6px 8px !important; padding:8px !important; }
+    .toolbar-title { display:none !important; }
+    #btn-sm, #btn-med, #btn-lg { display:none !important; }
   }
 </style>
 

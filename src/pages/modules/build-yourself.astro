@@ -1,0 +1,1225 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const allConcepts = await getCollection('concepts');
+const concept = allConcepts.find(c => c.data.id === 'BJJ-260');
+const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim();
+---
+
+<BaseLayout title="Build Yourself — Grappling Primitives" fullscreen={true}>
+
+<!-- ── Toolbar ──────────────────────────────────────────────────────────────── -->
+<div id="toolbar" style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;">
+  <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">&larr; Home</a>
+  <span style="color:#21262d;flex-shrink:0;">|</span>
+  <a href="#" id="title-link" style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;white-space:nowrap;flex-shrink:0;text-decoration:none;cursor:pointer;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'" title="Click for about info">BUILD YOURSELF</a>
+  <div style="flex:1;min-width:4px;flex-shrink:1;"></div>
+  <button id="autoplay-btn" style="font-family:inherit;font-size:13px;padding:2px 8px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;white-space:nowrap;flex-shrink:0;line-height:1;" aria-label="Pause auto-advance"><span class="play-icon">⏸</span></button>
+  <span style="color:#21262d;flex-shrink:0;">|</span>
+  <button id="btn-deeplink" style="font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;white-space:nowrap;flex-shrink:0;">Link</button>
+</div>
+<!-- Hidden scenario select (disabled for now) -->
+<select id="scenario-select" style="display:none;">
+  <option value="standing">Standing</option>
+</select>
+
+<!-- ── Header ──────────────────────────────────────────────────────────────── -->
+<div id="header" style="position:fixed;top:36px;left:0;right:0;z-index:40;padding:6px 16px 0;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;text-align:center;">
+  <div style="display:flex;justify-content:center;align-items:baseline;gap:12px;">
+    <a href="#" id="header-title-link" style="text-decoration:none;cursor:pointer;" title="Click for about info">
+      <span style="font-size:16px;color:#00d4ff;letter-spacing:0.05em;" lang="ja">自分を作れ</span>
+      <span style="font-size:13px;color:#c9d1d9;letter-spacing:0.12em;margin-left:4px;">Build Yourself</span>
+    </a>
+  </div>
+  <div style="font-size:9px;color:#6b7280;letter-spacing:0.06em;margin-top:1px;">Self-organization as the primary variable — four lenses, one body</div>
+  <!-- Slider row -->
+  <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+    <span style="font-size:8px;letter-spacing:0.14em;color:#6b7280;text-transform:uppercase;flex-shrink:0;">Unbuilt</span>
+    <input type="range" id="slider" min="0" max="1" step="0.001" value="0" style="flex:1;height:4px;cursor:pointer;accent-color:#00d4ff;" aria-label="Build progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1" />
+    <span style="font-size:8px;letter-spacing:0.14em;color:#6b7280;text-transform:uppercase;flex-shrink:0;">Built</span>
+  </div>
+  <!-- Stage label -->
+  <div id="slider-label" style="font-size:9px;color:#6b7280;text-align:center;margin:2px 0 1px;letter-spacing:0.08em;min-height:13px;"></div>
+  <!-- Step buttons -->
+  <div id="steps" style="display:flex;justify-content:center;gap:4px;flex-wrap:wrap;padding-bottom:5px;"></div>
+</div>
+
+<!-- ── App area (4 canvas panels) ──────────────────────────────────────────── -->
+<div id="app-wrap" style="position:fixed;top:150px;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#050509;">
+<div id="app" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;background:#21262d;font-family:'Courier New',Consolas,Monaco,monospace;border-radius:6px;overflow:hidden;width:min(1000px, calc(100vh - 160px), 100vw);aspect-ratio:1/1;">
+  <div class="panel-wrap" style="position:relative;overflow:hidden;background:#0a0e14;">
+    <canvas id="canvas-tension" aria-label="Tension Economy heatmap panel"></canvas>
+    <span id="sr-tension" class="sr-only" role="status" aria-live="polite"></span>
+  </div>
+  <div class="panel-wrap" style="position:relative;overflow:hidden;background:#0a0e14;">
+    <canvas id="canvas-connections" aria-label="Internal Connections panel"></canvas>
+    <span id="sr-connections" class="sr-only" role="status" aria-live="polite"></span>
+  </div>
+  <div class="panel-wrap" style="position:relative;overflow:hidden;background:#0a0e14;">
+    <canvas id="canvas-force" aria-label="Force Flow panel"></canvas>
+    <span id="sr-force" class="sr-only" role="status" aria-live="polite"></span>
+  </div>
+  <div class="panel-wrap" style="position:relative;overflow:hidden;background:#0a0e14;">
+    <canvas id="canvas-stacking" aria-label="Stacking Alignment panel"></canvas>
+    <span id="sr-stacking" class="sr-only" role="status" aria-live="polite"></span>
+  </div>
+</div>
+</div>
+
+<!-- ── Tooltip ─────────────────────────────────────────────────────────────── -->
+<div id="tooltip" style="position:fixed;z-index:100;max-width:240px;padding:10px 12px;border-radius:4px;background:rgba(5,5,9,0.95);border:1px solid #21262d;color:#c9d1d9;font-family:'Courier New',Consolas,Monaco,monospace;font-size:10px;line-height:1.6;pointer-events:none;opacity:0;transition:opacity 0.15s;" aria-hidden="true"></div>
+
+<!-- ── Card modal (Quadtree-style) ──────────────────────────────────────────── -->
+<div id="about-modal" class="hidden" style="position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,0.80);backdrop-filter:blur(4px);" role="dialog" aria-label="About Build Yourself">
+  <div style="width:100%;max-width:min(640px,98vw);max-height:88vh;display:flex;flex-direction:column;font-family:'Courier New',Consolas,Monaco,monospace;background:#000d18;border:1px solid #848a9488;box-shadow:0 0 40px rgba(0,0,0,0.8);">
+    <div style="display:flex;align-items:start;justify-content:space-between;gap:12px;padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#c9d1d9;margin-bottom:4px;">{concept.data.concept}</div>
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#848a94;">Grappling Primitives</div>
+      </div>
+      <button id="modal-close" style="font-family:inherit;font-size:18px;background:none;border:none;color:#6b7280;cursor:pointer;padding:4px 8px;flex-shrink:0;line-height:1;" aria-label="Close">&times;</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:20px;font-size:13px;color:#8b949e;line-height:1.7;white-space:pre-wrap;">{cardBody}</div>
+  </div>
+</div>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .panel-wrap canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  #toolbar::-webkit-scrollbar { display: none; }
+  #toolbar { -ms-overflow-style: none; scrollbar-width: none; }
+  #header::-webkit-scrollbar { display: none; }
+  #header { -ms-overflow-style: none; scrollbar-width: none; }
+
+  #tooltip.visible { opacity: 1; }
+
+  #autoplay-btn:hover,
+  #btn-deeplink:hover { border-color: #00d4ff; color: #00d4ff; }
+
+  .panel-wrap { border-radius: 4px; aspect-ratio: 1/1; }
+
+  @media (max-width: 700px) {
+    #steps { flex-wrap: wrap; }
+  }
+</style>
+
+<style is:global>
+  .step-btn {
+    font-family: 'Courier New', Consolas, Monaco, monospace;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    border: 1px solid #21262d;
+    background: transparent;
+    color: #6b7280;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .step-btn:hover { border-color: #00d4ff; color: #00d4ff; }
+  .step-btn.active { border-color: #00d4ff; background: rgba(0,212,255,0.15); color: #00d4ff; box-shadow: 0 0 6px rgba(0,212,255,0.3); }
+  .step-btn.passed { border-color: #00d4ff; color: #00d4ff; background: rgba(0,212,255,0.06); }
+</style>
+
+<script>
+(function(){
+// ============================================================
+// 1. Math utils
+// ============================================================
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, min, max) {
+  if (min === undefined) { min = 0; max = 1; }
+  return Math.max(min, Math.min(max, v));
+}
+function easeInOut(t) { return t * t * (3 - 2 * t); }
+function dist(a, b) {
+  var dx = b.x - a.x, dy = b.y - a.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+function lerpPos(a, b, t) { return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t) }; }
+
+// ============================================================
+// 2. Color constants + helpers
+// ============================================================
+var COLORS = {
+  bg: '#050509',
+  panel: '#0a0e14',
+  panelBorder: '#21262d',
+  bone: '#c8d6e5',
+  boneDim: '#576574',
+  node: '#c9d1d9',
+  text: '#c9d1d9',
+  textDim: '#6b7280',
+  label: '#00d4ff',
+  heatHot: [255, 60, 40],
+  heatWarm: [255, 165, 0],
+  heatCool: [40, 120, 200],
+  connectionGlow: '#00cec9',
+  connectionDim: '#2d3436',
+  forceArrow: '#fdcb6e',
+  forceBlocked: '#d63031',
+  forceFlowing: '#00b894',
+  plumbLine: '#6b7280',
+  landmarkAligned: '#55efc4',
+  landmarkOff: '#e17055',
+  accent: '#e056fd',
+  sliderTrack: '#2d3436',
+  sliderThumb: '#00d4ff',
+};
+
+function heatColor(t) {
+  var hot = COLORS.heatHot, cool = COLORS.heatCool;
+  var r = Math.round(cool[0] + (hot[0] - cool[0]) * t);
+  var g = Math.round(cool[1] + (hot[1] - cool[1]) * t);
+  var b = Math.round(cool[2] + (hot[2] - cool[2]) * t);
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+function heatColorAlpha(t, alpha) {
+  var hot = COLORS.heatHot, cool = COLORS.heatCool;
+  var r = Math.round(cool[0] + (hot[0] - cool[0]) * t);
+  var g = Math.round(cool[1] + (hot[1] - cool[1]) * t);
+  var b = Math.round(cool[2] + (hot[2] - cool[2]) * t);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
+// ============================================================
+// 3. Drawing helpers
+// ============================================================
+function clearPanel(ctx, w, h) {
+  ctx.fillStyle = COLORS.panel;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function drawLine(ctx, a, b, color, width) {
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width || 2;
+  ctx.stroke();
+}
+
+function drawCircle(ctx, pos, radius, color) {
+  ctx.beginPath();
+  ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawGlow(ctx, pos, radius, color, alpha) {
+  if (alpha === undefined) alpha = 0.5;
+  var grad = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, radius);
+  grad.addColorStop(0, color.replace(')', ',' + alpha + ')').replace('rgb', 'rgba'));
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+}
+
+function drawArrow(ctx, from, to, color, width, headSize) {
+  width = width || 2;
+  headSize = headSize || 8;
+  var angle = Math.atan2(to.y - from.y, to.x - from.x);
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(to.x, to.y);
+  ctx.lineTo(to.x - headSize * Math.cos(angle - Math.PI / 6), to.y - headSize * Math.sin(angle - Math.PI / 6));
+  ctx.lineTo(to.x - headSize * Math.cos(angle + Math.PI / 6), to.y - headSize * Math.sin(angle + Math.PI / 6));
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawLabel(ctx, text, x, y, fontSize, color) {
+  ctx.font = (fontSize || 14) + "px 'Courier New', Consolas, monospace";
+  ctx.fillStyle = color || COLORS.text;
+  ctx.textAlign = 'center';
+  ctx.fillText(text, x, y);
+}
+
+function drawPanelTitle(ctx, title, subtitle, w) {
+  ctx.font = "15px 'Courier New', Consolas, monospace";
+  ctx.fillStyle = COLORS.label;
+  ctx.textAlign = 'center';
+  ctx.fillText(title, w / 2, 28);
+  if (subtitle) {
+    ctx.font = "12px 'Courier New', Consolas, monospace";
+    ctx.fillStyle = COLORS.textDim;
+    ctx.fillText(subtitle, w / 2, 46);
+  }
+}
+
+function drawDashedLine(ctx, a, b, color, width, dash) {
+  ctx.beginPath();
+  ctx.setLineDash(dash || [4, 4]);
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width || 1;
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ============================================================
+// 4. Mannequin topology
+// ============================================================
+var NODES = [
+  'head', 'neck',
+  'shoulderL', 'shoulderR', 'shoulderMid',
+  'elbowL', 'elbowR',
+  'handL', 'handR',
+  'spine', 'core',
+  'hipL', 'hipR', 'hipMid',
+  'kneeL', 'kneeR',
+  'ankleL', 'ankleR', 'ankleMid',
+];
+
+var BONES = [
+  ['head', 'neck'],
+  ['neck', 'shoulderL'], ['neck', 'shoulderR'],
+  ['shoulderL', 'elbowL'], ['shoulderR', 'elbowR'],
+  ['elbowL', 'handL'], ['elbowR', 'handR'],
+  ['neck', 'spine'], ['spine', 'core'],
+  ['core', 'hipL'], ['core', 'hipR'],
+  ['hipL', 'kneeL'], ['hipR', 'kneeR'],
+  ['kneeL', 'ankleL'], ['kneeR', 'ankleR'],
+];
+
+var MIDPOINTS = {
+  shoulderMid: ['shoulderL', 'shoulderR'],
+  hipMid: ['hipL', 'hipR'],
+  ankleMid: ['ankleL', 'ankleR'],
+};
+
+var REGIONS = {
+  head: ['head'],
+  neck: ['neck'],
+  shoulders: ['shoulderL', 'shoulderR'],
+  arms: ['elbowL', 'elbowR', 'handL', 'handR'],
+  upperBack: ['spine'],
+  core: ['core'],
+  hips: ['hipL', 'hipR'],
+  legs: ['kneeL', 'kneeR', 'ankleL', 'ankleR'],
+};
+
+var CONNECTION_PAIRS = [
+  { from: 'shoulderL', to: 'hipR', label: 'L shoulder→R hip' },
+  { from: 'shoulderR', to: 'hipL', label: 'R shoulder→L hip' },
+  { from: 'elbowL', to: 'kneeL', label: 'L elbow→L knee' },
+  { from: 'elbowR', to: 'kneeR', label: 'R elbow→R knee' },
+  { from: 'handL', to: 'handR', label: 'hand↔hand' },
+  { from: 'shoulderL', to: 'hipL', label: 'L column' },
+  { from: 'shoulderR', to: 'hipR', label: 'R column' },
+];
+
+var SPINE_PATH = ['head', 'neck', 'spine', 'core'];
+var ARCH_PATH = ['ankleL', 'kneeL', 'hipL', 'hipR', 'kneeR', 'ankleR'];
+var FORCE_PATH = ['shoulderR', 'neck', 'spine', 'core', 'hipR', 'kneeR', 'ankleR'];
+var LANDMARKS = ['head', 'shoulderMid', 'hipMid', 'ankleMid'];
+
+function scalePositions(positions, w, h) {
+  var margin = { top: 60, bottom: 20, left: 40, right: 40 };
+  var drawW = w - margin.left - margin.right;
+  var drawH = h - margin.top - margin.bottom;
+  var scaled = {};
+  for (var key in positions) {
+    scaled[key] = {
+      x: margin.left + positions[key].x * drawW,
+      y: margin.top + positions[key].y * drawH,
+    };
+  }
+  for (var mid in MIDPOINTS) {
+    var pair = MIDPOINTS[mid];
+    if (scaled[pair[0]] && scaled[pair[1]]) {
+      scaled[mid] = {
+        x: (scaled[pair[0]].x + scaled[pair[1]].x) / 2,
+        y: (scaled[pair[0]].y + scaled[pair[1]].y) / 2,
+      };
+    }
+  }
+  return scaled;
+}
+
+function drawMannequin(ctx, positions, opts) {
+  opts = opts || {};
+  var boneColor = opts.boneColor || COLORS.boneDim;
+  var nodeColor = opts.nodeColor || COLORS.node;
+  var boneWidth = opts.boneWidth || 2;
+  var nodeRadius = opts.nodeRadius || 3;
+  var showNodes = opts.showNodes !== false;
+  var midpointKeys = Object.keys(MIDPOINTS);
+
+  for (var i = 0; i < BONES.length; i++) {
+    var a = BONES[i][0], b = BONES[i][1];
+    if (positions[a] && positions[b]) drawLine(ctx, positions[a], positions[b], boneColor, boneWidth);
+  }
+  if (showNodes) {
+    for (var j = 0; j < NODES.length; j++) {
+      if (positions[NODES[j]] && midpointKeys.indexOf(NODES[j]) === -1) {
+        drawCircle(ctx, positions[NODES[j]], nodeRadius, nodeColor);
+      }
+    }
+  }
+}
+
+// ============================================================
+// 5. State interpolation
+// ============================================================
+function computeState(scenario, t) {
+  t = clamp(t, 0, 1);
+  var kfs = scenario.keyframes;
+  var lo = kfs[0], hi = kfs[kfs.length - 1];
+  for (var i = 0; i < kfs.length - 1; i++) {
+    if (t >= kfs[i].t && t <= kfs[i + 1].t) {
+      lo = kfs[i]; hi = kfs[i + 1]; break;
+    }
+  }
+  var segLen = hi.t - lo.t;
+  var lt = segLen === 0 ? 0 : (t - lo.t) / segLen;
+
+  return {
+    t: t,
+    label: lt < 0.5 ? lo.label : hi.label,
+    description: lt < 0.5 ? lo.description : hi.description,
+    positions: lerpPositions(lo.positions, hi.positions, lt),
+    tension: lerpObject(lo.tension, hi.tension, lt),
+    connections: lerpObject(lo.connections, hi.connections, lt),
+    forceEfficiency: lerp(lo.forceEfficiency, hi.forceEfficiency, lt),
+    forceAccumulation: lerpObject(lo.forceAccumulation, hi.forceAccumulation, lt),
+  };
+}
+
+function lerpPositions(a, b, t) {
+  var result = {};
+  for (var key in a) result[key] = lerpPos(a[key], b[key], t);
+  return result;
+}
+
+function lerpObject(a, b, t) {
+  var result = {}, keys = {}, k;
+  for (k in a) keys[k] = true;
+  for (k in b) keys[k] = true;
+  for (k in keys) result[k] = lerp(a[k] || 0, b[k] || 0, t);
+  return result;
+}
+
+// ============================================================
+// 6. Scenario data
+// ============================================================
+var standing = {
+  name: 'Standing', nameJP: '立位',
+  keyframes: [
+    {
+      t: 0.0, label: 'Unorganized', description: 'Mess, unaligned, unable to absorb or generate force',
+      positions: { head:{x:0.56,y:0.05}, neck:{x:0.54,y:0.12}, shoulderL:{x:0.38,y:0.15}, shoulderR:{x:0.72,y:0.13}, elbowL:{x:0.30,y:0.30}, elbowR:{x:0.76,y:0.27}, handL:{x:0.26,y:0.42}, handR:{x:0.78,y:0.39}, spine:{x:0.53,y:0.28}, core:{x:0.52,y:0.42}, hipL:{x:0.38,y:0.53}, hipR:{x:0.56,y:0.50}, kneeL:{x:0.41,y:0.70}, kneeR:{x:0.59,y:0.69}, ankleL:{x:0.40,y:0.90}, ankleR:{x:0.60,y:0.89} },
+      tension: { head:0.8, neck:0.9, shoulders:0.95, arms:0.7, upperBack:0.6, core:0.3, hips:0.5, legs:0.6 },
+      connections: { 'shoulderL-hipR':0.05, 'shoulderR-hipL':0.05, 'elbowL-kneeL':0.0, 'elbowR-kneeR':0.0, 'handL-handR':0.0, 'shoulderL-hipL':0.1, 'shoulderR-hipR':0.1, 'spine':0.05, 'arch':0.0 },
+      forceEfficiency: 0.1,
+      forceAccumulation: { shoulderR:0.9, neck:0.8, spine:0.4, core:0.1, hipR:0.0, kneeR:0.0, ankleR:0.0 },
+    },
+    {
+      t: 0.2, label: 'Head Pulled Up', description: 'Ballet "suspended from invisible string", Taichi "uplifting through baihui", the body elongates',
+      positions: { head:{x:0.52,y:0.03}, neck:{x:0.51,y:0.10}, shoulderL:{x:0.37,y:0.15}, shoulderR:{x:0.69,y:0.14}, elbowL:{x:0.30,y:0.30}, elbowR:{x:0.74,y:0.28}, handL:{x:0.27,y:0.42}, handR:{x:0.76,y:0.40}, spine:{x:0.52,y:0.26}, core:{x:0.51,y:0.41}, hipL:{x:0.39,y:0.52}, hipR:{x:0.57,y:0.51}, kneeL:{x:0.41,y:0.70}, kneeR:{x:0.59,y:0.69}, ankleL:{x:0.41,y:0.90}, ankleR:{x:0.59,y:0.89} },
+      tension: { head:0.6, neck:0.65, shoulders:0.8, arms:0.6, upperBack:0.55, core:0.25, hips:0.45, legs:0.55 },
+      connections: { 'shoulderL-hipR':0.1, 'shoulderR-hipL':0.1, 'elbowL-kneeL':0.02, 'elbowR-kneeR':0.02, 'handL-handR':0.02, 'shoulderL-hipL':0.15, 'shoulderR-hipR':0.15, 'spine':0.08, 'arch':0.0 },
+      forceEfficiency: 0.18,
+      forceAccumulation: { shoulderR:0.85, neck:0.7, spine:0.4, core:0.15, hipR:0.02, kneeR:0.0, ankleR:0.0 },
+    },
+    {
+      t: 0.4, label: 'Drop Shoulders', description: 'Shoulders drop in sockets, upper body tension drains',
+      positions: { head:{x:0.51,y:0.03}, neck:{x:0.50,y:0.10}, shoulderL:{x:0.36,y:0.18}, shoulderR:{x:0.64,y:0.18}, elbowL:{x:0.30,y:0.32}, elbowR:{x:0.70,y:0.32}, handL:{x:0.28,y:0.44}, handR:{x:0.72,y:0.44}, spine:{x:0.50,y:0.25}, core:{x:0.50,y:0.41}, hipL:{x:0.42,y:0.52}, hipR:{x:0.58,y:0.52}, kneeL:{x:0.43,y:0.70}, kneeR:{x:0.57,y:0.70}, ankleL:{x:0.43,y:0.90}, ankleR:{x:0.57,y:0.90} },
+      tension: { head:0.35, neck:0.35, shoulders:0.2, arms:0.3, upperBack:0.4, core:0.25, hips:0.4, legs:0.45 },
+      connections: { 'shoulderL-hipR':0.2, 'shoulderR-hipL':0.2, 'elbowL-kneeL':0.1, 'elbowR-kneeR':0.1, 'handL-handR':0.1, 'shoulderL-hipL':0.3, 'shoulderR-hipR':0.3, 'spine':0.15, 'arch':0.0 },
+      forceEfficiency: 0.35,
+      forceAccumulation: { shoulderR:0.65, neck:0.45, spine:0.5, core:0.3, hipR:0.1, kneeR:0.02, ankleR:0.0 },
+    },
+    {
+      t: 0.6, label: 'Wrap Diaphragm', description: 'The "bell shape" that is the diaphragm wraps downward, unifying the core',
+      positions: { head:{x:0.50,y:0.03}, neck:{x:0.50,y:0.10}, shoulderL:{x:0.37,y:0.18}, shoulderR:{x:0.63,y:0.18}, elbowL:{x:0.32,y:0.32}, elbowR:{x:0.68,y:0.32}, handL:{x:0.30,y:0.44}, handR:{x:0.70,y:0.44}, spine:{x:0.50,y:0.25}, core:{x:0.50,y:0.40}, hipL:{x:0.43,y:0.52}, hipR:{x:0.57,y:0.52}, kneeL:{x:0.44,y:0.71}, kneeR:{x:0.56,y:0.71}, ankleL:{x:0.44,y:0.91}, ankleR:{x:0.56,y:0.91} },
+      tension: { head:0.15, neck:0.15, shoulders:0.1, arms:0.15, upperBack:0.2, core:0.4, hips:0.2, legs:0.3 },
+      connections: { 'shoulderL-hipR':0.5, 'shoulderR-hipL':0.5, 'elbowL-kneeL':0.3, 'elbowR-kneeR':0.3, 'handL-handR':0.2, 'shoulderL-hipL':0.5, 'shoulderR-hipR':0.5, 'spine':0.45, 'arch':0.0 },
+      forceEfficiency: 0.6,
+      forceAccumulation: { shoulderR:0.4, neck:0.35, spine:0.5, core:0.6, hipR:0.3, kneeR:0.15, ankleR:0.05 },
+    },
+    {
+      t: 0.8, label: 'Engage Hips', description: 'Pelvic adjustment, feeling the leg "arch", connecting upper and lower body',
+      positions: { head:{x:0.50,y:0.03}, neck:{x:0.50,y:0.10}, shoulderL:{x:0.37,y:0.17}, shoulderR:{x:0.63,y:0.17}, elbowL:{x:0.33,y:0.31}, elbowR:{x:0.67,y:0.31}, handL:{x:0.31,y:0.43}, handR:{x:0.69,y:0.43}, spine:{x:0.50,y:0.24}, core:{x:0.50,y:0.39}, hipL:{x:0.44,y:0.52}, hipR:{x:0.56,y:0.52}, kneeL:{x:0.45,y:0.72}, kneeR:{x:0.55,y:0.72}, ankleL:{x:0.45,y:0.92}, ankleR:{x:0.55,y:0.92} },
+      tension: { head:0.08, neck:0.08, shoulders:0.06, arms:0.08, upperBack:0.12, core:0.32, hips:0.08, legs:0.15 },
+      connections: { 'shoulderL-hipR':0.8, 'shoulderR-hipL':0.8, 'elbowL-kneeL':0.6, 'elbowR-kneeR':0.6, 'handL-handR':0.5, 'shoulderL-hipL':0.75, 'shoulderR-hipR':0.75, 'spine':0.8, 'arch':0.8 },
+      forceEfficiency: 0.85,
+      forceAccumulation: { shoulderR:0.2, neck:0.2, spine:0.35, core:0.55, hipR:0.55, kneeR:0.5, ankleR:0.6 },
+    },
+    {
+      t: 1.0, label: 'Tsukuri', description: 'Fully "Built", organized, ideally no wasted energy',
+      positions: { head:{x:0.50,y:0.03}, neck:{x:0.50,y:0.10}, shoulderL:{x:0.38,y:0.17}, shoulderR:{x:0.62,y:0.17}, elbowL:{x:0.34,y:0.31}, elbowR:{x:0.66,y:0.31}, handL:{x:0.32,y:0.43}, handR:{x:0.68,y:0.43}, spine:{x:0.50,y:0.24}, core:{x:0.50,y:0.39}, hipL:{x:0.45,y:0.52}, hipR:{x:0.55,y:0.52}, kneeL:{x:0.45,y:0.72}, kneeR:{x:0.55,y:0.72}, ankleL:{x:0.45,y:0.92}, ankleR:{x:0.55,y:0.92} },
+      tension: { head:0.05, neck:0.05, shoulders:0.05, arms:0.05, upperBack:0.1, core:0.3, hips:0.05, legs:0.1 },
+      connections: { 'shoulderL-hipR':0.95, 'shoulderR-hipL':0.95, 'elbowL-kneeL':0.8, 'elbowR-kneeR':0.8, 'handL-handR':0.7, 'shoulderL-hipL':0.9, 'shoulderR-hipR':0.9, 'spine':0.95, 'arch':0.95 },
+      forceEfficiency: 0.95,
+      forceAccumulation: { shoulderR:0.15, neck:0.15, spine:0.3, core:0.5, hipR:0.6, kneeR:0.7, ankleR:0.9 },
+    },
+  ],
+};
+
+var armInTriangle = {
+  name: 'Arm-in-Triangle', nameJP: '腕三角',
+  keyframes: [
+    {
+      t: 0.0, label: 'Loose Frame', description: 'On back, shoulders elevated, no connections',
+      positions: { head:{x:0.30,y:0.22}, neck:{x:0.35,y:0.28}, shoulderL:{x:0.28,y:0.36}, shoulderR:{x:0.46,y:0.32}, elbowL:{x:0.18,y:0.48}, elbowR:{x:0.58,y:0.42}, handL:{x:0.14,y:0.58}, handR:{x:0.66,y:0.50}, spine:{x:0.42,y:0.42}, core:{x:0.48,y:0.55}, hipL:{x:0.42,y:0.66}, hipR:{x:0.56,y:0.64}, kneeL:{x:0.36,y:0.80}, kneeR:{x:0.62,y:0.78}, ankleL:{x:0.30,y:0.92}, ankleR:{x:0.68,y:0.90} },
+      tension: { head:0.7, neck:0.85, shoulders:0.9, arms:0.6, upperBack:0.5, core:0.2, hips:0.5, legs:0.4 },
+      connections: { 'shoulderL-hipR':0.05, 'shoulderR-hipL':0.05, 'elbowL-kneeL':0.0, 'elbowR-kneeR':0.0, 'handL-handR':0.0, 'shoulderL-hipL':0.1, 'shoulderR-hipR':0.1, 'spine':0.05, 'arch':0.0 },
+      forceEfficiency: 0.08,
+      forceAccumulation: { shoulderR:0.9, neck:0.7, spine:0.3, core:0.1, hipR:0.0, kneeR:0.0, ankleR:0.0 },
+    },
+    {
+      t: 0.33, label: 'Drop Shoulders', description: 'Shoulders settle into the mat, neck releases',
+      positions: { head:{x:0.32,y:0.20}, neck:{x:0.36,y:0.27}, shoulderL:{x:0.30,y:0.35}, shoulderR:{x:0.45,y:0.35}, elbowL:{x:0.20,y:0.50}, elbowR:{x:0.56,y:0.46}, handL:{x:0.16,y:0.60}, handR:{x:0.62,y:0.54}, spine:{x:0.40,y:0.42}, core:{x:0.46,y:0.55}, hipL:{x:0.40,y:0.66}, hipR:{x:0.54,y:0.65}, kneeL:{x:0.34,y:0.80}, kneeR:{x:0.60,y:0.79}, ankleL:{x:0.30,y:0.92}, ankleR:{x:0.66,y:0.91} },
+      tension: { head:0.4, neck:0.4, shoulders:0.25, arms:0.4, upperBack:0.4, core:0.25, hips:0.35, legs:0.35 },
+      connections: { 'shoulderL-hipR':0.2, 'shoulderR-hipL':0.15, 'elbowL-kneeL':0.1, 'elbowR-kneeR':0.1, 'handL-handR':0.05, 'shoulderL-hipL':0.25, 'shoulderR-hipR':0.2, 'spine':0.15, 'arch':0.1 },
+      forceEfficiency: 0.3,
+      forceAccumulation: { shoulderR:0.6, neck:0.45, spine:0.45, core:0.25, hipR:0.1, kneeR:0.05, ankleR:0.0 },
+    },
+    {
+      t: 0.66, label: 'Engage Diaphragm', description: 'Core pressurizes, chin tucks, frame solidifies',
+      positions: { head:{x:0.34,y:0.19}, neck:{x:0.37,y:0.26}, shoulderL:{x:0.30,y:0.34}, shoulderR:{x:0.46,y:0.34}, elbowL:{x:0.22,y:0.52}, elbowR:{x:0.54,y:0.50}, handL:{x:0.20,y:0.64}, handR:{x:0.58,y:0.60}, spine:{x:0.40,y:0.41}, core:{x:0.44,y:0.54}, hipL:{x:0.38,y:0.65}, hipR:{x:0.52,y:0.65}, kneeL:{x:0.32,y:0.78}, kneeR:{x:0.56,y:0.77}, ankleL:{x:0.28,y:0.90}, ankleR:{x:0.62,y:0.89} },
+      tension: { head:0.15, neck:0.15, shoulders:0.1, arms:0.2, upperBack:0.2, core:0.4, hips:0.15, legs:0.2 },
+      connections: { 'shoulderL-hipR':0.55, 'shoulderR-hipL':0.5, 'elbowL-kneeL':0.45, 'elbowR-kneeR':0.4, 'handL-handR':0.25, 'shoulderL-hipL':0.55, 'shoulderR-hipR':0.5, 'spine':0.5, 'arch':0.55 },
+      forceEfficiency: 0.65,
+      forceAccumulation: { shoulderR:0.35, neck:0.3, spine:0.45, core:0.55, hipR:0.4, kneeR:0.2, ankleR:0.1 },
+    },
+    {
+      t: 1.0, label: 'Elbow-Knee Connected', description: 'Triangle locked: elbow finds knee, full chain',
+      positions: { head:{x:0.36,y:0.18}, neck:{x:0.38,y:0.25}, shoulderL:{x:0.32,y:0.33}, shoulderR:{x:0.46,y:0.33}, elbowL:{x:0.26,y:0.54}, elbowR:{x:0.50,y:0.56}, handL:{x:0.24,y:0.66}, handR:{x:0.52,y:0.66}, spine:{x:0.40,y:0.40}, core:{x:0.42,y:0.52}, hipL:{x:0.36,y:0.64}, hipR:{x:0.50,y:0.64}, kneeL:{x:0.28,y:0.76}, kneeR:{x:0.52,y:0.75}, ankleL:{x:0.24,y:0.88}, ankleR:{x:0.58,y:0.87} },
+      tension: { head:0.05, neck:0.05, shoulders:0.05, arms:0.1, upperBack:0.1, core:0.35, hips:0.05, legs:0.1 },
+      connections: { 'shoulderL-hipR':0.9, 'shoulderR-hipL':0.85, 'elbowL-kneeL':0.9, 'elbowR-kneeR':0.85, 'handL-handR':0.6, 'shoulderL-hipL':0.85, 'shoulderR-hipR':0.8, 'spine':0.9, 'arch':0.9 },
+      forceEfficiency: 0.9,
+      forceAccumulation: { shoulderR:0.15, neck:0.15, spine:0.3, core:0.5, hipR:0.55, kneeR:0.65, ankleR:0.85 },
+    },
+  ],
+};
+
+var scenarios = { standing: standing, armInTriangle: armInTriangle };
+
+// ============================================================
+// 7. Panel renderers
+// ============================================================
+
+// --- Panel 1: Tension Economy Heatmap ---
+var REGION_RADIUS = { head:22, neck:16, shoulders:28, arms:20, upperBack:24, core:30, hips:26, legs:22 };
+
+function renderTensionHeatmap(ctx, state, w, h) {
+  clearPanel(ctx, w, h);
+  drawPanelTitle(ctx, 'Tension Economy', '無駄を省く', w);
+  var positions = scalePositions(state.positions, w, h);
+
+  for (var region in REGIONS) {
+    var tension = state.tension[region] || 0;
+    var radius = REGION_RADIUS[region] || 20;
+    var nodeNames = REGIONS[region];
+    for (var n = 0; n < nodeNames.length; n++) {
+      var pos = positions[nodeNames[n]];
+      if (!pos) continue;
+      var r = radius + tension * 15;
+      var grad = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, r);
+      grad.addColorStop(0, heatColorAlpha(tension, 0.5 + tension * 0.3));
+      grad.addColorStop(0.6, heatColorAlpha(tension, 0.2 * tension));
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+  }
+  drawMannequin(ctx, positions, { boneColor: COLORS.bone + '90', nodeRadius: 2.5 });
+}
+
+// --- Panel 2: Internal Connection Lines ---
+// Scale factor: 1.0 at 400px panel width, smaller on narrow panels
+function panelScale(w) { return Math.min(w / 400, 1); }
+
+function renderConnectionLines(ctx, state, w, h, time) {
+  clearPanel(ctx, w, h);
+  drawPanelTitle(ctx, 'Internal Connections', '體の統一', w);
+  var positions = scalePositions(state.positions, w, h);
+  var sc = panelScale(w);
+
+  drawMannequin(ctx, positions, { boneColor: COLORS.boneDim + '60', nodeColor: COLORS.node + '40', nodeRadius: 2 * sc });
+
+  var corePos = positions.core;
+  if (!corePos) return;
+
+  // Arch
+  var archStrength = state.connections['arch'] || 0;
+  if (archStrength > 0.02) drawArch(ctx, positions, archStrength, time, sc);
+
+  // Spine
+  var spineStrength = state.connections['spine'] || 0;
+  if (spineStrength > 0.02) drawSpine(ctx, positions, spineStrength, time, sc);
+
+  // Pairwise connections
+  for (var p = 0; p < CONNECTION_PAIRS.length; p++) {
+    var pair = CONNECTION_PAIRS[p];
+    var fromPos = positions[pair.from];
+    var toPos = positions[pair.to];
+    if (!fromPos || !toPos) continue;
+    var key = pair.from + '-' + pair.to;
+    var strength = state.connections[key] || 0;
+    if (strength < 0.02) continue;
+
+    var cpx = corePos.x + (fromPos.x + toPos.x - 2 * corePos.x) * 0.3;
+    var cpy = corePos.y + (fromPos.y + toPos.y - 2 * corePos.y) * 0.3;
+    var pulse = strength > 0.5 ? 1 + 0.15 * Math.sin(time * 3 + strength * 10) : 1;
+    var alpha = strength * 0.8 * pulse;
+    var width = (1 + strength * 3) * sc;
+
+    if (strength > 0.3) {
+      ctx.beginPath();
+      ctx.moveTo(fromPos.x, fromPos.y);
+      ctx.quadraticCurveTo(cpx, cpy, toPos.x, toPos.y);
+      ctx.strokeStyle = COLORS.connectionGlow + Math.round(alpha * 0.3 * 255).toString(16).padStart(2, '0');
+      ctx.lineWidth = width + 4 * sc;
+      ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(fromPos.x, fromPos.y);
+    ctx.quadraticCurveTo(cpx, cpy, toPos.x, toPos.y);
+    ctx.strokeStyle = COLORS.connectionGlow + Math.round(alpha * 255).toString(16).padStart(2, '0');
+    ctx.lineWidth = width;
+    ctx.stroke();
+
+    var dotR = (3 + strength * 2) * sc;
+    var dotAlpha = Math.round(strength * 200).toString(16).padStart(2, '0');
+    ctx.beginPath();
+    ctx.arc(fromPos.x, fromPos.y, dotR, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.connectionGlow + dotAlpha;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(toPos.x, toPos.y, dotR, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.connectionGlow + dotAlpha;
+    ctx.fill();
+  }
+}
+
+function drawSmoothCurve(ctx, pts) {
+  if (pts.length < 2) return;
+  ctx.moveTo(pts[0].x, pts[0].y);
+  if (pts.length === 2) { ctx.lineTo(pts[1].x, pts[1].y); return; }
+  var mid01x = (pts[0].x + pts[1].x) / 2;
+  var mid01y = (pts[0].y + pts[1].y) / 2;
+  ctx.quadraticCurveTo(pts[0].x, pts[0].y, mid01x, mid01y);
+  for (var i = 1; i < pts.length - 1; i++) {
+    var midx = (pts[i].x + pts[i + 1].x) / 2;
+    var midy = (pts[i].y + pts[i + 1].y) / 2;
+    ctx.quadraticCurveTo(pts[i].x, pts[i].y, midx, midy);
+  }
+  ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+}
+
+function drawSpine(ctx, positions, strength, time, sc) {
+  sc = sc || 1;
+  var pts = SPINE_PATH.map(function(name) { return positions[name]; }).filter(Boolean);
+  if (pts.length < 2) return;
+  var pulse = strength > 0.5 ? 1 + 0.1 * Math.sin(time * 2) : 1;
+  var alpha = strength * 0.85 * pulse;
+  var width = (1.5 + strength * 3) * sc;
+  var color = '#fdcb6e';
+
+  if (strength > 0.3) {
+    ctx.beginPath();
+    drawSmoothCurve(ctx, pts);
+    ctx.strokeStyle = color + Math.round(alpha * 0.25 * 255).toString(16).padStart(2, '0');
+    ctx.lineWidth = width + 6 * sc;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  drawSmoothCurve(ctx, pts);
+  ctx.strokeStyle = color + Math.round(alpha * 255).toString(16).padStart(2, '0');
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  var dotAlpha = Math.round(strength * 220).toString(16).padStart(2, '0');
+  for (var j = 0; j < pts.length; j++) {
+    ctx.beginPath();
+    ctx.arc(pts[j].x, pts[j].y, (3 + strength * 2) * sc, 0, Math.PI * 2);
+    ctx.fillStyle = color + dotAlpha;
+    ctx.fill();
+  }
+
+  if (strength > 0.4) {
+    var midPt = pts[Math.floor(pts.length / 2)];
+    ctx.font = Math.round(10 * sc) + "px 'Courier New', Consolas, monospace";
+    ctx.fillStyle = color + Math.round(alpha * 200).toString(16).padStart(2, '0');
+    ctx.textAlign = 'center';
+    ctx.fillText('spine', midPt.x + 24 * sc, midPt.y);
+  }
+}
+
+function drawArch(ctx, positions, strength, time, sc) {
+  sc = sc || 1;
+  var pts = ARCH_PATH.map(function(name) { return positions[name]; }).filter(Boolean);
+  if (pts.length < 4) return;
+  var pulse = strength > 0.5 ? 1 + 0.1 * Math.sin(time * 2.5) : 1;
+  var alpha = strength * 0.85 * pulse;
+  var width = (1.5 + strength * 3) * sc;
+
+  var archPts = pts.map(function(p, i) {
+    if (i === 2 || i === 3) return { x: p.x, y: p.y - strength * 12 * sc };
+    return p;
+  });
+
+  if (strength > 0.3) {
+    ctx.beginPath();
+    drawSmoothCurve(ctx, archPts);
+    ctx.strokeStyle = '#e056fd' + Math.round(alpha * 0.25 * 255).toString(16).padStart(2, '0');
+    ctx.lineWidth = width + 6 * sc;
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  drawSmoothCurve(ctx, archPts);
+  ctx.strokeStyle = '#e056fd' + Math.round(alpha * 255).toString(16).padStart(2, '0');
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  var dotAlpha = Math.round(strength * 220).toString(16).padStart(2, '0');
+  for (var j = 0; j < pts.length; j++) {
+    ctx.beginPath();
+    ctx.arc(pts[j].x, pts[j].y, (3 + strength * 2.5) * sc, 0, Math.PI * 2);
+    ctx.fillStyle = '#e056fd' + dotAlpha;
+    ctx.fill();
+  }
+
+  if (strength > 0.4) {
+    var midX = (archPts[2].x + archPts[3].x) / 2;
+    var midY = (archPts[2].y + archPts[3].y) / 2 - 14 * sc;
+    ctx.font = Math.round(10 * sc) + "px 'Courier New', Consolas, monospace";
+    ctx.fillStyle = '#e056fd' + Math.round(alpha * 200).toString(16).padStart(2, '0');
+    ctx.textAlign = 'center';
+    ctx.fillText('arch', midX, midY);
+  }
+}
+
+// --- Panel 3: Force Flow ---
+function renderForceFlow(ctx, state, w, h, time) {
+  clearPanel(ctx, w, h);
+  drawPanelTitle(ctx, 'Ground Path / Force Flow', '地面への道', w);
+  var positions = scalePositions(state.positions, w, h);
+
+  drawMannequin(ctx, positions, { boneColor: COLORS.boneDim + '50', nodeColor: COLORS.node + '30', nodeRadius: 2 });
+
+  var efficiency = state.forceEfficiency;
+  var accum = state.forceAccumulation;
+  var shoulderR = positions.shoulderR;
+  if (!shoulderR) return;
+
+  var pushStart = { x: shoulderR.x + 50, y: shoulderR.y - 10 };
+  drawArrow(ctx, pushStart, shoulderR, COLORS.forceArrow, 2.5, 10);
+
+  for (var i = 0; i < FORCE_PATH.length - 1; i++) {
+    var fromName = FORCE_PATH[i];
+    var toName = FORCE_PATH[i + 1];
+    var fromPos = positions[fromName];
+    var toPos = positions[toName];
+    if (!fromPos || !toPos) continue;
+
+    var fromAccum = accum[fromName] || 0;
+    var toAccum = accum[toName] || 0;
+    var segFlow = (fromAccum + toAccum) / 2;
+
+    var flowColor = segFlow > 0.1
+      ? lerpColor(COLORS.forceBlocked, COLORS.forceFlowing, efficiency)
+      : COLORS.boneDim + '40';
+
+    var dashOffset = time * 60 * efficiency;
+    ctx.beginPath();
+    ctx.setLineDash([6, 4]);
+    ctx.lineDashOffset = -dashOffset;
+    ctx.moveTo(fromPos.x, fromPos.y);
+    ctx.lineTo(toPos.x, toPos.y);
+    ctx.strokeStyle = flowColor;
+    ctx.lineWidth = 1.5 + segFlow * 2.5;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    if (fromAccum > 0.2) {
+      var blocked = fromAccum * (1 - efficiency);
+      if (blocked > 0.1) {
+        var grad = ctx.createRadialGradient(fromPos.x, fromPos.y, 0, fromPos.x, fromPos.y, 12 + blocked * 15);
+        grad.addColorStop(0, 'rgba(214,48,49,' + (blocked * 0.5) + ')');
+        grad.addColorStop(1, 'rgba(214,48,49,0)');
+        ctx.beginPath();
+        ctx.arc(fromPos.x, fromPos.y, 12 + blocked * 15, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+    }
+  }
+
+  var lastNode = FORCE_PATH[FORCE_PATH.length - 1];
+  var lastPos = positions[lastNode];
+  if (lastPos) {
+    var groundFlow = accum[lastNode] || 0;
+    if (groundFlow > 0.1) {
+      var groundPt = { x: lastPos.x, y: lastPos.y + 20 };
+      drawArrow(ctx, lastPos, groundPt, COLORS.forceFlowing + Math.round(groundFlow * 200).toString(16).padStart(2, '0'), 2, 8);
+      ctx.beginPath();
+      ctx.moveTo(lastPos.x - 20, groundPt.y + 4);
+      ctx.lineTo(lastPos.x + 20, groundPt.y + 4);
+      ctx.strokeStyle = COLORS.forceFlowing + '60';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+}
+
+function lerpColor(hexA, hexB, t) {
+  var a = hexToRgb(hexA), b = hexToRgb(hexB);
+  return 'rgb(' + Math.round(lerp(a[0], b[0], t)) + ',' + Math.round(lerp(a[1], b[1], t)) + ',' + Math.round(lerp(a[2], b[2], t)) + ')';
+}
+
+function hexToRgb(hex) {
+  hex = hex.replace('#', '');
+  return [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
+}
+
+// --- Panel 4: Stacking Alignment ---
+var LANDMARK_LABELS = ['Ear', 'Shoulder', 'Hip', 'Ankle'];
+
+function renderStacking(ctx, state, w, h) {
+  clearPanel(ctx, w, h);
+  drawPanelTitle(ctx, 'Stacking', '整列', w);
+  var positions = scalePositions(state.positions, w, h);
+
+  var ankleMid = positions.ankleMid;
+  if (!ankleMid) return;
+
+  drawDashedLine(ctx, { x: ankleMid.x, y: 55 }, { x: ankleMid.x, y: h - 10 }, COLORS.plumbLine, 1, [6, 4]);
+
+  var landmarkPositions = LANDMARKS.map(function(name) { return positions[name]; });
+
+  for (var i = 0; i < landmarkPositions.length; i++) {
+    var pos = landmarkPositions[i];
+    if (!pos) continue;
+    var deviation = Math.abs(pos.x - ankleMid.x);
+    var maxDeviation = w * 0.15;
+    var normalizedDev = Math.min(deviation / maxDeviation, 1);
+
+    var r = Math.round(lerp(85, 225, normalizedDev));
+    var g = Math.round(lerp(239, 112, normalizedDev));
+    var b = Math.round(lerp(196, 85, normalizedDev));
+    var color = 'rgb(' + r + ',' + g + ',' + b + ')';
+
+    if (normalizedDev > 0.05) {
+      drawLine(ctx, pos, { x: ankleMid.x, y: pos.y }, color + '60', 1);
+    }
+    drawCircle(ctx, pos, 6 + normalizedDev * 4, color);
+    drawLabel(ctx, LANDMARK_LABELS[i], pos.x + (pos.x > w / 2 ? 30 : -30), pos.y + 4, 11, COLORS.textDim);
+  }
+
+  var totalDev = 0;
+  for (var j = 0; j < landmarkPositions.length; j++) {
+    if (landmarkPositions[j]) totalDev += Math.abs(landmarkPositions[j].x - ankleMid.x);
+  }
+  var maxTotal = w * 0.15 * 4;
+  var alignScore = Math.round((1 - Math.min(totalDev / maxTotal, 1)) * 100);
+  drawLabel(ctx, alignScore + '%', w / 2, h - 8, 12, COLORS.textDim);
+}
+
+// ============================================================
+// 8. Main bootstrap
+// ============================================================
+var scenario = standing;
+
+var slider = document.getElementById('slider');
+var sliderLabel = document.getElementById('slider-label');
+var stepsContainer = document.getElementById('steps');
+var scenarioSelect = document.getElementById('scenario-select');
+var autoplayBtn = document.getElementById('autoplay-btn');
+var playIcon = autoplayBtn.querySelector('.play-icon');
+var tooltipEl = document.getElementById('tooltip');
+var canvases = [
+  document.getElementById('canvas-tension'),
+  document.getElementById('canvas-connections'),
+  document.getElementById('canvas-force'),
+  document.getElementById('canvas-stacking'),
+];
+var ctxs = canvases.map(function(c) { return c.getContext('2d'); });
+
+var srPanels = {
+  tension: document.getElementById('sr-tension'),
+  connections: document.getElementById('sr-connections'),
+  force: document.getElementById('sr-force'),
+  stacking: document.getElementById('sr-stacking'),
+};
+
+var panels = [
+  { render: renderTensionHeatmap, usesTime: false },
+  { render: renderConnectionLines, usesTime: true },
+  { render: renderForceFlow, usesTime: true },
+  { render: renderStacking, usesTime: false },
+];
+
+// --- Sizing ---
+function resize() {
+  canvases.forEach(function(canvas, i) {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctxs[i].setTransform(dpr, 0, 0, dpr, 0, 0);
+    canvas.logicalWidth = rect.width;
+    canvas.logicalHeight = rect.height;
+  });
+}
+
+// --- Step buttons ---
+var stepBtns = [];
+
+function buildSteps() {
+  stepsContainer.innerHTML = '';
+  stepBtns = [];
+  for (var i = 0; i < scenario.keyframes.length; i++) {
+    var kf = scenario.keyframes[i];
+    (function(kf) {
+      var btn = document.createElement('button');
+      btn.className = 'step-btn';
+      btn.textContent = kf.label;
+      btn.title = kf.description;
+      btn.setAttribute('aria-label', kf.label + ': ' + kf.description);
+      btn.addEventListener('click', function() {
+        setAutoplayState(false);
+        animateSliderTo(kf.t);
+      });
+      stepsContainer.appendChild(btn);
+      stepBtns.push(btn);
+    })(kf);
+  }
+}
+
+// --- Scenario selector ---
+scenarioSelect.addEventListener('change', function() {
+  var key = scenarioSelect.value;
+  if (scenarios[key]) {
+    scenario = scenarios[key];
+    slider.value = 0;
+    setAutoplayState(false);
+    buildSteps();
+  }
+});
+
+// --- Smooth slider animation ---
+var animTarget = null;
+var animStart = null;
+var animFrom = null;
+var ANIM_DURATION = 600;
+
+function animateSliderTo(target) {
+  animTarget = target;
+  animStart = performance.now();
+  animFrom = parseFloat(slider.value);
+}
+
+function updateAnimatedSlider(now) {
+  if (animTarget === null) return;
+  var elapsed = now - animStart;
+  var progress = Math.min(elapsed / ANIM_DURATION, 1);
+  slider.value = lerp(animFrom, animTarget, easeInOut(progress));
+  if (progress >= 1) animTarget = null;
+}
+
+// --- Auto-play ---
+var autoplayActive = true;
+var userPaused = false;
+var AUTOPLAY_SPEED = 0.08;
+var LOOP_PAUSE_MS = 3000;
+var lastAutoplayTime = 0;
+var loopPauseUntil = 0;
+var autoplayValue = 0;
+
+function setAutoplayState(playing) {
+  if (autoplayActive === playing) return;
+  autoplayActive = playing;
+  autoplayBtn.classList.toggle('playing', playing);
+  playIcon.textContent = playing ? '⏸' : '▶';
+  autoplayBtn.setAttribute('aria-label', playing ? 'Pause auto-advance' : 'Play auto-advance');
+  if (playing) {
+    lastAutoplayTime = performance.now();
+    autoplayValue = parseFloat(slider.value);
+  }
+}
+
+autoplayBtn.addEventListener('click', function() {
+  userPaused = autoplayActive;
+  loopPauseUntil = 0;
+  if (!autoplayActive && parseFloat(slider.value) >= 1) slider.value = 0;
+  setAutoplayState(!autoplayActive);
+});
+
+slider.addEventListener('input', function() {
+  userPaused = true;
+  loopPauseUntil = 0;
+  setAutoplayState(false);
+  animTarget = null;
+});
+
+function updateAutoplay(now) {
+  if (loopPauseUntil > 0) {
+    if (now >= loopPauseUntil) {
+      loopPauseUntil = 0;
+      autoplayValue = 0;
+      slider.value = 0;
+      lastAutoplayTime = now;
+      setAutoplayState(true);
+    }
+    return;
+  }
+  if (!autoplayActive) return;
+  if (lastAutoplayTime === 0) lastAutoplayTime = now;
+  var dt = Math.min((now - lastAutoplayTime) / 1000, 0.1);
+  lastAutoplayTime = now;
+  autoplayValue += AUTOPLAY_SPEED * dt;
+  if (autoplayValue >= 1) {
+    autoplayValue = 1;
+    slider.value = 1;
+    setAutoplayState(false);
+    if (!userPaused) loopPauseUntil = now + LOOP_PAUSE_MS;
+    return;
+  }
+  slider.value = autoplayValue;
+}
+
+// --- Tooltips ---
+var PANEL_TOOLTIPS = [
+  { title: 'Tension Economy 無駄を省く', body: 'Heat shows parasitic (wasted) tension. Cool blue = efficient. Hot red = energy leak. As you self-organize, tension migrates from extremities into the core.' },
+  { title: 'Internal Connections 體の統一', body: 'Cyan arcs show kinetic chains linking distant body parts through the core. The purple arch connects feet through hips. Stronger connections = unified structure.' },
+  { title: 'Ground Path / Force Flow 地面への道', body: 'Animated dashes show how an external push at the shoulder travels to the ground. Red pooling = force is stuck. Green flow = force reaches the earth.' },
+  { title: 'Stacking 整列', body: 'Dots show four landmarks (ear, shoulder, hip, ankle) relative to a plumb line. Green = aligned over ankles. Orange = off-axis. Percentage shows overall alignment.' },
+];
+
+var activeTooltipIndex = -1;
+
+function showTooltip(x, y, index) {
+  if (activeTooltipIndex !== index) {
+    activeTooltipIndex = index;
+    var content = PANEL_TOOLTIPS[index];
+    tooltipEl.textContent = '';
+    var strong = document.createElement('strong');
+    strong.textContent = content.title;
+    tooltipEl.appendChild(strong);
+    tooltipEl.appendChild(document.createElement('br'));
+    tooltipEl.appendChild(document.createTextNode(content.body));
+    tooltipEl.classList.add('visible');
+    tooltipEl.setAttribute('aria-hidden', 'false');
+  }
+  var pad = 12;
+  var left = x + pad;
+  var top = y + pad;
+  if (left + 240 > window.innerWidth) left = x - 240 - pad;
+  if (top + 160 > window.innerHeight) top = y - 160 - pad;
+  tooltipEl.style.left = left + 'px';
+  tooltipEl.style.top = top + 'px';
+}
+
+function hideTooltip() {
+  activeTooltipIndex = -1;
+  tooltipEl.classList.remove('visible');
+  tooltipEl.setAttribute('aria-hidden', 'true');
+}
+
+canvases.forEach(function(canvas, i) {
+  canvas.addEventListener('pointerenter', function(e) { showTooltip(e.clientX, e.clientY, i); });
+  canvas.addEventListener('pointermove', function(e) { showTooltip(e.clientX, e.clientY, i); });
+  canvas.addEventListener('pointerleave', hideTooltip);
+});
+
+// --- Accessibility: screen reader descriptions ---
+var lastSrLabel = '';
+
+function updateScreenReaderDescriptions(state) {
+  if (state.label === lastSrLabel) return;
+  lastSrLabel = state.label;
+
+  var topTension = Object.entries(state.tension)
+    .sort(function(a, b) { return b[1] - a[1]; })
+    .slice(0, 2)
+    .map(function(e) { return e[0] + ' ' + Math.round(e[1] * 100) + '%'; })
+    .join(', ');
+  srPanels.tension.textContent = state.label + ': highest tension in ' + topTension;
+
+  var activeConns = Object.entries(state.connections)
+    .filter(function(e) { return e[1] > 0.3; })
+    .map(function(e) { return e[0]; })
+    .join(', ');
+  srPanels.connections.textContent = state.label + ': active connections: ' + (activeConns || 'none');
+  srPanels.force.textContent = state.label + ': force efficiency ' + Math.round(state.forceEfficiency * 100) + '%';
+  srPanels.stacking.textContent = state.label + ': ' + state.description;
+}
+
+// --- Keyboard support ---
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (!aboutModal.classList.contains('hidden')) return;
+
+  if (e.key === ' ' || e.key === 'Spacebar') {
+    e.preventDefault();
+    setAutoplayState(!autoplayActive);
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    setAutoplayState(false);
+    slider.value = clamp(parseFloat(slider.value) + 0.02, 0, 1);
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    setAutoplayState(false);
+    slider.value = clamp(parseFloat(slider.value) - 0.02, 0, 1);
+  } else if (e.key >= '1' && e.key <= '9') {
+    var idx = parseInt(e.key) - 1;
+    if (idx < scenario.keyframes.length) {
+      setAutoplayState(false);
+      animateSliderTo(scenario.keyframes[idx].t);
+    }
+  }
+});
+
+// --- Deep link ---
+var deeplinkBtn = document.getElementById('btn-deeplink');
+deeplinkBtn.addEventListener('click', function() {
+  var url = window.location.origin + window.location.pathname;
+  navigator.clipboard.writeText(url).then(function() {
+    deeplinkBtn.textContent = 'Copied!';
+    deeplinkBtn.style.color = '#00d4ff';
+    deeplinkBtn.style.borderColor = '#00d4ff';
+    setTimeout(function() {
+      deeplinkBtn.textContent = 'Link';
+      deeplinkBtn.style.color = '';
+      deeplinkBtn.style.borderColor = '';
+    }, 1500);
+  });
+});
+
+// --- About modal ---
+var titleLink = document.getElementById('title-link');
+var headerTitleLink = document.getElementById('header-title-link');
+var aboutModal = document.getElementById('about-modal');
+var modalClose = document.getElementById('modal-close');
+
+function openAboutModal(e) {
+  e.preventDefault();
+  aboutModal.classList.remove('hidden');
+  aboutModal.style.display = 'flex';
+  modalClose.focus();
+}
+
+function closeAboutModal() {
+  aboutModal.classList.add('hidden');
+  aboutModal.style.display = 'none';
+}
+
+titleLink.addEventListener('click', openAboutModal);
+headerTitleLink.addEventListener('click', openAboutModal);
+modalClose.addEventListener('click', closeAboutModal);
+aboutModal.addEventListener('click', function(e) { if (e.target === aboutModal) closeAboutModal(); });
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && !aboutModal.classList.contains('hidden')) {
+    closeAboutModal();
+  }
+});
+
+// --- Render loop ---
+var startTime = performance.now();
+var lastT = -1;
+var lastLabelText = '';
+var _lastState = null;
+
+function render(now) {
+  var time = (now - startTime) / 1000;
+
+  updateAnimatedSlider(now);
+  updateAutoplay(now);
+
+  var t = parseFloat(slider.value);
+  var tChanged = t !== lastT;
+  lastT = t;
+
+  var state = tChanged ? computeState(scenario, t) : _lastState;
+  _lastState = state;
+
+  if (tChanged) {
+    slider.setAttribute('aria-valuenow', t.toFixed(2));
+    var labelText = state.label + ' — ' + state.description;
+    if (labelText !== lastLabelText) {
+      lastLabelText = labelText;
+      sliderLabel.textContent = labelText;
+    }
+
+    for (var i = 0; i < stepBtns.length; i++) {
+      var kfT = scenario.keyframes[i].t;
+      var passed = t >= kfT - 0.01;
+      var current = Math.abs(t - kfT) < 0.01;
+      stepBtns[i].classList.toggle('passed', passed && !current);
+      stepBtns[i].classList.toggle('active', current);
+      stepBtns[i].setAttribute('aria-pressed', passed || current);
+    }
+
+    updateScreenReaderDescriptions(state);
+  }
+
+  for (var j = 0; j < panels.length; j++) {
+    var w = canvases[j].logicalWidth;
+    var h = canvases[j].logicalHeight;
+    if (panels[j].usesTime || tChanged) {
+      if (panels[j].usesTime) {
+        panels[j].render(ctxs[j], state, w, h, time);
+      } else {
+        panels[j].render(ctxs[j], state, w, h);
+      }
+    }
+  }
+
+  requestAnimationFrame(render);
+}
+
+// --- Init ---
+window.addEventListener('resize', resize);
+resize();
+buildSteps();
+requestAnimationFrame(render);
+
+})();
+</script>
+
+</BaseLayout>
