@@ -134,9 +134,9 @@ const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim()
     transition: all 0.15s;
     white-space: nowrap;
   }
-  .step-btn:hover { border-color: #00d4ff; color: #00d4ff; }
-  .step-btn.active { border-color: #00d4ff; background: rgba(0,212,255,0.15); color: #00d4ff; box-shadow: 0 0 6px rgba(0,212,255,0.3); }
-  .step-btn.passed { border-color: #00d4ff; color: #00d4ff; background: rgba(0,212,255,0.06); }
+  .step-btn:hover { border-color: #888; color: #ccc; }
+  .step-btn.lit { box-shadow: 0 0 6px rgba(0,0,0,0.3); }
+  .step-btn.active { box-shadow: 0 0 8px rgba(255,255,255,0.2); }
 </style>
 
 <script>
@@ -262,15 +262,24 @@ function drawLabel(ctx, text, x, y, fontSize, color) {
   ctx.fillText(text, x, y);
 }
 
-function drawPanelTitle(ctx, title, subtitle, w) {
-  ctx.font = "15px 'Courier New', Consolas, monospace";
+// pos: 'tl' | 'tr' | 'bl' | 'br' — which quadrant the panel occupies
+function drawPanelTitle(ctx, title, subtitle, w, h, pos) {
+  var pad = 12;
+  // English — outer diagonal corner, large
+  ctx.font = "bold 18px 'Courier New', Consolas, monospace";
   ctx.fillStyle = COLORS.label;
-  ctx.textAlign = 'center';
-  ctx.fillText(title, w / 2, 28);
+  if (pos === 'tl') { ctx.textAlign = 'left';  ctx.fillText(title, pad, 26); }
+  else if (pos === 'tr') { ctx.textAlign = 'right'; ctx.fillText(title, w - pad, 26); }
+  else if (pos === 'bl') { ctx.textAlign = 'left';  ctx.fillText(title, pad, h - pad); }
+  else if (pos === 'br') { ctx.textAlign = 'right'; ctx.fillText(title, w - pad, h - pad); }
+  // Japanese — inner corner (toward center), large
   if (subtitle) {
-    ctx.font = "12px 'Courier New', Consolas, monospace";
+    ctx.font = "bold 20px sans-serif";
     ctx.fillStyle = COLORS.textDim;
-    ctx.fillText(subtitle, w / 2, 46);
+    if (pos === 'tl') { ctx.textAlign = 'right'; ctx.fillText(subtitle, w - pad, h - pad); }
+    else if (pos === 'tr') { ctx.textAlign = 'left';  ctx.fillText(subtitle, pad, h - pad); }
+    else if (pos === 'bl') { ctx.textAlign = 'right'; ctx.fillText(subtitle, w - pad, 26); }
+    else if (pos === 'br') { ctx.textAlign = 'left';  ctx.fillText(subtitle, pad, 26); }
   }
 }
 
@@ -319,12 +328,16 @@ var MIDPOINTS = {
 var REGIONS = {
   head: ['head'],
   neck: ['neck'],
-  shoulders: ['shoulderL', 'shoulderR'],
-  arms: ['elbowL', 'elbowR', 'handL', 'handR'],
+  shoulderR: ['shoulderR'],
+  shoulderL: ['shoulderL'],
+  armR: ['elbowR', 'handR'],
+  armL: ['elbowL', 'handL'],
   upperBack: ['spine'],
   core: ['core'],
-  hips: ['hipL', 'hipR'],
-  legs: ['kneeL', 'kneeR', 'ankleL', 'ankleR'],
+  hipR: ['hipR'],
+  hipL: ['hipL'],
+  legR: ['kneeR', 'ankleR'],
+  legL: ['kneeL', 'ankleL'],
 };
 
 var CONNECTION_PAIRS = [
@@ -436,24 +449,24 @@ var standing = {
   keyframes: [
     {
       t: 0.0, label: 'Unorganized', description: 'Mess, unaligned, unable to absorb or generate force',
-      positions: { head:{x:0.56,y:0.05}, neck:{x:0.54,y:0.12}, shoulderL:{x:0.38,y:0.15}, shoulderR:{x:0.72,y:0.13}, elbowL:{x:0.30,y:0.30}, elbowR:{x:0.76,y:0.27}, handL:{x:0.26,y:0.42}, handR:{x:0.78,y:0.39}, spine:{x:0.53,y:0.28}, core:{x:0.52,y:0.42}, hipL:{x:0.38,y:0.53}, hipR:{x:0.56,y:0.50}, kneeL:{x:0.41,y:0.70}, kneeR:{x:0.59,y:0.69}, ankleL:{x:0.40,y:0.90}, ankleR:{x:0.60,y:0.89} },
-      tension: { head:0.8, neck:0.9, shoulders:0.95, arms:0.7, upperBack:0.6, core:0.3, hips:0.5, legs:0.6 },
+      positions: { head:{x:0.64,y:0.05}, neck:{x:0.58,y:0.12}, shoulderL:{x:0.42,y:0.15}, shoulderR:{x:0.78,y:0.13}, elbowL:{x:0.30,y:0.30}, elbowR:{x:0.82,y:0.27}, handL:{x:0.26,y:0.42}, handR:{x:0.84,y:0.39}, spine:{x:0.56,y:0.28}, core:{x:0.46,y:0.42}, hipL:{x:0.30,y:0.53}, hipR:{x:0.48,y:0.50}, kneeL:{x:0.41,y:0.70}, kneeR:{x:0.59,y:0.69}, ankleL:{x:0.40,y:0.90}, ankleR:{x:0.60,y:0.89} },
+      tension: { head:0.8, neck:0.9, shoulderR:0.95, shoulderL:0.7, armR:0.8, armL:0.4, upperBack:0.6, core:0.3, hipR:0.65, hipL:0.35, legR:0.7, legL:0.4 },
       connections: { 'shoulderL-hipR':0.05, 'shoulderR-hipL':0.05, 'elbowL-kneeL':0.0, 'elbowR-kneeR':0.0, 'handL-handR':0.0, 'shoulderL-hipL':0.1, 'shoulderR-hipR':0.1, 'spine':0.05, 'arch':0.0 },
       forceEfficiency: 0.1,
       forceAccumulation: { shoulderR:0.9, neck:0.8, spine:0.4, core:0.1, hipR:0.0, kneeR:0.0, ankleR:0.0 },
     },
     {
       t: 0.2, label: 'Head Pulled Up', description: 'Ballet "suspended from invisible string", Taichi "uplifting through baihui", the body elongates',
-      positions: { head:{x:0.52,y:0.03}, neck:{x:0.51,y:0.10}, shoulderL:{x:0.37,y:0.15}, shoulderR:{x:0.69,y:0.14}, elbowL:{x:0.30,y:0.30}, elbowR:{x:0.74,y:0.28}, handL:{x:0.27,y:0.42}, handR:{x:0.76,y:0.40}, spine:{x:0.52,y:0.26}, core:{x:0.51,y:0.41}, hipL:{x:0.39,y:0.52}, hipR:{x:0.57,y:0.51}, kneeL:{x:0.41,y:0.70}, kneeR:{x:0.59,y:0.69}, ankleL:{x:0.41,y:0.90}, ankleR:{x:0.59,y:0.89} },
-      tension: { head:0.6, neck:0.65, shoulders:0.8, arms:0.6, upperBack:0.55, core:0.25, hips:0.45, legs:0.55 },
+      positions: { head:{x:0.58,y:0.03}, neck:{x:0.55,y:0.10}, shoulderL:{x:0.40,y:0.15}, shoulderR:{x:0.74,y:0.14}, elbowL:{x:0.30,y:0.30}, elbowR:{x:0.76,y:0.28}, handL:{x:0.27,y:0.42}, handR:{x:0.78,y:0.40}, spine:{x:0.54,y:0.26}, core:{x:0.49,y:0.41}, hipL:{x:0.35,y:0.52}, hipR:{x:0.53,y:0.51}, kneeL:{x:0.41,y:0.70}, kneeR:{x:0.59,y:0.69}, ankleL:{x:0.41,y:0.90}, ankleR:{x:0.59,y:0.89} },
+      tension: { head:0.5, neck:0.85, shoulderR:0.85, shoulderL:0.45, armR:0.6, armL:0.25, upperBack:0.7, core:0.35, hipR:0.7, hipL:0.3, legR:0.7, legL:0.35 },
       connections: { 'shoulderL-hipR':0.1, 'shoulderR-hipL':0.1, 'elbowL-kneeL':0.02, 'elbowR-kneeR':0.02, 'handL-handR':0.02, 'shoulderL-hipL':0.15, 'shoulderR-hipR':0.15, 'spine':0.08, 'arch':0.0 },
       forceEfficiency: 0.18,
       forceAccumulation: { shoulderR:0.85, neck:0.7, spine:0.4, core:0.15, hipR:0.02, kneeR:0.0, ankleR:0.0 },
     },
     {
       t: 0.4, label: 'Drop Shoulders', description: 'Shoulders drop in sockets, upper body tension drains',
-      positions: { head:{x:0.51,y:0.03}, neck:{x:0.50,y:0.10}, shoulderL:{x:0.36,y:0.18}, shoulderR:{x:0.64,y:0.18}, elbowL:{x:0.30,y:0.32}, elbowR:{x:0.70,y:0.32}, handL:{x:0.28,y:0.44}, handR:{x:0.72,y:0.44}, spine:{x:0.50,y:0.25}, core:{x:0.50,y:0.41}, hipL:{x:0.42,y:0.52}, hipR:{x:0.58,y:0.52}, kneeL:{x:0.43,y:0.70}, kneeR:{x:0.57,y:0.70}, ankleL:{x:0.43,y:0.90}, ankleR:{x:0.57,y:0.90} },
-      tension: { head:0.35, neck:0.35, shoulders:0.2, arms:0.3, upperBack:0.4, core:0.25, hips:0.4, legs:0.45 },
+      positions: { head:{x:0.53,y:0.03}, neck:{x:0.52,y:0.10}, shoulderL:{x:0.38,y:0.18}, shoulderR:{x:0.66,y:0.18}, elbowL:{x:0.30,y:0.32}, elbowR:{x:0.70,y:0.32}, handL:{x:0.28,y:0.44}, handR:{x:0.72,y:0.44}, spine:{x:0.51,y:0.25}, core:{x:0.50,y:0.41}, hipL:{x:0.40,y:0.52}, hipR:{x:0.56,y:0.52}, kneeL:{x:0.43,y:0.70}, kneeR:{x:0.57,y:0.70}, ankleL:{x:0.43,y:0.90}, ankleR:{x:0.57,y:0.90} },
+      tension: { head:0.25, neck:0.7, shoulderR:0.7, shoulderL:0.2, armR:0.35, armL:0.1, upperBack:0.65, core:0.5, hipR:0.65, hipL:0.25, legR:0.65, legL:0.3 },
       connections: { 'shoulderL-hipR':0.2, 'shoulderR-hipL':0.2, 'elbowL-kneeL':0.1, 'elbowR-kneeR':0.1, 'handL-handR':0.1, 'shoulderL-hipL':0.3, 'shoulderR-hipR':0.3, 'spine':0.15, 'arch':0.0 },
       forceEfficiency: 0.35,
       forceAccumulation: { shoulderR:0.65, neck:0.45, spine:0.5, core:0.3, hipR:0.1, kneeR:0.02, ankleR:0.0 },
@@ -461,7 +474,7 @@ var standing = {
     {
       t: 0.6, label: 'Wrap Diaphragm', description: 'The "bell shape" that is the diaphragm wraps downward, unifying the core',
       positions: { head:{x:0.50,y:0.03}, neck:{x:0.50,y:0.10}, shoulderL:{x:0.37,y:0.18}, shoulderR:{x:0.63,y:0.18}, elbowL:{x:0.32,y:0.32}, elbowR:{x:0.68,y:0.32}, handL:{x:0.30,y:0.44}, handR:{x:0.70,y:0.44}, spine:{x:0.50,y:0.25}, core:{x:0.50,y:0.40}, hipL:{x:0.43,y:0.52}, hipR:{x:0.57,y:0.52}, kneeL:{x:0.44,y:0.71}, kneeR:{x:0.56,y:0.71}, ankleL:{x:0.44,y:0.91}, ankleR:{x:0.56,y:0.91} },
-      tension: { head:0.15, neck:0.15, shoulders:0.1, arms:0.15, upperBack:0.2, core:0.4, hips:0.2, legs:0.3 },
+      tension: { head:0.1, neck:0.4, shoulderR:0.4, shoulderL:0.08, armR:0.15, armL:0.05, upperBack:0.35, core:0.55, hipR:0.45, hipL:0.12, legR:0.45, legL:0.2 },
       connections: { 'shoulderL-hipR':0.5, 'shoulderR-hipL':0.5, 'elbowL-kneeL':0.3, 'elbowR-kneeR':0.3, 'handL-handR':0.2, 'shoulderL-hipL':0.5, 'shoulderR-hipR':0.5, 'spine':0.45, 'arch':0.0 },
       forceEfficiency: 0.6,
       forceAccumulation: { shoulderR:0.4, neck:0.35, spine:0.5, core:0.6, hipR:0.3, kneeR:0.15, ankleR:0.05 },
@@ -469,7 +482,7 @@ var standing = {
     {
       t: 0.8, label: 'Engage Hips', description: 'Pelvic adjustment, feeling the leg "arch", connecting upper and lower body',
       positions: { head:{x:0.50,y:0.03}, neck:{x:0.50,y:0.10}, shoulderL:{x:0.37,y:0.17}, shoulderR:{x:0.63,y:0.17}, elbowL:{x:0.33,y:0.31}, elbowR:{x:0.67,y:0.31}, handL:{x:0.31,y:0.43}, handR:{x:0.69,y:0.43}, spine:{x:0.50,y:0.24}, core:{x:0.50,y:0.39}, hipL:{x:0.44,y:0.52}, hipR:{x:0.56,y:0.52}, kneeL:{x:0.45,y:0.72}, kneeR:{x:0.55,y:0.72}, ankleL:{x:0.45,y:0.92}, ankleR:{x:0.55,y:0.92} },
-      tension: { head:0.08, neck:0.08, shoulders:0.06, arms:0.08, upperBack:0.12, core:0.32, hips:0.08, legs:0.15 },
+      tension: { head:0.06, neck:0.12, shoulderR:0.15, shoulderL:0.05, armR:0.08, armL:0.04, upperBack:0.15, core:0.35, hipR:0.25, hipL:0.06, legR:0.3, legL:0.12 },
       connections: { 'shoulderL-hipR':0.8, 'shoulderR-hipL':0.8, 'elbowL-kneeL':0.6, 'elbowR-kneeR':0.6, 'handL-handR':0.5, 'shoulderL-hipL':0.75, 'shoulderR-hipR':0.75, 'spine':0.8, 'arch':0.8 },
       forceEfficiency: 0.85,
       forceAccumulation: { shoulderR:0.2, neck:0.2, spine:0.35, core:0.55, hipR:0.55, kneeR:0.5, ankleR:0.6 },
@@ -477,7 +490,7 @@ var standing = {
     {
       t: 1.0, label: 'Tsukuri', description: 'Fully "Built", organized, ideally no wasted energy',
       positions: { head:{x:0.50,y:0.03}, neck:{x:0.50,y:0.10}, shoulderL:{x:0.38,y:0.17}, shoulderR:{x:0.62,y:0.17}, elbowL:{x:0.34,y:0.31}, elbowR:{x:0.66,y:0.31}, handL:{x:0.32,y:0.43}, handR:{x:0.68,y:0.43}, spine:{x:0.50,y:0.24}, core:{x:0.50,y:0.39}, hipL:{x:0.45,y:0.52}, hipR:{x:0.55,y:0.52}, kneeL:{x:0.45,y:0.72}, kneeR:{x:0.55,y:0.72}, ankleL:{x:0.45,y:0.92}, ankleR:{x:0.55,y:0.92} },
-      tension: { head:0.05, neck:0.05, shoulders:0.05, arms:0.05, upperBack:0.1, core:0.3, hips:0.05, legs:0.1 },
+      tension: { head:0.05, neck:0.05, shoulderR:0.08, shoulderL:0.03, armR:0.05, armL:0.03, upperBack:0.1, core:0.3, hipR:0.06, hipL:0.03, legR:0.1, legL:0.05 },
       connections: { 'shoulderL-hipR':0.95, 'shoulderR-hipL':0.95, 'elbowL-kneeL':0.8, 'elbowR-kneeR':0.8, 'handL-handR':0.7, 'shoulderL-hipL':0.9, 'shoulderR-hipR':0.9, 'spine':0.95, 'arch':0.95 },
       forceEfficiency: 0.95,
       forceAccumulation: { shoulderR:0.15, neck:0.15, spine:0.3, core:0.5, hipR:0.6, kneeR:0.7, ankleR:0.9 },
@@ -491,7 +504,7 @@ var armInTriangle = {
     {
       t: 0.0, label: 'Loose Frame', description: 'On back, shoulders elevated, no connections',
       positions: { head:{x:0.30,y:0.22}, neck:{x:0.35,y:0.28}, shoulderL:{x:0.28,y:0.36}, shoulderR:{x:0.46,y:0.32}, elbowL:{x:0.18,y:0.48}, elbowR:{x:0.58,y:0.42}, handL:{x:0.14,y:0.58}, handR:{x:0.66,y:0.50}, spine:{x:0.42,y:0.42}, core:{x:0.48,y:0.55}, hipL:{x:0.42,y:0.66}, hipR:{x:0.56,y:0.64}, kneeL:{x:0.36,y:0.80}, kneeR:{x:0.62,y:0.78}, ankleL:{x:0.30,y:0.92}, ankleR:{x:0.68,y:0.90} },
-      tension: { head:0.7, neck:0.85, shoulders:0.9, arms:0.6, upperBack:0.5, core:0.2, hips:0.5, legs:0.4 },
+      tension: { head:0.7, neck:0.85, shoulderR:0.9, shoulderL:0.9, armR:0.6, armL:0.6, upperBack:0.5, core:0.2, hipR:0.5, hipL:0.5, legR:0.4, legL:0.4 },
       connections: { 'shoulderL-hipR':0.05, 'shoulderR-hipL':0.05, 'elbowL-kneeL':0.0, 'elbowR-kneeR':0.0, 'handL-handR':0.0, 'shoulderL-hipL':0.1, 'shoulderR-hipR':0.1, 'spine':0.05, 'arch':0.0 },
       forceEfficiency: 0.08,
       forceAccumulation: { shoulderR:0.9, neck:0.7, spine:0.3, core:0.1, hipR:0.0, kneeR:0.0, ankleR:0.0 },
@@ -499,7 +512,7 @@ var armInTriangle = {
     {
       t: 0.33, label: 'Drop Shoulders', description: 'Shoulders settle into the mat, neck releases',
       positions: { head:{x:0.32,y:0.20}, neck:{x:0.36,y:0.27}, shoulderL:{x:0.30,y:0.35}, shoulderR:{x:0.45,y:0.35}, elbowL:{x:0.20,y:0.50}, elbowR:{x:0.56,y:0.46}, handL:{x:0.16,y:0.60}, handR:{x:0.62,y:0.54}, spine:{x:0.40,y:0.42}, core:{x:0.46,y:0.55}, hipL:{x:0.40,y:0.66}, hipR:{x:0.54,y:0.65}, kneeL:{x:0.34,y:0.80}, kneeR:{x:0.60,y:0.79}, ankleL:{x:0.30,y:0.92}, ankleR:{x:0.66,y:0.91} },
-      tension: { head:0.4, neck:0.4, shoulders:0.25, arms:0.4, upperBack:0.4, core:0.25, hips:0.35, legs:0.35 },
+      tension: { head:0.4, neck:0.4, shoulderR:0.25, shoulderL:0.25, armR:0.4, armL:0.4, upperBack:0.4, core:0.25, hipR:0.35, hipL:0.35, legR:0.35, legL:0.35 },
       connections: { 'shoulderL-hipR':0.2, 'shoulderR-hipL':0.15, 'elbowL-kneeL':0.1, 'elbowR-kneeR':0.1, 'handL-handR':0.05, 'shoulderL-hipL':0.25, 'shoulderR-hipR':0.2, 'spine':0.15, 'arch':0.1 },
       forceEfficiency: 0.3,
       forceAccumulation: { shoulderR:0.6, neck:0.45, spine:0.45, core:0.25, hipR:0.1, kneeR:0.05, ankleR:0.0 },
@@ -507,7 +520,7 @@ var armInTriangle = {
     {
       t: 0.66, label: 'Engage Diaphragm', description: 'Core pressurizes, chin tucks, frame solidifies',
       positions: { head:{x:0.34,y:0.19}, neck:{x:0.37,y:0.26}, shoulderL:{x:0.30,y:0.34}, shoulderR:{x:0.46,y:0.34}, elbowL:{x:0.22,y:0.52}, elbowR:{x:0.54,y:0.50}, handL:{x:0.20,y:0.64}, handR:{x:0.58,y:0.60}, spine:{x:0.40,y:0.41}, core:{x:0.44,y:0.54}, hipL:{x:0.38,y:0.65}, hipR:{x:0.52,y:0.65}, kneeL:{x:0.32,y:0.78}, kneeR:{x:0.56,y:0.77}, ankleL:{x:0.28,y:0.90}, ankleR:{x:0.62,y:0.89} },
-      tension: { head:0.15, neck:0.15, shoulders:0.1, arms:0.2, upperBack:0.2, core:0.4, hips:0.15, legs:0.2 },
+      tension: { head:0.15, neck:0.15, shoulderR:0.1, shoulderL:0.1, armR:0.2, armL:0.2, upperBack:0.2, core:0.4, hipR:0.15, hipL:0.15, legR:0.2, legL:0.2 },
       connections: { 'shoulderL-hipR':0.55, 'shoulderR-hipL':0.5, 'elbowL-kneeL':0.45, 'elbowR-kneeR':0.4, 'handL-handR':0.25, 'shoulderL-hipL':0.55, 'shoulderR-hipR':0.5, 'spine':0.5, 'arch':0.55 },
       forceEfficiency: 0.65,
       forceAccumulation: { shoulderR:0.35, neck:0.3, spine:0.45, core:0.55, hipR:0.4, kneeR:0.2, ankleR:0.1 },
@@ -515,7 +528,7 @@ var armInTriangle = {
     {
       t: 1.0, label: 'Elbow-Knee Connected', description: 'Triangle locked: elbow finds knee, full chain',
       positions: { head:{x:0.36,y:0.18}, neck:{x:0.38,y:0.25}, shoulderL:{x:0.32,y:0.33}, shoulderR:{x:0.46,y:0.33}, elbowL:{x:0.26,y:0.54}, elbowR:{x:0.50,y:0.56}, handL:{x:0.24,y:0.66}, handR:{x:0.52,y:0.66}, spine:{x:0.40,y:0.40}, core:{x:0.42,y:0.52}, hipL:{x:0.36,y:0.64}, hipR:{x:0.50,y:0.64}, kneeL:{x:0.28,y:0.76}, kneeR:{x:0.52,y:0.75}, ankleL:{x:0.24,y:0.88}, ankleR:{x:0.58,y:0.87} },
-      tension: { head:0.05, neck:0.05, shoulders:0.05, arms:0.1, upperBack:0.1, core:0.35, hips:0.05, legs:0.1 },
+      tension: { head:0.05, neck:0.05, shoulderR:0.05, shoulderL:0.05, armR:0.1, armL:0.1, upperBack:0.1, core:0.35, hipR:0.05, hipL:0.05, legR:0.1, legL:0.1 },
       connections: { 'shoulderL-hipR':0.9, 'shoulderR-hipL':0.85, 'elbowL-kneeL':0.9, 'elbowR-kneeR':0.85, 'handL-handR':0.6, 'shoulderL-hipL':0.85, 'shoulderR-hipR':0.8, 'spine':0.9, 'arch':0.9 },
       forceEfficiency: 0.9,
       forceAccumulation: { shoulderR:0.15, neck:0.15, spine:0.3, core:0.5, hipR:0.55, kneeR:0.65, ankleR:0.85 },
@@ -530,11 +543,11 @@ var scenarios = { standing: standing, armInTriangle: armInTriangle };
 // ============================================================
 
 // --- Panel 1: Tension Economy Heatmap ---
-var REGION_RADIUS = { head:22, neck:16, shoulders:28, arms:20, upperBack:24, core:30, hips:26, legs:22 };
+var REGION_RADIUS = { head:22, neck:16, shoulderR:28, shoulderL:28, armR:20, armL:20, upperBack:24, core:30, hipR:26, hipL:26, legR:22, legL:22 };
 
 function renderTensionHeatmap(ctx, state, w, h) {
   clearPanel(ctx, w, h);
-  drawPanelTitle(ctx, 'Tension Economy', '無駄を省く', w);
+  drawPanelTitle(ctx, 'Tension Economy', '無駄を省く', w, h, 'tl');
   var positions = scalePositions(state.positions, w, h);
 
   for (var region in REGIONS) {
@@ -564,7 +577,7 @@ function panelScale(w) { return Math.min(w / 400, 1); }
 
 function renderConnectionLines(ctx, state, w, h, time) {
   clearPanel(ctx, w, h);
-  drawPanelTitle(ctx, 'Internal Connections', '體の統一', w);
+  drawPanelTitle(ctx, 'Internal Connections', '體の統一', w, h, 'tr');
   var positions = scalePositions(state.positions, w, h);
   var sc = panelScale(w);
 
@@ -734,7 +747,7 @@ function drawArch(ctx, positions, strength, time, sc) {
 // --- Panel 3: Force Flow ---
 function renderForceFlow(ctx, state, w, h, time) {
   clearPanel(ctx, w, h);
-  drawPanelTitle(ctx, 'Ground Path / Force Flow', '地面への道', w);
+  drawPanelTitle(ctx, 'Ground Path / Force Flow', '地面への道', w, h, 'bl');
   var positions = scalePositions(state.positions, w, h);
 
   drawMannequin(ctx, positions, { boneColor: COLORS.boneDim + '50', nodeColor: COLORS.node + '30', nodeRadius: 2 });
@@ -819,7 +832,7 @@ var LANDMARK_LABELS = ['Ear', 'Shoulder', 'Hip', 'Ankle'];
 
 function renderStacking(ctx, state, w, h) {
   clearPanel(ctx, w, h);
-  drawPanelTitle(ctx, 'Stacking', '整列', w);
+  drawPanelTitle(ctx, 'Stacking', '部位の整列', w, h, 'br');
   var positions = scalePositions(state.positions, w, h);
 
   var ankleMid = positions.ankleMid;
@@ -907,6 +920,7 @@ function resize() {
 }
 
 // --- Step buttons ---
+var STEP_COLORS = ['#e53935','#ef6a5a','#fb8c00','#fdd835','#66bb6a','#a5d6a7'];
 var stepBtns = [];
 
 function buildSteps() {
@@ -1027,7 +1041,7 @@ var PANEL_TOOLTIPS = [
   { title: 'Tension Economy 無駄を省く', body: 'Heat shows parasitic (wasted) tension. Cool blue = efficient. Hot red = energy leak. As you self-organize, tension migrates from extremities into the core.' },
   { title: 'Internal Connections 體の統一', body: 'Cyan arcs show kinetic chains linking distant body parts through the core. The purple arch connects feet through hips. Stronger connections = unified structure.' },
   { title: 'Ground Path / Force Flow 地面への道', body: 'Animated dashes show how an external push at the shoulder travels to the ground. Red pooling = force is stuck. Green flow = force reaches the earth.' },
-  { title: 'Stacking 整列', body: 'Dots show four landmarks (ear, shoulder, hip, ankle) relative to a plumb line. Green = aligned over ankles. Orange = off-axis. Percentage shows overall alignment.' },
+  { title: 'Stacking 部位の整列', body: 'Dots show four landmarks (ear, shoulder, hip, ankle) relative to a plumb line. Green = aligned over ankles. Orange = off-axis. Percentage shows overall alignment.' },
 ];
 
 var activeTooltipIndex = -1;
@@ -1190,9 +1204,14 @@ function render(now) {
       var kfT = scenario.keyframes[i].t;
       var passed = t >= kfT - 0.01;
       var current = Math.abs(t - kfT) < 0.01;
-      stepBtns[i].classList.toggle('passed', passed && !current);
+      var lit = passed || current;
+      var c = STEP_COLORS[i] || STEP_COLORS[STEP_COLORS.length - 1];
+      stepBtns[i].classList.toggle('lit', lit);
       stepBtns[i].classList.toggle('active', current);
-      stepBtns[i].setAttribute('aria-pressed', passed || current);
+      stepBtns[i].style.borderColor = lit ? c : '';
+      stepBtns[i].style.color = lit ? c : '';
+      stepBtns[i].style.background = lit ? c + '18' : '';
+      stepBtns[i].setAttribute('aria-pressed', lit);
     }
 
     updateScreenReaderDescriptions(state);
