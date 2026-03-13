@@ -4,19 +4,21 @@ import rawData from '@/data/skill-assessment.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-type RawQuestion = { id: string; text: string; level: string; required?: boolean };
-type RawCategory = { id: string; name: string; questions: RawQuestion[] };
+type RawQuestion = { id: string; text: string; level: string; required?: boolean; diagnostic?: boolean; input?: string };
+type RawCategory = { id: string; name: string; weight?: number; questions: RawQuestion[] };
 
 const categories = (rawData as any).assessment.categories as RawCategory[];
 
-// Pick 2 per category for SHORT mode: prefer required+basic first
+// Pick 1 per category for SHORT mode: prefer diagnostic flag, fallback to required+basic
 function pickShortIds(qs: RawQuestion[]): Set<string> {
+  const diag = qs.find(q => q.diagnostic);
+  if (diag) return new Set([diag.id]);
   const sorted = [...qs].sort((a, b) => {
     const pri = (q: RawQuestion) =>
       (q.required ? 0 : 2) + (q.level === 'basic' ? 0 : q.level === 'intermediate' ? 1 : 2);
     return pri(a) - pri(b);
   });
-  return new Set(sorted.slice(0, 2).map(q => q.id));
+  return new Set(sorted.slice(0, 1).map(q => q.id));
 }
 
 const CAT_DATA = categories.map(cat => {
@@ -24,11 +26,13 @@ const CAT_DATA = categories.map(cat => {
   return {
     id: cat.id,
     name: cat.name,
+    catWeight: cat.weight ?? 1.0,
     questions: cat.questions.map(q => ({
       id: q.id,
       text: q.text,
       level: q.level,
       weight: q.level === 'basic' ? 1 : q.level === 'intermediate' ? 1.5 : 2,
+      input: q.input || 'slider',
       short: sIds.has(q.id),
     })),
   };
@@ -65,7 +69,7 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
         <button id="btn-short" class="mode-btn">
           <div class="mode-title">Short</div>
           <div class="mode-count">{totalShort} questions</div>
-          <div class="mode-desc">2 per area · ~5 min</div>
+          <div class="mode-desc">1 per area · ~3 min</div>
         </button>
         <button id="btn-full" class="mode-btn">
           <div class="mode-title">Full</div>
@@ -101,13 +105,53 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
         <div id="q-text" style="font-size:clamp(14px,3vw,20px);color:#c9d1d9;line-height:1.6;font-weight:500;"></div>
       </div>
 
-      <!-- Rating buttons 1–10 -->
-      <div style="margin-bottom:16px;">
-        <div id="q-btns" style="display:flex;gap:5px;margin-bottom:8px;"></div>
+      <!-- Rating slider 1–10 -->
+      <div id="q-slider-block" style="margin-bottom:16px;">
+        <div id="q-score-display" style="text-align:center;font-size:3rem;font-weight:700;line-height:1;transition:color 0.15s;">—</div>
+        <div style="position:relative;height:48px;margin:12px 0;">
+          <div style="position:absolute;inset:0;border-radius:4px;overflow:hidden;background:linear-gradient(to right,rgba(198,40,40,0.35),rgba(253,216,53,0.25) 50%,rgba(0,212,255,0.35));"></div>
+          <input type="range" id="q-slider" min="1" max="10" step="1" value="5"
+            style="position:absolute;inset:0;width:100%;height:100%;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;z-index:2;">
+        </div>
         <div style="display:flex;justify-content:space-between;">
           <span style="font-size:9px;letter-spacing:1px;color:#6b7280;">Not confident</span>
           <span style="font-size:9px;letter-spacing:1px;color:#6b7280;">Fully confident</span>
         </div>
+        <button id="q-confirm"
+          style="margin-top:16px;width:100%;font-family:inherit;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px 24px;border-radius:3px;cursor:pointer;border:1px solid #00d4ff44;background:rgba(0,212,255,0.08);color:#00d4ff;transition:all 0.15s;">
+          Confirm
+        </button>
+      </div>
+
+      <!-- Belt-Curve Widget -->
+      <div id="q-belt-curve" style="display:none;margin-bottom:16px;">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-bottom:10px;text-align:center;">Draw across belt levels</div>
+        <div id="bc-container" style="position:relative;height:200px;display:flex;gap:6px;justify-content:center;touch-action:none;user-select:none;">
+          <div class="bc-col" data-belt="0" style="width:48px;height:100%;border-radius:4px;background:linear-gradient(to top,rgba(198,40,40,0.25),rgba(0,212,255,0.25));position:relative;"></div>
+          <div class="bc-col" data-belt="1" style="width:48px;height:100%;border-radius:4px;background:linear-gradient(to top,rgba(198,40,40,0.25),rgba(0,212,255,0.25));position:relative;"></div>
+          <div class="bc-col" data-belt="2" style="width:48px;height:100%;border-radius:4px;background:linear-gradient(to top,rgba(198,40,40,0.25),rgba(0,212,255,0.25));position:relative;"></div>
+          <div class="bc-col" data-belt="3" style="width:48px;height:100%;border-radius:4px;background:linear-gradient(to top,rgba(198,40,40,0.25),rgba(0,212,255,0.25));position:relative;"></div>
+          <div class="bc-col" data-belt="4" style="width:48px;height:100%;border-radius:4px;background:linear-gradient(to top,rgba(198,40,40,0.25),rgba(0,212,255,0.25));position:relative;"></div>
+          <svg id="bc-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;">
+            <defs>
+              <filter id="glow"><feGaussianBlur stdDeviation="3" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <polyline id="bc-line" fill="none" stroke="#00d4ff" stroke-width="2" stroke-linejoin="round" filter="url(#glow)"/>
+          </svg>
+        </div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:6px;">
+          <div class="bc-label" style="width:48px;text-align:center;font-size:10px;font-weight:700;color:#e0e0e0;">W</div>
+          <div class="bc-label" style="width:48px;text-align:center;font-size:10px;font-weight:700;color:#1565c0;">B</div>
+          <div class="bc-label" style="width:48px;text-align:center;font-size:10px;font-weight:700;color:#7b1fa2;">P</div>
+          <div class="bc-label" style="width:48px;text-align:center;font-size:10px;font-weight:700;color:#6d4c41;">Br</div>
+          <div class="bc-label" style="width:48px;text-align:center;font-size:10px;font-weight:700;color:#ccc;">Bk</div>
+        </div>
+        <div id="bc-hint" style="text-align:center;font-size:9px;color:#6b7280;margin-top:8px;">5 belt levels remaining</div>
+        <button id="bc-confirm"
+          style="margin-top:16px;width:100%;font-family:inherit;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px 24px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:rgba(0,212,255,0.03);color:#6b7280;transition:all 0.15s;opacity:0.5;"
+          disabled>
+          Confirm
+        </button>
       </div>
 
       <!-- Skip -->
@@ -124,6 +168,11 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
 
       <!-- Overall score -->
       <div id="r-overall" style="display:flex;align-items:center;gap:20px;margin-bottom:28px;padding:16px 20px;border:1px solid #21262d;border-radius:4px;background:rgba(13,17,23,0.8);"></div>
+
+      <!-- Spider/Radar chart -->
+      <div style="display:flex;justify-content:center;margin-bottom:28px;">
+        <canvas id="r-radar" style="max-width:400px;width:100%;"></canvas>
+      </div>
 
       <!-- Per-category bars -->
       <div id="r-bars" style="margin-bottom:32px;"></div>
@@ -155,23 +204,24 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
     .mode-count { font-size: 13px; color: #00d4ff; margin-bottom: 4px; }
     .mode-desc  { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #6b7280; }
 
-    .q-btn {
-      flex: 1;
-      min-width: 0;
-      height: 44px;
-      padding: 0;
-      font-family: 'Courier New', Consolas, Monaco, monospace;
-      font-size: 14px;
-      font-weight: 700;
-      border: 1px solid #21262d;
-      border-radius: 3px;
-      cursor: pointer;
-      color: #c9d1d9;
-      background: rgba(13,17,23,0.8);
-      transition: transform 0.1s, background 0.1s, border-color 0.1s;
+    #q-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px; height: 44px; border-radius: 4px;
+      background: #00d4ff;
+      border: 2px solid #050509;
+      box-shadow: 0 0 12px #00d4ff88, 0 0 24px #00d4ff44;
+      cursor: grab;
     }
-    .q-btn:hover  { transform: scale(1.1); z-index: 1; position: relative; }
-    .q-btn.picked { transform: scale(1.18); z-index: 2; position: relative; }
+    #q-slider::-moz-range-thumb {
+      width: 24px; height: 44px; border-radius: 4px;
+      background: #00d4ff;
+      border: 2px solid #050509;
+      box-shadow: 0 0 12px #00d4ff88;
+      cursor: grab;
+    }
+    #q-slider::-webkit-slider-runnable-track { background: transparent; }
+    #q-slider::-moz-range-track { background: transparent; }
+    #q-confirm:hover { background: rgba(0,212,255,0.15); border-color: #00d4ff; }
 
     .retake-btn {
       font-family: 'Courier New', Consolas, Monaco, monospace;
@@ -188,79 +238,225 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
     }
     .retake-btn:hover { border-color: #00d4ff; color: #00d4ff; }
 
-    @media (max-width: 480px) {
-      .q-btn { height: 38px; font-size: 12px; }
-    }
   </style>
 
   <script define:vars={{ CAT_DATA, totalShort, totalFull }}>
-    // ── Color helpers (same as Training Partners) ──────────────────────────────
+    // ── Color helpers ────────────────────────────────────────────────────────────
     const SCORE_COLORS = [
-      '#7f0000', // 0
-      '#c62828', // 1
-      '#e53935', // 2
-      '#f4511e', // 3
-      '#fb8c00', // 4
-      '#fdd835', // 5
-      '#c0ca33', // 6
-      '#7cb342', // 7
-      '#26a69a', // 8
-      '#00acc1', // 9
-      '#00d4ff', // 10
+      '#7f0000', '#c62828', '#e53935', '#f4511e', '#fb8c00',
+      '#fdd835', '#c0ca33', '#7cb342', '#26a69a', '#00acc1', '#00d4ff',
     ];
     const ZONE_GRADIENT = 'linear-gradient(to right,rgba(198,40,40,0.18),rgba(253,216,53,0.12) 50%,rgba(0,212,255,0.18))';
 
     function fillColor(v) {
       return SCORE_COLORS[Math.max(0, Math.min(10, Math.round(v)))];
     }
-    // Convert 1-10 score to 0-10 color index
-    function scoreToColor(s) {
-      return fillColor((s - 1) / 9 * 10);
-    }
-    // Convert 1-10 score to 0-100 pct
     function scoreToPct(s) {
       return Math.round((s - 1) / 9 * 100);
     }
 
-    // ── State ──────────────────────────────────────────────────────────────────
-    let queue   = [];   // flat: [{id, text, level, weight, catId, catName}, ...]
+    // ── Belt-curve constants ─────────────────────────────────────────────────────
+    const BELTS = ['W','B','P','Br','Bk'];
+    const BELT_COLORS = ['#e0e0e0','#1565c0','#7b1fa2','#6d4c41','#212121'];
+    const BELT_SCORE_WEIGHTS = [0.5, 0.8, 1.0, 1.2, 1.5];
+
+    // ── State ────────────────────────────────────────────────────────────────────
+    let queue   = [];
     let qIdx    = 0;
-    let answers = {};   // {qId: 1-10}
+    let answers = {};   // {qId: number | {beltValues:[...], score:number}}
+    let beltValues  = [5,5,5,5,5];
+    let beltTouched = [false,false,false,false,false];
+    let bcTracking  = false;
 
-    // ── Elements ───────────────────────────────────────────────────────────────
-    const vSetup   = document.getElementById('v-setup');
-    const vQuiz    = document.getElementById('v-quiz');
-    const vResults = document.getElementById('v-results');
-    const qCatEl   = document.getElementById('q-cat');
-    const qNumEl   = document.getElementById('q-num');
-    const qBarEl   = document.getElementById('q-bar');
-    const qLevelEl = document.getElementById('q-level');
-    const qTextEl  = document.getElementById('q-text');
-    const qBtnsEl  = document.getElementById('q-btns');
+    // ── Elements ─────────────────────────────────────────────────────────────────
+    const vSetup      = document.getElementById('v-setup');
+    const vQuiz       = document.getElementById('v-quiz');
+    const vResults    = document.getElementById('v-results');
+    const qCatEl      = document.getElementById('q-cat');
+    const qNumEl      = document.getElementById('q-num');
+    const qBarEl      = document.getElementById('q-bar');
+    const qLevelEl    = document.getElementById('q-level');
+    const qTextEl     = document.getElementById('q-text');
+    const qSlider     = document.getElementById('q-slider');
+    const qScoreDisp  = document.getElementById('q-score-display');
+    const qSliderBlk  = document.getElementById('q-slider-block');
+    const qBeltCurve  = document.getElementById('q-belt-curve');
+    const bcContainer = document.getElementById('bc-container');
+    const bcSvg       = document.getElementById('bc-svg');
+    const bcLine      = document.getElementById('bc-line');
+    const bcConfirm   = document.getElementById('bc-confirm');
+    const bcHint      = document.getElementById('bc-hint');
+    const bcCols      = bcContainer.querySelectorAll('.bc-col');
+    let sliderTouched = false;
 
-    // ── Build 1-10 rating buttons once ────────────────────────────────────────
-    for (let i = 1; i <= 10; i++) {
-      const btn = document.createElement('button');
-      btn.className = 'q-btn';
-      btn.textContent = String(i);
-      btn.style.borderColor = SCORE_COLORS[i] + '66';
-      btn.addEventListener('click', () => recordAnswer(i));
-      qBtnsEl.appendChild(btn);
+    // ── Slider display ───────────────────────────────────────────────────────────
+    function updateSliderDisplay() {
+      const v = parseInt(qSlider.value, 10);
+      const color = SCORE_COLORS[v];
+      qScoreDisp.textContent = v;
+      qScoreDisp.style.color = color;
+      qScoreDisp.style.textShadow = `0 0 12px ${color}88`;
+      sliderTouched = true;
+    }
+    qSlider.addEventListener('input', updateSliderDisplay);
+
+    document.getElementById('q-confirm').addEventListener('click', () => {
+      if (!sliderTouched) return;
+      recordAnswer(parseInt(qSlider.value, 10));
+    });
+
+    // ── Belt-curve interaction ────────────────────────────────────────────────────
+    function getBeltIndex(clientX) {
+      for (let i = 0; i < bcCols.length; i++) {
+        const r = bcCols[i].getBoundingClientRect();
+        if (clientX >= r.left && clientX <= r.right) return i;
+      }
+      // Clamp to nearest
+      const first = bcCols[0].getBoundingClientRect();
+      const last = bcCols[4].getBoundingClientRect();
+      if (clientX < first.left) return 0;
+      return 4;
     }
 
-    // ── View helpers ───────────────────────────────────────────────────────────
+    function getValueFromY(clientY, colEl) {
+      const r = colEl.getBoundingClientRect();
+      const ratio = 1 - Math.max(0, Math.min(1, (clientY - r.top) / r.height));
+      return Math.max(1, Math.min(10, Math.round(ratio * 9 + 1)));
+    }
+
+    function setBeltValue(idx, clientY) {
+      const val = getValueFromY(clientY, bcCols[idx]);
+      beltValues[idx] = val;
+      beltTouched[idx] = true;
+      updateBeltCurveVisuals();
+    }
+
+    function updateBeltCurveVisuals() {
+      // Remove old dots and labels from SVG
+      bcSvg.querySelectorAll('.bc-dot, .bc-score-label').forEach(el => el.remove());
+
+      const points = [];
+      for (let i = 0; i < 5; i++) {
+        if (!beltTouched[i]) continue;
+        const col = bcCols[i];
+        const cr = col.getBoundingClientRect();
+        const sr = bcContainer.getBoundingClientRect();
+        const x = cr.left - sr.left + cr.width / 2;
+        const yRatio = 1 - (beltValues[i] - 1) / 9;
+        const y = yRatio * cr.height;
+        points.push({ x, y, i });
+
+        // Dot
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', x);
+        dot.setAttribute('cy', y);
+        dot.setAttribute('r', 8);
+        dot.setAttribute('fill', SCORE_COLORS[beltValues[i]]);
+        dot.setAttribute('stroke', '#050509');
+        dot.setAttribute('stroke-width', '2');
+        dot.classList.add('bc-dot');
+        bcSvg.appendChild(dot);
+
+        // Score label
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', x);
+        label.setAttribute('y', y - 14);
+        label.setAttribute('text-anchor', 'middle');
+        label.setAttribute('fill', SCORE_COLORS[beltValues[i]]);
+        label.setAttribute('font-size', '11');
+        label.setAttribute('font-weight', '700');
+        label.setAttribute('font-family', "'Courier New', monospace");
+        label.classList.add('bc-score-label');
+        label.textContent = beltValues[i];
+        bcSvg.appendChild(label);
+      }
+
+      // Sort by belt index for polyline
+      points.sort((a, b) => a.i - b.i);
+      bcLine.setAttribute('points', points.map(p => `${p.x},${p.y}`).join(' '));
+
+      // Update hint and confirm state
+      const remaining = beltTouched.filter(t => !t).length;
+      if (remaining === 0) {
+        bcConfirm.disabled = false;
+        bcConfirm.style.opacity = '1';
+        bcConfirm.style.color = '#00d4ff';
+        bcConfirm.style.borderColor = '#00d4ff44';
+        bcConfirm.style.background = 'rgba(0,212,255,0.08)';
+        bcHint.textContent = 'All belt levels set';
+        bcHint.style.color = '#00d4ff';
+      } else {
+        bcConfirm.disabled = true;
+        bcConfirm.style.opacity = '0.5';
+        bcConfirm.style.color = '#6b7280';
+        bcConfirm.style.borderColor = '#21262d';
+        bcConfirm.style.background = 'rgba(0,212,255,0.03)';
+        bcHint.textContent = `${remaining} belt level${remaining > 1 ? 's' : ''} remaining`;
+        bcHint.style.color = '#6b7280';
+      }
+    }
+
+    bcContainer.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      bcContainer.setPointerCapture(e.pointerId);
+      bcTracking = true;
+      const idx = getBeltIndex(e.clientX);
+      setBeltValue(idx, e.clientY);
+    });
+
+    bcContainer.addEventListener('pointermove', (e) => {
+      if (!bcTracking) return;
+      e.preventDefault();
+      const idx = getBeltIndex(e.clientX);
+      setBeltValue(idx, e.clientY);
+    });
+
+    bcContainer.addEventListener('pointerup', (e) => {
+      bcTracking = false;
+    });
+
+    bcContainer.addEventListener('pointercancel', () => {
+      bcTracking = false;
+    });
+
+    function getBeltCurveScore() {
+      let wSum = 0, vSum = 0;
+      for (let i = 0; i < 5; i++) {
+        wSum += BELT_SCORE_WEIGHTS[i];
+        vSum += beltValues[i] * BELT_SCORE_WEIGHTS[i];
+      }
+      return vSum / wSum;
+    }
+
+    bcConfirm.addEventListener('click', () => {
+      if (bcConfirm.disabled) return;
+      const score = getBeltCurveScore();
+      answers[queue[qIdx].id] = { beltValues: [...beltValues], score };
+      qIdx++;
+      renderQ();
+    });
+
+    // ── Score helper (works for both answer formats) ─────────────────────────────
+    function getAnswerScore(qId) {
+      const a = answers[qId];
+      if (a == null) return null;
+      if (typeof a === 'number') return a;
+      return a.score;
+    }
+
+    // ── View helpers ─────────────────────────────────────────────────────────────
     function showView(id) {
       vSetup.style.display   = id === 'v-setup'   ? '' : 'none';
       vQuiz.style.display    = id === 'v-quiz'    ? '' : 'none';
       vResults.style.display = id === 'v-results' ? '' : 'none';
     }
 
-    // ── Quiz ───────────────────────────────────────────────────────────────────
+    // ── Quiz ─────────────────────────────────────────────────────────────────────
     function buildQueue(mode) {
       return CAT_DATA.flatMap(cat =>
         cat.questions
           .filter(q => mode === 'full' || q.short)
-          .map(q => ({ id: q.id, text: q.text, level: q.level, weight: q.weight, catId: cat.id, catName: cat.name }))
+          .map(q => ({ id: q.id, text: q.text, level: q.level, weight: q.weight, input: q.input, catId: cat.id, catName: cat.name }))
       );
     }
 
@@ -284,45 +480,56 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
       qLevelEl.textContent = q.level;
       qTextEl.textContent  = q.text;
 
-      // Reset buttons
-      document.querySelectorAll('.q-btn').forEach(b => {
-        b.classList.remove('picked');
-        b.style.background   = 'rgba(13,17,23,0.8)';
-        b.style.borderColor  = SCORE_COLORS[parseInt(b.textContent)] + '66';
-        b.style.color        = '#c9d1d9';
-      });
+      const isBeltCurve = q.input === 'belt-curve';
+
+      // Toggle widgets
+      qSliderBlk.style.display = isBeltCurve ? 'none' : '';
+      qBeltCurve.style.display = isBeltCurve ? '' : 'none';
+
+      if (isBeltCurve) {
+        // Reset belt-curve state
+        beltValues  = [5,5,5,5,5];
+        beltTouched = [false,false,false,false,false];
+        bcTracking  = false;
+        bcLine.setAttribute('points', '');
+        bcSvg.querySelectorAll('.bc-dot, .bc-score-label').forEach(el => el.remove());
+        updateBeltCurveVisuals();
+      } else {
+        // Reset slider
+        qSlider.value = 5;
+        sliderTouched = false;
+        qScoreDisp.textContent = '—';
+        qScoreDisp.style.color = '#6b7280';
+        qScoreDisp.style.textShadow = 'none';
+      }
     }
 
     function recordAnswer(score) {
-      const btns = document.querySelectorAll('.q-btn');
-      btns[score - 1].classList.add('picked');
-      btns[score - 1].style.background  = SCORE_COLORS[score] + '33';
-      btns[score - 1].style.borderColor = SCORE_COLORS[score];
-
       answers[queue[qIdx].id] = score;
-
-      setTimeout(() => { qIdx++; renderQ(); }, 220);
+      qIdx++;
+      renderQ();
     }
 
     document.getElementById('q-skip')?.addEventListener('click', () => { qIdx++; renderQ(); });
 
-    // ── Results ────────────────────────────────────────────────────────────────
+    // ── Results ──────────────────────────────────────────────────────────────────
     function showResults() {
       showView('v-results');
 
       // Per-category weighted scores
       const catResults = CAT_DATA.map(cat => {
-        const answered = cat.questions.filter(q => answers[q.id] != null);
+        const answered = cat.questions.filter(q => getAnswerScore(q.id) != null);
         if (answered.length === 0) return { name: cat.name, score: null, pct: null };
         const tw  = answered.reduce((s, q) => s + q.weight, 0);
-        const ws  = answered.reduce((s, q) => s + answers[q.id] * q.weight, 0);
-        const score = ws / tw;                 // 1–10 weighted avg
-        const pct   = scoreToPct(score);       // 0–100
-        return { name: cat.name, score, pct };
+        const ws  = answered.reduce((s, q) => s + getAnswerScore(q.id) * q.weight, 0);
+        const score = ws / tw;
+        const pct   = scoreToPct(score);
+        return { name: cat.name, score, pct, catWeight: cat.catWeight };
       });
 
       const valid   = catResults.filter(r => r.pct != null);
-      const overall = valid.length ? Math.round(valid.reduce((s, r) => s + r.pct, 0) / valid.length) : 0;
+      const totalWeight = valid.reduce((s, r) => s + r.catWeight, 0);
+      const overall = valid.length ? Math.round(valid.reduce((s, r) => s + r.pct * r.catWeight, 0) / totalWeight) : 0;
 
       // Overall badge
       const oc = fillColor(overall / 10);
@@ -334,6 +541,9 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
         </div>
       `;
       document.getElementById('r-overall').style.borderColor = oc + '44';
+
+      // Radar chart
+      drawRadarChart(catResults);
 
       // Category bar chart
       const barsEl = document.getElementById('r-bars');
@@ -357,13 +567,108 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
       }).join('');
     }
 
-    // ── Button wiring ──────────────────────────────────────────────────────────
+    // ── Radar / Spider chart ─────────────────────────────────────────────────────
+    const RADAR_LABELS = [
+      'Takedowns', 'Guard Pass', 'Guard Ret.',
+      'CG Top', 'CG Bottom', 'OG Top', 'OG Bottom',
+      'HG Top', 'HG Bottom', 'Mount Top', 'Mount Bot.',
+      'Back Top', 'Back Bot.', 'Leg Locks', 'Wrist Locks'
+    ];
+
+    function drawRadarChart(catResults) {
+      const canvas = document.getElementById('r-radar');
+      const DPR = Math.min(window.devicePixelRatio || 1, 2);
+      const size = Math.min(400, canvas.parentElement.clientWidth);
+      canvas.width  = size * DPR;
+      canvas.height = size * DPR;
+      canvas.style.width  = size + 'px';
+      canvas.style.height = size + 'px';
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(DPR, DPR);
+
+      const cx = size / 2;
+      const cy = size / 2;
+      const R  = size / 2 - 40;
+      const n  = catResults.length;
+      const angleStep = (2 * Math.PI) / n;
+      const startAngle = -Math.PI / 2;
+
+      // Grid polygons
+      ctx.strokeStyle = '#21262d';
+      ctx.lineWidth = 0.5;
+      for (const frac of [0.25, 0.5, 0.75, 1.0]) {
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+          const a = startAngle + (i % n) * angleStep;
+          const x = cx + Math.cos(a) * R * frac;
+          const y = cy + Math.sin(a) * R * frac;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // Axis lines
+      for (let i = 0; i < n; i++) {
+        const a = startAngle + i * angleStep;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+        ctx.stroke();
+      }
+
+      // Data polygon
+      const dataPoints = [];
+      for (let i = 0; i < n; i++) {
+        const r = catResults[i];
+        const val = r.pct != null ? r.pct / 100 : 0;
+        const a = startAngle + i * angleStep;
+        dataPoints.push({
+          x: cx + Math.cos(a) * R * val,
+          y: cy + Math.sin(a) * R * val,
+          answered: r.pct != null,
+        });
+      }
+
+      ctx.beginPath();
+      dataPoints.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(0,212,255,0.15)';
+      ctx.fill();
+      ctx.strokeStyle = '#00d4ff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Dots at vertices
+      dataPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = p.answered ? '#00d4ff' : '#6b7280';
+        ctx.fill();
+      });
+
+      // Labels
+      ctx.font = "9px 'Courier New', monospace";
+      ctx.textBaseline = 'middle';
+      for (let i = 0; i < n; i++) {
+        const a = startAngle + i * angleStep;
+        const lx = cx + Math.cos(a) * (R + 18);
+        const ly = cy + Math.sin(a) * (R + 18);
+        const label = i < RADAR_LABELS.length ? RADAR_LABELS[i] : catResults[i].name;
+        ctx.fillStyle = catResults[i].pct != null ? '#8b949e' : '#6b7280';
+        ctx.textAlign = Math.abs(Math.cos(a)) < 0.01 ? 'center' : Math.cos(a) > 0 ? 'left' : 'right';
+        ctx.fillText(label, lx, ly);
+      }
+    }
+
+    // ── Button wiring ────────────────────────────────────────────────────────────
     document.getElementById('btn-short')?.addEventListener('click', () => startQuiz('short'));
     document.getElementById('btn-full') ?.addEventListener('click', () => startQuiz('full'));
     document.getElementById('btn-retake-short')?.addEventListener('click', () => startQuiz('short'));
     document.getElementById('btn-retake-full') ?.addEventListener('click', () => startQuiz('full'));
 
-    // ── Deep link button ───────────────────────────────────────────────────────
+    // ── Deep link button ─────────────────────────────────────────────────────────
     document.getElementById('btn-deeplink')?.addEventListener('click', () => {
       navigator.clipboard.writeText(location.href).then(() => {
         const btn = document.getElementById('btn-deeplink');

@@ -20,11 +20,11 @@
         "id": "takedowns",
         "name": "Takedowns & Wrestling",
         "description": "Standing grappling, throws, and takedown techniques",
-        "weight": 1.0,
+        "weight": 1.2,
         "questions": [
           {
             "id": "td_001",
-            "text": "I can name more than 5 takedowns",
+            "text": "I can name and effectively use more than 5 takedowns",
             "type": "knowledge",
             "level": "basic",
             "category_id": "takedowns",
@@ -32,13 +32,15 @@
             "required": true
           },
           {
-            "id": "td_002", 
-            "text": "I can take down white belts reliably (70%+ success rate)",
+            "id": "td_002",
+            "text": "I can take down opponents reliably",
+            "input": "belt-curve",
             "type": "performance",
             "level": "basic",
             "category_id": "takedowns",
             "subcategory": "execution",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "td_003",
@@ -74,7 +76,8 @@
           },
           {
             "id": "td_007",
-            "text": "In my last 10 training sessions, I successfully took down white belts 80% of the time",
+            "text": "In my last 10 sessions, I completed takedowns consistently",
+            "input": "belt-curve",
             "type": "performance",
             "level": "intermediate",
             "category_id": "takedowns",
@@ -134,11 +137,11 @@
         "id": "guard_top",
         "name": "Guard Passing (Top)",
         "description": "Passing opponent's guard from top position",
-        "weight": 1.0,
+        "weight": 1.2,
         "questions": [
           {
             "id": "gt_001",
-            "text": "I can name 5+ guard passing principles",
+            "text": "I can name and effectively use 5+ guard passing principles",
             "type": "knowledge",
             "level": "basic",
             "category_id": "guard_top",
@@ -147,12 +150,14 @@
           },
           {
             "id": "gt_002",
-            "text": "I can pass white belt guards consistently (70%+ success rate)",
+            "text": "I can pass guard consistently",
+            "input": "belt-curve",
             "type": "performance",
             "level": "basic",
             "category_id": "guard_top",
             "subcategory": "execution",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "gt_003",
@@ -240,11 +245,11 @@
         "id": "guard_bottom",
         "name": "Guard Retention (Bottom)",
         "description": "Maintaining and recovering guard from bottom position",
-        "weight": 1.0,
+        "weight": 1.2,
         "questions": [
           {
             "id": "gb_001",
-            "text": "I can name 5+ guard retention principles",
+            "text": "I can name and effectively use 5+ guard retention principles",
             "type": "knowledge",
             "level": "basic",
             "category_id": "guard_bottom",
@@ -258,7 +263,8 @@
             "level": "intermediate",
             "category_id": "guard_bottom",
             "subcategory": "recovery",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "gb_003",
@@ -350,7 +356,7 @@
         "questions": [
           {
             "id": "cgt_001",
-            "text": "I can name 3+ ways to break closed guard",
+            "text": "I can name and effectively use 3+ ways to break closed guard",
             "type": "knowledge",
             "level": "basic",
             "category_id": "closed_guard_top",
@@ -359,12 +365,14 @@
           },
           {
             "id": "cgt_002",
-            "text": "I can break closed guard consistently against white belts",
+            "text": "I can break closed guard consistently",
+            "input": "belt-curve",
             "type": "performance",
             "level": "basic",
             "category_id": "closed_guard_top",
             "subcategory": "execution",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "cgt_003",
@@ -453,7 +461,8 @@
             "level": "basic",
             "category_id": "closed_guard_bottom",
             "subcategory": "fundamentals",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "cgb_002",
@@ -568,7 +577,8 @@
             "level": "basic",
             "category_id": "open_guard_top",
             "subcategory": "execution",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "ogt_003",
@@ -666,7 +676,8 @@
             "level": "basic",
             "category_id": "open_guard_bottom",
             "subcategory": "sweeps",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "ogb_003",
@@ -758,7 +769,7 @@
         "questions": [
           {
             "id": "hgt_001",
-            "text": "I can name 3+ ways to pass half guard",
+            "text": "I can name and effectively use 3+ ways to pass half guard",
             "type": "knowledge",
             "level": "basic",
             "category_id": "half_guard_top",
@@ -767,12 +778,14 @@
           },
           {
             "id": "hgt_002",
-            "text": "I can pass half guard consistently against white belts",
+            "text": "I can pass half guard consistently",
+            "input": "belt-curve",
             "type": "performance",
             "level": "basic",
             "category_id": "half_guard_top",
             "subcategory": "execution",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "hgt_003",
@@ -856,7 +869,7 @@
         "questions": [
           {
             "id": "hgb_001",
-            "text": "I can name 3+ sweeps from half guard bottom",
+            "text": "I can name and effectively use 3+ sweeps from half guard bottom",
             "type": "knowledge",
             "level": "basic",
             "category_id": "half_guard_bottom",
@@ -894,7 +907,8 @@
             "type": "performance",
             "level": "intermediate",
             "category_id": "half_guard_bottom",
-            "subcategory": "sweeps"
+            "subcategory": "sweeps",
+            "diagnostic": true
           },
           {
             "id": "hgb_006",
@@ -958,20 +972,22 @@
         "id": "mount_top",
         "name": "Mount (Top)",
         "description": "Controlling and attacking from mount",
-        "weight": 1.0,
+        "weight": 1.2,
         "questions": [
           {
             "id": "mt_001",
-            "text": "I can maintain mount against white belts for 30+ seconds",
+            "text": "I can maintain mount for 30+ seconds",
+            "input": "belt-curve",
             "type": "performance",
             "level": "basic",
             "category_id": "mount_top",
             "subcategory": "control",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "mt_002",
-            "text": "I can name 3+ submissions from mount",
+            "text": "I can name and effectively use 3+ submissions from mount",
             "type": "knowledge",
             "level": "basic",
             "category_id": "mount_top",
@@ -1064,11 +1080,11 @@
         "id": "mount_bottom",
         "name": "Mount (Bottom)",
         "description": "Escaping and defending from mount bottom",
-        "weight": 1.0,
+        "weight": 1.2,
         "questions": [
           {
             "id": "mb_001",
-            "text": "I can name 3+ mount escapes",
+            "text": "I can name and effectively use 3+ mount escapes",
             "type": "knowledge",
             "level": "basic",
             "category_id": "mount_bottom",
@@ -1077,12 +1093,14 @@
           },
           {
             "id": "mb_002",
-            "text": "I can escape mount from white belts consistently",
+            "text": "I can escape mount consistently",
+            "input": "belt-curve",
             "type": "performance",
             "level": "basic",
             "category_id": "mount_bottom",
             "subcategory": "escapes",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "mb_003",
@@ -1162,16 +1180,18 @@
         "id": "back_mount_top",
         "name": "Back Mount (Top)",
         "description": "Controlling and attacking from back mount",
-        "weight": 1.0,
+        "weight": 1.2,
         "questions": [
           {
             "id": "bmt_001",
-            "text": "I can maintain back control for 30+ seconds against white belts",
+            "text": "I can maintain back control for 30+ seconds",
+            "input": "belt-curve",
             "type": "performance",
             "level": "basic",
             "category_id": "back_mount_top",
             "subcategory": "control",
-            "required": true
+            "required": true,
+            "diagnostic": true
           },
           {
             "id": "bmt_002",
@@ -1260,11 +1280,11 @@
         "id": "back_mount_bottom",
         "name": "Back Mount (Bottom)",
         "description": "Escaping and defending from back mount bottom",
-        "weight": 1.0,
+        "weight": 1.2,
         "questions": [
           {
             "id": "bmb_001",
-            "text": "I can name 3+ back escape techniques",
+            "text": "I can name and effectively use 3+ back escape techniques",
             "type": "knowledge",
             "level": "basic",
             "category_id": "back_mount_bottom",
@@ -1282,11 +1302,13 @@
           },
           {
             "id": "bmb_003",
-            "text": "I can escape back control from white belts consistently",
+            "text": "I can escape back control consistently",
+            "input": "belt-curve",
             "type": "performance",
             "level": "basic",
             "category_id": "back_mount_bottom",
-            "subcategory": "escapes"
+            "subcategory": "escapes",
+            "diagnostic": true
           },
           {
             "id": "bmb_004",
@@ -1358,11 +1380,11 @@
         "id": "leg_locks",
         "name": "Leg Locks (Attack/Defense)",
         "description": "Attacking with and defending against leg locks",
-        "weight": 1.0,
+        "weight": 0.8,
         "questions": [
           {
             "id": "ll_001",
-            "text": "I can name 5+ different leg lock submissions",
+            "text": "I can name and effectively use 5+ different leg lock submissions",
             "type": "knowledge",
             "level": "basic",
             "category_id": "leg_locks",
@@ -1384,7 +1406,8 @@
             "type": "technical",
             "level": "basic",
             "category_id": "leg_locks",
-            "subcategory": "execution"
+            "subcategory": "execution",
+            "diagnostic": true
           },
           {
             "id": "ll_004",
@@ -1468,7 +1491,7 @@
         "questions": [
           {
             "id": "wl_001",
-            "text": "I can name 3+ different wrist lock variations",
+            "text": "I can name and effectively use 3+ different wrist lock variations",
             "type": "knowledge",
             "level": "basic",
             "category_id": "wrist_locks",
@@ -1490,7 +1513,8 @@
             "type": "technical",
             "level": "basic",
             "category_id": "wrist_locks",
-            "subcategory": "execution"
+            "subcategory": "execution",
+            "diagnostic": true
           },
           {
             "id": "wl_004",
