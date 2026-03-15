@@ -7,16 +7,8 @@ const thumbBase = `${base}/images/thumbs`;
 
 const games = [
   {
-    title: 'Pressure Game',
-    description: 'Steer a ball on a tilting platform toward pressure zones. Timer expires → d20 roll → BJJ technique scenario.',
-    href: `${base}/modules/pressure-game`,
-    status: 'live' as const,
-    tag: 'PHYSICS',
-    thumb: `${thumbBase}/games-pressure.webp`,
-  },
-  {
     title: 'Memory Game',
-    description: 'Match technique card pairs from the JJJ image set. 8 pairs, 4×4 grid — study the layout, then find all matches.',
+    description: 'Match technique card pairs from the JJJ image set. 8 pairs, 4x4 grid, study the layout, then find all matches.',
     href: `${base}/modules/memory`,
     status: 'live' as const,
     tag: 'MEMORY',
@@ -24,33 +16,11 @@ const games = [
   },
   {
     title: 'Centroid Game',
-    description: 'Estimate the center of mass of a dot cluster. 10 rounds, Chebyshev scoring, timer penalty — lowest score wins.',
+    description: 'Estimate the center of mass of a dot cluster. 10 rounds, Chebyshev scoring, timer penalty, lowest score wins.',
     href: `${base}/modules/centroid`,
     status: 'live' as const,
     tag: 'SPATIAL',
     thumb: `${thumbBase}/games-centroid.webp`,
-  },
-  {
-    title: 'Udejuji Hakai Game',
-    description: 'Arm destruction scenarios — recognize joint lock entries, evaluate danger levels, choose the correct counter.',
-    href: `${base}/modules/udejuji-hakai`,
-    status: 'wip' as const,
-    tag: 'DECISION',
-  },
-  {
-    title: 'BJJ Word Hunt',
-    description: 'Guess the grappling term in 6 tries. Supports 4–7 letter words in English, Japanese, and Portuguese.',
-    href: `${base}/modules/bjj-wordle`,
-    status: 'live' as const,
-    tag: 'WORD',
-    thumb: `${thumbBase}/games-wordle.webp`,
-  },
-  {
-    title: 'TBD Game 5',
-    description: 'Coming soon.',
-    href: '#',
-    status: 'soon' as const,
-    tag: 'TBD',
   },
 ];
 ---
@@ -65,17 +35,17 @@ const games = [
         Games Hub
       </h1>
       <p class="text-sm text-text-muted max-w-xl leading-relaxed">
-        Gamified drills and decision tools built on grappling mechanics.
-        Score, react, and resolve — each game ends with a d20 or a verdict.
+        Mini-games built on grappling mechanics.
+        Light-hearted side diversions, not the main course.
       </p>
     </div>
 
     <!-- Stats row -->
     <div class="grid grid-cols-3 gap-px bg-border mb-10 fade-up">
       {[
-        { n: '4',   label: 'Live' },
-        { n: '1',   label: 'In Progress' },
-        { n: '1',   label: 'Coming Soon' },
+        { n: '2',   label: 'Live' },
+        { n: '0',   label: 'In Progress' },
+        { n: '0',   label: 'Coming Soon' },
       ].map(({ n, label }) => (
         <div class="bg-surface px-4 py-3 text-center">
           <div class="font-digital text-accent" style="font-size:2rem;font-weight:700;line-height:1;text-shadow:0 0 12px #00d4ff55;">{n}</div>
