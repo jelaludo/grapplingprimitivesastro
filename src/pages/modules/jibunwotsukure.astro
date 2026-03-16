@@ -1923,7 +1923,7 @@ function panelScale(w) { return Math.min(w / 400, 1); }
 
 function renderConnectionLines(ctx, state, w, h, time) {
   clearPanel(ctx, w, h);
-  drawPanelTitle(ctx, 'Internal Connections', '\u9AD4\u306E\u7D71\u4E00', w, h, 'tr');
+  drawPanelTitle(ctx, 'Connections', '\u9AD4\u306E\u7D71\u4E00', w, h, 'tr');
   var positions = scalePositions(state.positions, w, h);
   var sc = panelScale(w);
 
@@ -2089,7 +2089,7 @@ function drawArch(ctx, positions, strength, time, sc) {
 
 function renderForceFlow(ctx, state, w, h, time) {
   clearPanel(ctx, w, h);
-  drawPanelTitle(ctx, 'Ground Path / Force Flow', '\u5730\u9762\u3078\u306E\u9053', w, h, 'bl');
+  drawPanelTitle(ctx, 'Ground Path', '\u5730\u9762\u3078\u306E\u9053', w, h, 'bl');
   var positions = scalePositions(state.positions, w, h);
 
   drawMannequin(ctx, positions, { boneColor: COLORS.boneDim + '50', nodeColor: COLORS.node + '30', nodeRadius: 2 });
