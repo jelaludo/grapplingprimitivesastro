@@ -32,7 +32,7 @@ const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim()
       <span style="font-size:13px;color:#c9d1d9;letter-spacing:0.12em;margin-left:4px;">Build Yourself</span>
     </a>
   </div>
-  <div style="font-size:9px;color:#6b7280;letter-spacing:0.06em;margin-top:1px;">Self-organization as the primary variable — four lenses, one body</div>
+  <div style="font-size:clamp(10px,1.5vw,13px);color:#6b7280;letter-spacing:0.06em;margin-top:1px;">Self-organization as the primary variable, four lenses, one body</div>
   <!-- Slider row -->
   <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
     <span style="font-size:8px;letter-spacing:0.14em;color:#6b7280;text-transform:uppercase;flex-shrink:0;">Unbuilt</span>
@@ -40,7 +40,7 @@ const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim()
     <span style="font-size:8px;letter-spacing:0.14em;color:#6b7280;text-transform:uppercase;flex-shrink:0;">Built</span>
   </div>
   <!-- Stage label -->
-  <div id="slider-label" style="font-size:9px;color:#6b7280;text-align:center;margin:2px 0 1px;letter-spacing:0.08em;min-height:13px;"></div>
+  <div id="slider-label" style="font-size:clamp(11px,1.6vw,14px);color:#6b7280;text-align:center;margin:2px 0 1px;letter-spacing:0.08em;min-height:16px;"></div>
   <!-- Step buttons -->
   <div id="steps" style="display:flex;justify-content:center;gap:4px;flex-wrap:wrap;padding-bottom:5px;"></div>
 </div>
@@ -87,9 +87,10 @@ const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim()
 <style>
   /* When embedded in an iframe, hide toolbar and compact header */
   .is-embedded #toolbar { display: none !important; }
+  .is-embedded #about-modal { display: none !important; }
   .is-embedded #header { top: 0 !important; padding: 4px 12px 0 !important; }
-  .is-embedded #app-wrap { top: 110px !important; }
-  .is-embedded .step-btn { font-size: 10px !important; padding: 3px 10px !important; }
+  .is-embedded #app-wrap { top: 120px !important; }
+  .is-embedded .step-btn { font-size: 11px !important; padding: 4px 12px !important; }
 
   .sr-only {
     position: absolute;
@@ -145,12 +146,14 @@ const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim()
   .step-btn.active { box-shadow: 0 0 8px rgba(255,255,255,0.2); }
 </style>
 
-<script>
+<script is:inline>
 // Detect if we're inside an iframe (embedded in jibunwotsukure)
 if (window.self !== window.top) {
   document.body.classList.add('is-embedded');
 }
+</script>
 
+<script>
 (function(){
 // ============================================================
 // 1. Math utils
@@ -701,7 +704,7 @@ function drawSpine(ctx, positions, strength, time, sc) {
 
   if (strength > 0.4) {
     var midPt = pts[Math.floor(pts.length / 2)];
-    ctx.font = Math.round(10 * sc) + "px 'Courier New', Consolas, monospace";
+    ctx.font = Math.round(13 * sc) + "px 'Courier New', Consolas, monospace";
     ctx.fillStyle = color + Math.round(alpha * 200).toString(16).padStart(2, '0');
     ctx.textAlign = 'center';
     ctx.fillText('spine', midPt.x + 24 * sc, midPt.y);
@@ -748,7 +751,7 @@ function drawArch(ctx, positions, strength, time, sc) {
   if (strength > 0.4) {
     var midX = (archPts[2].x + archPts[3].x) / 2;
     var midY = (archPts[2].y + archPts[3].y) / 2 - 14 * sc;
-    ctx.font = Math.round(10 * sc) + "px 'Courier New', Consolas, monospace";
+    ctx.font = Math.round(13 * sc) + "px 'Courier New', Consolas, monospace";
     ctx.fillStyle = '#e056fd' + Math.round(alpha * 200).toString(16).padStart(2, '0');
     ctx.textAlign = 'center';
     ctx.fillText('arch', midX, midY);
@@ -869,7 +872,7 @@ function renderStacking(ctx, state, w, h) {
       drawLine(ctx, pos, { x: ankleMid.x, y: pos.y }, color + '60', 1);
     }
     drawCircle(ctx, pos, 6 + normalizedDev * 4, color);
-    drawLabel(ctx, LANDMARK_LABELS[i], pos.x + (pos.x > w / 2 ? 30 : -30), pos.y + 4, 11, COLORS.textDim);
+    drawLabel(ctx, LANDMARK_LABELS[i], pos.x + (pos.x > w / 2 ? 30 : -30), pos.y + 4, Math.max(14, Math.round(14 * sc)), COLORS.textDim);
   }
 
   var totalDev = 0;
