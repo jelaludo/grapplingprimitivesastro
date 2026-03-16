@@ -85,6 +85,12 @@ const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim()
 </div>
 
 <style>
+  /* When embedded in an iframe, hide toolbar and compact header */
+  .is-embedded #toolbar { display: none !important; }
+  .is-embedded #header { top: 0 !important; padding: 4px 12px 0 !important; }
+  .is-embedded #app-wrap { top: 110px !important; }
+  .is-embedded .step-btn { font-size: 10px !important; padding: 3px 10px !important; }
+
   .sr-only {
     position: absolute;
     width: 1px;
@@ -122,10 +128,10 @@ const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim()
 <style is:global>
   .step-btn {
     font-family: 'Courier New', Consolas, Monaco, monospace;
-    font-size: 8px;
+    font-size: clamp(9px, 1.4vw, 12px);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 2px;
     cursor: pointer;
     border: 1px solid #21262d;
@@ -140,6 +146,11 @@ const cardBody = (concept.body ?? '').replace(/\n---\nCategory:.*$/s, '').trim()
 </style>
 
 <script>
+// Detect if we're inside an iframe (embedded in jibunwotsukure)
+if (window.self !== window.top) {
+  document.body.classList.add('is-embedded');
+}
+
 (function(){
 // ============================================================
 // 1. Math utils
