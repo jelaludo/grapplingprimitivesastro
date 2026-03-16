@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Typography scale: readable text uses these, UI chrome can stay small */
+    --text-xs:   clamp(10px, 1.2vw, 12px);   /* UI chrome, labels, breadcrumbs */
+    --text-sm:   clamp(12px, 1.4vw, 14px);   /* secondary text, captions */
+    --text-base: clamp(14px, 1.6vw, 16px);   /* body text, paragraphs */
+    --text-lg:   clamp(16px, 1.8vw, 18px);   /* lead paragraphs, emphasis */
+  }
+
   html {
     background-color: #050509;
     color: #E5E7EB;
