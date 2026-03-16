@@ -1,0 +1,48 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ModuleCard from '@/components/ui/ModuleCard.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const thumbBase = `${base}/images/thumbs`;
+
+const experiments = [
+  {
+    title: 'Belt Dropout',
+    description: 'Visualize belt progression and dropout statistics in BJJ.',
+    href: `${base}/modules/belt-dropout`,
+    status: 'live' as const,
+    tag: 'DATA',
+    thumb: `${thumbBase}/belt-dropout.webp`,
+  },
+  {
+    title: 'Centroid Game',
+    description: 'Estimate the center of mass of a dot cluster. 10 rounds, Chebyshev scoring, timer penalty, lowest score wins.',
+    href: `${base}/modules/centroid`,
+    status: 'live' as const,
+    tag: 'GAME',
+    thumb: `${thumbBase}/games-centroid.webp`,
+  },
+];
+---
+
+<BaseLayout title="Experiments — Grappling Primitives">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+
+    <div class="mb-10 fade-up">
+      <p class="text-[9px] tracking-[4px] text-accent uppercase mb-3">Experiments</p>
+      <h1 class="font-digital text-text-primary mb-3" style="font-size:clamp(2rem,6vw,3rem);font-weight:700;letter-spacing:0.04em;text-shadow:0 0 18px #00d4ff66,0 0 40px #00d4ff22;">
+        Experiments
+      </h1>
+      <p class="text-sm text-text-muted max-w-xl leading-relaxed">
+        Side projects and explorations. Some useful, some just fun.
+      </p>
+    </div>
+
+    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2">
+      {experiments.map((m) => (
+        <ModuleCard {...m} />
+      ))}
+    </div>
+
+  </div>
+</BaseLayout>
