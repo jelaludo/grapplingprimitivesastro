@@ -4,11 +4,12 @@
 
 @layer base {
   :root {
-    /* Typography scale: readable text uses these, UI chrome can stay small */
-    --text-xs:   clamp(10px, 1.2vw, 12px);   /* UI chrome, labels, breadcrumbs */
-    --text-sm:   clamp(12px, 1.4vw, 14px);   /* secondary text, captions */
-    --text-base: clamp(14px, 1.6vw, 16px);   /* body text, paragraphs */
-    --text-lg:   clamp(16px, 1.8vw, 18px);   /* lead paragraphs, emphasis */
+    /* Typography scale: monospace needs larger sizes than proportional fonts for equivalent readability */
+    /* Tested against claude.ai (~18px sans) and submeta.io (~16-18px sans) on 2560px monitor */
+    --text-xs:   clamp(12px, 0.9vw + 4px, 16px);   /* UI chrome, labels, breadcrumbs */
+    --text-sm:   clamp(14px, 1.0vw + 5px, 18px);   /* secondary text, captions, cards */
+    --text-base: clamp(16px, 1.1vw + 6px, 21px);   /* body text, paragraphs */
+    --text-lg:   clamp(18px, 1.2vw + 7px, 24px);   /* lead paragraphs, emphasis */
   }
 
   html {

@@ -1,0 +1,677 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Where to Start — Grappling Primitives" fullscreen={true}>
+
+<!-- ── Toolbar ──────────────────────────────────────────────────────────────── -->
+<div id="toolbar" style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
+  <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+  <span style="color:#21262d;">|</span>
+  <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;">Where to Start</span>
+  <div style="flex:1;"></div>
+  <button id="deeplink-btn" style="font-family:inherit;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)';this.style.color='#00d4ff'" onmouseout="if(this.textContent==='Link'){this.style.borderColor='#21262d';this.style.color='#6b7280'}">Link</button>
+</div>
+
+<!-- ── Scrolling Content ───────────────────────────────────────────────────── -->
+<div style="padding-top:36px;">
+
+<!-- ACT 0 — The Question -->
+<section id="act-0" class="act" data-act="0">
+  <div class="act-inner" style="text-align:center;">
+    <h1 class="hero-title">Where to Start?</h1>
+    <p class="act-subtitle">Most schools teach offense first. (Armbar First, No Mercy). This model says start with survival.</p>
+    <div class="key-insight">The entry point to grappling isn't as much position, as it should be a mindset.</div>
+    <p class="act-lead" style="max-width:600px;margin:32px auto;text-align:left;">
+      Beginners and coaches alike face this question. Everyone has an opinion. Learn this take-down, here's a sweep. Learn this guard. Start from standing. Here's a great guard.
+      Here's an alternative that focuses on creating a foundation of being comfortable in bad positions first. From there you can unlock everything else.
+    </p>
+  </div>
+</section>
+
+<!-- ACT 1 — The Foundation -->
+<section id="act-1" class="act" data-act="1">
+  <div class="act-inner">
+    <h2 class="act-title"><span class="act-number">01</span>Resilience is the Foundation</h2>
+    <p class="act-lead">Two things must come first. Before submissions or even positions. An ability to survive to explore and counter attack.</p>
+
+    <div class="foundation-cards">
+      <div class="foundation-card card-escape">
+        <div class="card-label">Goal 1</div>
+        <h3 class="card-heading" style="color:var(--green);">Escaping Pins</h3>
+        <p class="card-body">
+          Can you survive being held down? Can you breathe under mount, under side control, under knee-on-belly?
+          Until the answer is yes, everything else is built on sand.
+        </p>
+      </div>
+      <div class="foundation-card card-guard">
+        <div class="card-label">Goal 2</div>
+        <h3 class="card-heading" style="color:var(--cyan);">Retaining Guard</h3>
+        <p class="card-body">
+          Escaping pins can take a lot of energy. Not getting there in the first place is even better.  Pound of cure vs gram of prevention or something. Can you keep someone from passing your legs? Not even attacking from guard, just keeping it.
+          Guard retention is the first layer of defensive comfort.
+        </p>
+      </div>
+    </div>
+
+    <p class="foundation-summary">
+      These two skills give you something no technique can: the confidence that bad situations are survivable.
+      That conviction is what makes risk-taking psychologically available.  I think it was Danaher who said that confidence should be built on objective skills.
+    </p>
+  </div>
+</section>
+
+<!-- ACT 2 — The Fork (CLD Diagram) -->
+<section id="act-2" class="act" data-act="2">
+  <div class="act-inner" style="max-width:1000px;">
+    <h2 class="act-title"><span class="act-number">02</span>Confidence Creates a Fork</h2>
+    <p class="act-lead">Once you're comfortable surviving, confidence emerges. And confidence opens a choice.</p>
+
+    <!-- CLD: pure flexbox, bottom-to-top, click nodes for annotation -->
+    <div class="cld" id="cld-container">
+
+      <!-- TOP ROW: Exploit chain -->
+      <div class="cld-row">
+        <span class="cld-branch">EXPLOIT: "A GAME"</span>
+      </div>
+      <div class="cld-row">
+        <div class="cld-node" data-node="dominant">% Chance of Reaching Dominant Positions</div>
+        <span class="cld-plus">+</span>
+        <div class="cld-node" data-node="maintain">Maintain Dominant Positions</div>
+        <span class="cld-plus">+</span>
+        <div class="cld-node cld-node-strong" data-node="submit">Achieve Submissions</div>
+      </div>
+
+      <!-- MIDDLE: The fork -->
+      <div class="cld-row cld-row-split">
+        <div class="cld-side cld-side-explore">
+          <span class="cld-branch">EXPLORE</span>
+          <div class="cld-node cld-node-accent" data-node="creativity">Creativity / Mindful Practice</div>
+          <div class="cld-explore-list">
+            <span>Trying new techniques</span>
+            <span>Trying new transitions</span>
+            <span>Starting from bad position</span>
+            <span>Relaxing / reducing tension</span>
+            <span>Playing with "invisible jiu-jitsu"</span>
+            <span>Getting creative</span>
+          </div>
+        </div>
+        <div class="cld-side cld-side-center">
+          <span class="cld-arrow-up">&uarr; + &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + &uarr;</span>
+          <span class="cld-fork-label">explore | exploit</span>
+          <div class="cld-node cld-node-amber" data-node="confidence">Confidence<br><strong>Taking Risks</strong></div>
+        </div>
+      </div>
+
+      <!-- Arrow from creativity back up to exploit -->
+      <div class="cld-row cld-feedback-row">
+        <span class="cld-feedback">+ feedback from exploration feeds back into exploit &uarr;</span>
+      </div>
+
+      <!-- BOTTOM: Foundation -->
+      <div class="cld-row cld-row-up">
+        <span class="cld-arrow-up" style="color:var(--green);">+ &uarr;</span>
+        <span style="width:40px;"></span>
+        <span class="cld-arrow-up" style="color:var(--cyan);">&uarr; +</span>
+      </div>
+      <div class="cld-row">
+        <div class="cld-node cld-node-green" data-node="escape">Comfort<br><strong>Escaping Pins</strong><br><span class="cld-goal">(Goal 1)</span></div>
+        <div class="cld-node cld-node-cyan" data-node="guard">Comfort<br><strong>Retaining Guard</strong><br><span class="cld-goal">(Goal 2)</span></div>
+      </div>
+
+    </div>
+
+    <!-- Annotation panel -->
+    <div class="cld-annotation" id="cld-annotation">
+      <div class="cld-annotation-title" id="cld-annotation-title"></div>
+      <div class="cld-annotation-text" id="cld-annotation-text">Click any node to learn its role in the system.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ACT 3 — The Insight Loop -->
+<section id="act-3" class="act" data-act="3">
+  <div class="act-inner">
+    <h2 class="act-title"><span class="act-number">03</span>Why Exploring Matters</h2>
+    <p class="act-lead">There's a difference between logging mat time and extracting signal from it.  Just showing up vs active learning.</p>
+
+    <div class="prose-block">
+      <p>
+        Confidence unlocks the option to explore. Exploring creates variance in the situations you encounter.
+        Variance is the precondition for insights. You cannot extract signal from a roll when you are either 1) trying to completely dominate the other or 2) getting totally smeshed.
+      </p>
+      <p>
+        High comfort leads to high willingness to experiment. More novel situations encountered per session.
+        More signal per roll. This is how training becomes generative instead of repetitive.
+      </p>
+    </div>
+
+    <div class="explore-chips">
+      <span class="explore-chip">Trying new techniques</span>
+      <span class="explore-chip">Trying new transitions</span>
+      <span class="explore-chip">Starting from bad positions voluntarily</span>
+      <span class="explore-chip">Relaxing / reducing tension on purpose</span>
+      <span class="explore-chip">Playing with "invisible jiu-jitsu"</span>
+      <span class="explore-chip">Getting creative</span>
+    </div>
+
+    <blockquote class="pull-quote">
+      Insight requires variance. You cannot extract signal from a roll you are trying to control completely.
+    </blockquote>
+
+    <div class="prose-block">
+      <p>
+        The explore branch feeds back into the exploit chain. Exploration isn't just developmental; it compounds into your competitive game.
+        The whole system is a positive feedback loop.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT 4 — CTA -->
+<section id="act-4" class="act" data-act="4">
+  <div class="act-inner" style="text-align:center;">
+    <h2 class="act-title"><span class="act-number">04</span>Keep Going</h2>
+    <p class="act-lead" style="margin:0 auto 32px;">Related modules to explore next.</p>
+    <div class="cta-row">
+      <a href={`${base}/modules/jibunwotsukure`} class="cta-link">Build Yourself First &rarr;</a>
+      <a href={`${base}/modules/ideal-partner`} class="cta-link">Ideal Training Partner &rarr;</a>
+      <a href={`${base}/modules/back-control`} class="cta-link">Back Control &rarr;</a>
+      <a href={`${base}/modules/quadtree`} class="cta-link">Explore the Map &rarr;</a>
+    </div>
+  </div>
+</section>
+
+</div><!-- end scrolling content -->
+
+</BaseLayout>
+
+<style is:global>
+:root {
+  --bg:           #050509;
+  --surface:      #0E1014;
+  --border:       #1C1F26;
+  --accent:       #4C8DFF;
+  --accent-soft:  #A970FF;
+  --cyan:         #00FFFF;
+  --cyan-dim:     #00d4ff;
+  --green:        #34D399;
+  --amber:        #FBBF24;
+  --red:          #F87171;
+  --text-primary: #E5E7EB;
+  --text-muted:   #9CA3AF;
+  --text-dim:     #6B7280;
+  --font-mono:    'Courier New', Consolas, Monaco, monospace;
+  --glow-cyan:    0 0 12px #00FFFF88;
+  --glow-blue:    0 0 12px #4C8DFF88;
+  --glow-green:   0 0 12px #34D39988;
+  --glow-amber:   0 0 12px #FBBF2488;
+}
+
+/* ─── Acts ─── */
+.act {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.act.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.act-inner {
+  max-width: 780px;
+  width: 100%;
+}
+
+.act-number {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.act-title {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  text-shadow: var(--glow-blue);
+}
+.act-lead {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  margin-bottom: 32px;
+  max-width: 600px;
+}
+
+/* ─── Act 0: Hero ─── */
+.hero-title {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 16px;
+  text-shadow: var(--glow-blue);
+}
+.act-subtitle {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+.key-insight {
+  text-align: center;
+  font-size: var(--text-base);
+  color: var(--amber);
+  letter-spacing: 0.05em;
+  margin: 24px auto;
+  padding: 12px 20px;
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 4px;
+  background: rgba(251,191,36,0.03);
+  max-width: 600px;
+}
+
+/* ─── Act 1: Foundation Cards ─── */
+.foundation-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+@media (max-width: 700px) {
+  .foundation-cards {
+    grid-template-columns: 1fr;
+  }
+}
+.foundation-card {
+  padding: 24px;
+  border-radius: 6px;
+  background: var(--surface);
+}
+.card-escape {
+  border: 1px solid rgba(52,211,153,0.3);
+}
+.card-guard {
+  border: 1px solid rgba(0,255,255,0.3);
+}
+.card-label {
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.card-heading {
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.card-body {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.foundation-summary {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: 1.7;
+  padding: 16px 20px;
+  border-left: 2px solid var(--amber);
+  background: rgba(251,191,36,0.03);
+  border-radius: 0 4px 4px 0;
+}
+
+/* ─── Act 2: CLD Diagram (flexbox, no SVG, no absolute positioning) ─── */
+.cld {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 32px auto;
+  max-width: 860px;
+  padding: 24px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(14,16,20,0.5);
+}
+.cld-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.cld-row-split {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px;
+}
+.cld-row-up {
+  gap: 40px;
+}
+.cld-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Nodes */
+.cld-node {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 12px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  line-height: 1.4;
+}
+.cld-node:hover { border-color: var(--text-dim); }
+.cld-node.active { transform: scale(1.05); }
+.cld-node strong { display: block; }
+
+.cld-node-green { border: 2px solid var(--green); border-radius: 20px; }
+.cld-node-green.active { box-shadow: 0 0 16px rgba(52,211,153,0.3); }
+.cld-node-cyan { border: 2px solid var(--cyan); border-radius: 20px; }
+.cld-node-cyan.active { box-shadow: 0 0 16px rgba(0,255,255,0.3); }
+.cld-node-amber { border: 2px solid var(--amber); }
+.cld-node-amber.active { box-shadow: 0 0 16px rgba(251,191,36,0.3); }
+.cld-node-accent { border: 2px solid var(--accent); border-radius: 20px; }
+.cld-node-accent.active { box-shadow: 0 0 16px rgba(76,141,255,0.3); }
+.cld-node-strong { border-width: 2px; font-weight: bold; }
+
+/* Dimmed state */
+.cld.has-selection .cld-node:not(.active):not(.connected) { opacity: 0.25; }
+
+/* Labels and arrows */
+.cld-branch {
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.cld-plus {
+  font-size: var(--text-lg);
+  color: var(--text-dim);
+  font-weight: bold;
+}
+.cld-arrow-up {
+  font-size: var(--text-base);
+  font-weight: bold;
+}
+.cld-fork-label {
+  font-size: var(--text-xs);
+  color: var(--amber);
+  letter-spacing: 0.1em;
+}
+.cld-goal {
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+}
+.cld-feedback {
+  font-size: var(--text-xs);
+  color: var(--accent);
+  font-style: italic;
+  opacity: 0.7;
+}
+.cld-explore-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  max-width: 280px;
+}
+.cld-explore-list span {
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  border: 1px solid rgba(76,141,255,0.15);
+  border-radius: 3px;
+  padding: 2px 8px;
+  background: rgba(76,141,255,0.03);
+}
+
+/* Annotation */
+.cld-annotation {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 20px;
+  min-height: 60px;
+  margin-top: 16px;
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cld-annotation-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.cld-annotation-text {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Mobile: everything stacks naturally since it's already flex-wrap */
+@media (max-width: 600px) {
+  .cld-row-split { flex-direction: column; gap: 16px; }
+  .cld-plus { display: none; }
+  .cld-row { gap: 8px; }
+}
+
+/* ─── Act 3: Prose + Chips ─── */
+.prose-block {
+  margin-bottom: 28px;
+}
+.prose-block p {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.explore-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.explore-chip {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--accent);
+  border: 1px solid rgba(76,141,255,0.25);
+  background: rgba(76,141,255,0.05);
+  border-radius: 3px;
+  padding: 4px 10px;
+  letter-spacing: 0.03em;
+  transition: all 0.2s;
+}
+.explore-chip:hover {
+  border-color: var(--accent);
+  background: rgba(76,141,255,0.1);
+  box-shadow: var(--glow-blue);
+}
+
+.pull-quote {
+  font-size: var(--text-base);
+  color: var(--cyan);
+  padding: 16px 24px;
+  border-left: 3px solid var(--cyan);
+  background: rgba(0,255,255,0.03);
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 32px;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* ─── Act 4: CTA ─── */
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.cta-link {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--cyan-dim);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 18px;
+  letter-spacing: 0.06em;
+  transition: all 0.2s;
+}
+.cta-link:hover {
+  color: var(--cyan);
+  border-color: rgba(0,255,255,0.3);
+  box-shadow: 0 0 8px rgba(0,255,255,0.1);
+}
+</style>
+
+<script>
+// ═══ Scroll Reveal + Hash Tracking ═══
+(function() {
+  const acts = document.querySelectorAll('.act');
+  let currentAct = null;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        const actId = e.target.id;
+        if (actId && actId !== currentAct) {
+          currentAct = actId;
+          history.replaceState(null, '', location.pathname + location.search + '#' + actId);
+        }
+      }
+    });
+  }, { threshold: 0.15 });
+  acts.forEach((a) => observer.observe(a));
+
+  // Restore scroll position from hash on load
+  const hash = location.hash.replace('#', '');
+  if (hash) {
+    const target = document.getElementById(hash);
+    if (target) {
+      setTimeout(() => {
+        target.scrollIntoView({ behavior: 'smooth' });
+        target.classList.add('visible');
+      }, 200);
+    }
+  }
+})();
+
+// ═══ Deep Link Button ═══
+(function() {
+  const btn = document.getElementById('deeplink-btn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(location.href).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#00d4ff';
+      btn.style.borderColor = 'rgba(0,212,255,0.4)';
+      setTimeout(() => {
+        btn.textContent = 'Link';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 1500);
+    });
+  });
+})();
+
+// ═══ CLD Node Interaction (flexbox, no SVG) ═══
+(function() {
+  const container = document.getElementById('cld-container');
+  if (!container) return;
+  const nodes = container.querySelectorAll('.cld-node');
+  const titleEl = document.getElementById('cld-annotation-title');
+  const textEl = document.getElementById('cld-annotation-text');
+
+  const annotations = {
+    escape: {
+      title: 'Escaping Pins',
+      text: "Goal 1. Survive being held. Breathe under pressure. This is the last line of defense but arguably the most important. If they can never finish you, you'll have infinite opportunities to retaliate."
+    },
+    guard: {
+      title: 'Retaining Guard',
+      text: 'Goal 2. Keep them from passing. More energy efficient than letting them settle. The first layer of comfort.'
+    },
+    confidence: {
+      title: 'Confidence / Taking Risks',
+      text: "The unlock. When you know you can survive, you stop fearing failure. That's when real learning begins."
+    },
+    dominant: {
+      title: 'Reach Dominant Positions',
+      text: 'With confidence built on real escape-artist skills, your success rate reaching dominant positions will improve. Partly because of techniques, partly because you know how to escape and therefore how to not let THEM escape. And partly because your body is starting to adapt.'
+    },
+    maintain: {
+      title: 'Maintain Dominant Positions',
+      text: 'Holding the position or improving it without regressing. Pressure, weight distribution, anticipating their escapes, manipulating levers, seeing the options.'
+    },
+    submit: {
+      title: 'Achieve Submissions',
+      text: 'The downstream result. Submissions happen when everything upstream is solid. I recommend practicing finishing mechanics as a separate skill. (see End Game)'
+    },
+    creativity: {
+      title: 'Creativity / Mindful Practice',
+      text: 'The explore side. Trying new things, starting from bad positions, reducing tension, playing with invisible jiu-jitsu. This is mostly where insights come from.'
+    }
+  };
+
+  const neighbors = {
+    escape:     ['confidence'],
+    guard:      ['confidence'],
+    confidence: ['escape', 'guard', 'dominant', 'creativity'],
+    dominant:   ['confidence', 'maintain', 'creativity'],
+    maintain:   ['dominant', 'submit'],
+    submit:     ['maintain'],
+    creativity: ['confidence', 'dominant']
+  };
+
+  let active = null;
+
+  nodes.forEach(n => {
+    n.addEventListener('click', () => {
+      const id = n.getAttribute('data-node');
+      if (active === id) {
+        active = null;
+        container.classList.remove('has-selection');
+        nodes.forEach(x => x.classList.remove('active', 'connected'));
+        titleEl.textContent = '';
+        textEl.textContent = 'Click any node to learn its role in the system.';
+        return;
+      }
+      active = id;
+      container.classList.add('has-selection');
+      const nb = neighbors[id] || [];
+      nodes.forEach(x => {
+        const xid = x.getAttribute('data-node');
+        x.classList.remove('active', 'connected');
+        if (xid === id) x.classList.add('active');
+        else if (nb.indexOf(xid) !== -1) x.classList.add('connected');
+      });
+      const ann = annotations[id];
+      if (ann) { titleEl.textContent = ann.title; textEl.textContent = ann.text; }
+    });
+  });
+})();
+</script>
