@@ -7,7 +7,10 @@ axis_mental_physical: 0.42
 color: "#888888"
 short_description: "Rotational force applied around a joint or axis"
 tags: []
-related: []
+related:
+  - "BJJ-205-leverage"          # torque is the rotational product of leverage
+  - "BJJ-261-rotational-control" # torque is the force that drives or resists rotation
+  - "BJJ-240-axis-awareness"    # torque acts around an axis
 ---
 
 Torque is rotational force around a pivot point, and it shows up everywhere in grappling. The formula is straightforward: force times distance from the pivot. That means small changes in where you grip can make a massive difference in how much rotational pressure you create.

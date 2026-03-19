@@ -7,7 +7,10 @@ axis_mental_physical: -0.44
 color: "#888888"
 short_description: "Mass times velocity, the currency of movement in grappling exchanges"
 tags: []
-related: []
+related:
+  - "BJJ-212-impulse"     # impulse changes momentum
+  - "BJJ-211-acceleration" # acceleration builds momentum
+  - "BJJ-210-redirection"  # you redirect existing momentum rather than opposing it
 ---
 
 Momentum is mass times velocity, which means a heavier person moving slowly and a lighter person moving quickly can carry the same amount of it. Understanding this helps you figure out your best strategy based on your body type and the situation.

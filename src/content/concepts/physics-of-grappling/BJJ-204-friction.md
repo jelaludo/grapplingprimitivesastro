@@ -7,7 +7,9 @@ axis_mental_physical: -0.48
 color: "#888888"
 short_description: "The resistance between surfaces that determines grip, control, and slipperiness"
 tags: []
-related: []
+related:
+  - "BJJ-078-cloth-tension"  # gi friction is cloth tension
+  - "BJJ-003-grip-fighting"  # friction determines grip strength
 ---
 
 Friction is the force that keeps you from sliding off your opponent, and it quietly shapes almost everything in grappling. The single biggest difference between gi and no-gi isn't the techniques; it's the friction. A cotton gi creates enormous friction, letting you maintain grips and slow the game down. Take it away, add some sweat, and suddenly everything is slippery and fast.

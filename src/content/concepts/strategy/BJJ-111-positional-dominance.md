@@ -7,7 +7,10 @@ axis_mental_physical: 0.2
 color: "#FF8C00"
 short_description: "\"Position before submission\"\n\nA generic model of what to prioritize.  Limited but still useful.\n\nCaveats; high-level competitions have plenty of examples of explosive submissions coming out of nowhere fast."
 tags: []
-related: []
+related:
+  - "BJJ-264-positional-spectrum"  # dominance is the upper region of the spectrum
+  - "BJJ-200-overlapping-pressure" # you maintain dominance through overlapping pressure
+  - "BJJ-128-passing-definition"   # passing is achieving positional dominance past the legs
 ---
 
 "Position before submission"

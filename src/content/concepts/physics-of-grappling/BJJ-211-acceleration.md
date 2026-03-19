@@ -7,7 +7,10 @@ axis_mental_physical: -0.7
 color: "#888888"
 short_description: "The rate of change of velocity, making tempo shifts a weapon"
 tags: []
-related: []
+related:
+  - "BJJ-075-vibration"  # vibration is rapid acceleration changes
+  - "BJJ-212-impulse"    # impulse = force x time, acceleration is force/mass
+  - "BJJ-213-momentum"   # acceleration changes momentum
 ---
 
 Acceleration isn't about being fast. It's about changing speed. In grappling, the person who controls the tempo changes is usually winning the exchange. A slow, methodical setup that suddenly explodes into a sweep or submission catches people off guard because their body can't react to the acceleration, not just the speed.

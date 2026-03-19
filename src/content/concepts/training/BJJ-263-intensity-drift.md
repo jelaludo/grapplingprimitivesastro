@@ -7,7 +7,10 @@ axis_mental_physical: 0.6
 color: "#00CED1"
 short_description: "Ego-driven escalation of training intensity mid-roll. What starts as a light technical round slowly creeps toward competition pace without either partner acknowledging the shift."
 tags: []
-related: []
+related:
+  - "BJJ-090-catch-release"   # catch and release is the antidote to intensity drift
+  - "BJJ-032-empathy"         # recognizing your partner's discomfort before drift escalates
+  - "BJJ-267-tension-economy" # drift wastes tension on ego rather than technique
 ---
 
 We're all familiar; The round starts light, flowing, working techniques. Then someone gets caught in something and it gets personal.  oh yeah? The pace picks up. Grips get tighter. Breathing gets heavier. Five minutes in, you're both going 90% but neither of you agreed to that.

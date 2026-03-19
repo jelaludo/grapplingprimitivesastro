@@ -7,7 +7,9 @@ axis_mental_physical: -0.2
 color: "#888888"
 short_description: "Everybody should know their own body and how they get warmed up and get the juices going best.   I encourage people to find moves that work for them and their current body type and ailments and goals.  We can share moves we like, but expecting everyone to warm up the same feels off.  We are not the same."
 tags: []
-related: []
+related:
+  - "BJJ-080-proprioception"  # warmup is about waking up proprioception
+  - "BJJ-260-build-yourself"  # warmup = building yourself before the session
 ---
 
 Everybody should know their own body and how they get warmed up and get the juices going best.   I encourage people to find moves that work for them and their current body type and ailments and goals.  We can share moves we like, but expecting everyone to warm up the same feels off.  We are not the same.

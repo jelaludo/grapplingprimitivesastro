@@ -7,7 +7,8 @@ axis_mental_physical: 0.58
 color: "#888888"
 short_description: "Find somehow of similar build that moves the way you'd like to move, try to imitate the essence of how they do their magic."
 tags: []
-related: []
+related:
+  - "BJJ-271-shu-ha-ri" # copying is Shu phase
 ---
 
 Find somehow of similar build that moves the way you'd like to move, try to imitate the essence of how they do their magic.

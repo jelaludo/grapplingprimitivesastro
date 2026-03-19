@@ -7,7 +7,9 @@ axis_mental_physical: 0.6124
 color: "#848a94"
 short_description: "Heel as an anchor and pressure tool.  Set-it close to their hips to reduce movement, or in their neck or ribs, back heel, hook.\n\nJust bringing attention to the idea that whereas its obvious you have heels, start to recognize it as an active tool."
 tags: []
-related: []
+related:
+  - "BJJ-086-back-heeling"     # heel is the tool in back-heeling
+  - "BJJ-077-loading-unloading" # heel placement loads or unloads pressure
 ---
 
 Heel as an anchor and pressure tool.  Set-it close to their hips to reduce movement, or in their neck or ribs, back heel, hook.

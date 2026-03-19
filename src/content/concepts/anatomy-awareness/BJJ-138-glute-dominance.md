@@ -7,7 +7,9 @@ axis_mental_physical: 0.52
 color: "#848a94"
 short_description: "The Glutes are the engine of bridging, and having strong glutes is key to protecting one's knees.\n\nFeel what's activating when you move."
 tags: []
-related: []
+related:
+  - "BJJ-270-kinetic-chain" # glutes are the power center of the chain
+  - "BJJ-203-base"          # glute strength drives bridging, the primary base escape
 ---
 
 The Glutes are the engine of bridging, and having strong glutes is key to protecting one's knees.

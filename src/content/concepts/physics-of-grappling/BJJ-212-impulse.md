@@ -7,7 +7,10 @@ axis_mental_physical: -0.58
 color: "#888888"
 short_description: "The product of force and the time it's applied, shaping how techniques feel and work"
 tags: []
-related: []
+related:
+  - "BJJ-211-acceleration"     # impulse and acceleration are related through F=ma
+  - "BJJ-077-loading-unloading" # an explosive bridge is a high-impulse event
+  - "BJJ-213-momentum"         # impulse changes momentum
 ---
 
 Impulse is force multiplied by the time you apply it, and it determines how much you actually change someone's momentum. This is why a quick explosive bridge feels completely different from sustained grinding pressure, even though both can get you a sweep.

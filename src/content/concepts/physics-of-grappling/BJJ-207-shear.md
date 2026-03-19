@@ -7,7 +7,10 @@ axis_mental_physical: 0.54
 color: "#888888"
 short_description: "Parallel opposing forces applied in opposite directions"
 tags: []
-related: []
+related:
+  - "BJJ-268-diagonal-control"  # diagonal control creates shear forces through the torso
+  - "BJJ-002-collapse-frames"   # shearing forces collapse frames by splitting them apart
+  - "BJJ-128-passing-definition" # knee slice and many passes use shear mechanics
 ---
 
 Shear is what happens when two forces push in opposite directions along parallel lines. Think of it like sliding a deck of cards: the top goes one way, the bottom goes the other. In grappling, this shows up constantly.

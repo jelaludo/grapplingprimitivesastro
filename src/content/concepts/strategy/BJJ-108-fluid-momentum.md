@@ -7,7 +7,9 @@ axis_mental_physical: 0.36
 color: "#FF8C00"
 short_description: "\"Fluid Momentum, leading to positions, then submissions\"\nAnother model, 3 steps.  Similar to Flow-Pressure-Finish.\nDefinitely a very valid way to explain how it's supposed to unfold at high levels.  Also Karel loves to train in water, fluid ^^\n"
 tags: []
-related: []
+related:
+  - "BJJ-109-flow-pressure-finish" # parallel 3-step framework
+  - "BJJ-213-momentum"             # fluid momentum literally uses momentum
 ---
 
 "Fluid Momentum, leading to positions, then submissions"

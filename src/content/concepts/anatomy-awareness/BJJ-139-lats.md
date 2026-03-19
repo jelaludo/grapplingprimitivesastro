@@ -7,7 +7,9 @@ axis_mental_physical: 0.7
 color: "#848a94"
 short_description: "The latissimus dorsi forms a powerful link between your arms and core. I mainly focus on that when doing armpit grips a la Silver Fox.\n\nWhether you're dragging, collar-tying, or maintaining a clamp, lats stabilize the shoulder girdle and transmit force efficiently. Lat connection ensures pulling doesn’t rely only on biceps or grip, but the full body chain."
 tags: []
-related: []
+related:
+  - "BJJ-270-kinetic-chain" # lats link arms to core in the chain
+  - "BJJ-236-stay-connected" # lats maintain connection during transitions
 ---
 
 The latissimus dorsi forms a powerful link between your arms and core. I mainly focus on that when doing armpit grips a la Silver Fox.

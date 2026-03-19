@@ -7,7 +7,10 @@ axis_mental_physical: 0.1881
 color: "#8A2BE2"
 short_description: "Unforced Errors in Tennis. Blunder in Chess.\n\nSometimes it pays to be reactive rather than proactive. \nTo let them make mistakes that you can exploit.\n\nYou set it up either through bait, frustration, or a dilemma.\n\nSay you're in a strong base, 50/50 standing as you're both in a position to go for an Osotogari outside leg sweep, if you moving first means compromising your stance, which they could use, sometimes it's best to wait for them to commit and react.\n\nIt helps to know the handful of potential most likely outcome from a given position.\n\nDon't interrupt an opponent making a mistake.\n\nThis is not a hard and fast rule, don't wait *all the time ffs.\n\nsometimes it makes sense."
 tags: []
-related: []
+related:
+  - "BJJ-036-bait-trap"    # baiting creates unforced errors
+  - "BJJ-032-empathy"      # recognizing when the opponent is about to make an error
+  - "BJJ-004-anticipation" # anticipating the error lets you capitalize on it
 ---
 
 Unforced Errors in Tennis. Blunder in Chess.
