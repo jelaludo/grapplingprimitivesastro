@@ -10,13 +10,13 @@ tags: []
 related: []
 ---
 
-You've felt it. The round starts light, flowing, working technique. Then someone gets caught in something embarrassing. The pace picks up. Grips get tighter. Breathing gets heavier. Five minutes in, you're both going 90% but neither of you agreed to that.
+We're all familiar; The round starts light, flowing, working techniques. Then someone gets caught in something and it gets personal.  oh yeah? The pace picks up. Grips get tighter. Breathing gets heavier. Five minutes in, you're both going 90% but neither of you agreed to that.
 
-This is intensity drift, and it's one of the most common causes of training injuries and partnership breakdowns. It usually starts with a small ego trigger: getting swept unexpectedly, having your guard passed, or just feeling like your partner bumped the pace up first.
+Let's call it 'intensity drift', and it's definitely a cause of training injuries, or at least of bruised egos. It usually starts with a small ego trigger: getting swept unexpectedly, having your guard passed, or just feeling like your partner bumped the pace up first.
 
-The fix is awareness. Notice when you're escalating, and deliberately downshift. Communicate. "Hey, we're getting spicy" is a perfectly good thing to say mid-roll. You can also use physical signals, like visibly slowing your own pace, taking a deep breath, or briefly disengaging to reset.
+The fix is awareness. Notice when you're escalating, and deliberately downshift. Communicate. "Hey, we're getting a bit spicy" should be ok to say mid-roll.  Although some warriors in the garden might think you're just being a snowflake.  You can also use physical signals, like visibly slowing your own pace, taking a deep breath, or briefly disengaging to reset.  We should normalize using our words to communicate if we feel uncomfortable in training.
 
-The best training partners are the ones who can catch the drift before it catches them. They protect the round, the relationship, and both people's bodies.
+The best training partners are the ones who can modulate their intensity.  They protect both your bodies, and a good training environment.  This does not mean we should never go hard.  moderation in everything, including in moderation.
 
 ---
 Category: [[Training]]

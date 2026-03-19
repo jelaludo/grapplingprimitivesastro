@@ -30,6 +30,89 @@ const experiments = [
     tag: 'GAME',
     thumb: `${thumbBase}/games-centroid.webp`,
   },
+  {
+    title: 'Beyond Offense & Defense',
+    description: "It's always the same: improve your relative position. Both players, simultaneously.",
+    href: `${base}/modules/beyond-offense-defense`,
+    status: 'live' as const,
+    tag: 'CONCEPTS',
+    thumb: `${thumbBase}/beyond-offense-defense.webp`,
+  },
+  {
+    title: 'Grappling Timer',
+    description: 'Round timer with configurable duration, rest, and rounds. 3-2-1 countdown, beep cues, auto-cycle.',
+    href: `${base}/modules/timer`,
+    status: 'live' as const,
+    tag: 'TOOLS',
+    thumb: `${thumbBase}/timer.webp`,
+  },
+  {
+    title: 'Visual Notes',
+    description: 'Hand-drawn diagrams and sketches collected over years of training.',
+    href: `${base}/modules/visual-notes`,
+    status: 'live' as const,
+    tag: 'MEDIA',
+    thumb: `${thumbBase}/visual-notes.webp`,
+  },
+];
+
+const purgatory = [
+  {
+    title: 'Articles',
+    description: 'Long-form writings on grappling concepts, heuristics, training philosophy, and more.',
+    href: `${base}/modules/articles`,
+    status: 'live' as const,
+    tag: 'ARTICLES',
+    thumb: `${thumbBase}/articles.webp`,
+  },
+  {
+    title: 'Skill Assessment',
+    description: 'Rate your confidence across 15 grappling areas. Results as a bar chart.',
+    href: `${base}/modules/skill-check`,
+    status: 'live' as const,
+    tag: 'TOOLS',
+    thumb: `${thumbBase}/skill-check.webp`,
+  },
+  {
+    title: 'Weight Classes',
+    description: 'Find your division across IBJJF, ADCC, and WNO. Includes kg/lbs conversion.',
+    href: `${base}/modules/weight-class`,
+    status: 'live' as const,
+    tag: 'TOOLS',
+    thumb: `${thumbBase}/weight-class.webp`,
+  },
+  {
+    title: 'BJJ Pricing',
+    description: 'Monthly memberships and seminar fees worldwide. Interactive maps and box plots.',
+    href: `${base}/modules/pricing`,
+    status: 'live' as const,
+    tag: 'DATA',
+    thumb: `${thumbBase}/pricing.webp`,
+  },
+  {
+    title: 'Games Hub',
+    description: 'Mini-games: memory match, centroid estimation, and more.',
+    href: `${base}/modules/games`,
+    status: 'live' as const,
+    tag: 'GAMES',
+    thumb: `${thumbBase}/games.webp`,
+  },
+  {
+    title: 'Training Partners',
+    description: 'Map the 10 archetypal training partners. Self-assess and find your closest match.',
+    href: `${base}/modules/training-partner`,
+    status: 'live' as const,
+    tag: 'TOOLS',
+    thumb: `${thumbBase}/training-partner.webp`,
+  },
+  {
+    title: 'Flash Cards',
+    description: 'Study and review all concepts with Anki-style flash cards.',
+    href: `${base}/modules/cards`,
+    status: 'wip' as const,
+    tag: 'STUDY',
+    thumb: `${thumbBase}/cards.webp`,
+  },
 ];
 ---
 
@@ -52,5 +135,42 @@ const experiments = [
       ))}
     </div>
 
+    <!-- Purgatory toggle -->
+    <div class="mt-16 text-center">
+      <button
+        id="purgatory-toggle"
+        class="text-[11px] tracking-[2px] uppercase font-mono text-text-dim/40 hover:text-text-dim/70 transition-colors cursor-pointer border-none bg-none"
+        style="background:none;"
+      >
+        totally not ready for primetime &darr;
+      </button>
+    </div>
+
+    <div id="purgatory-section" style="display:none;" class="mt-8 pt-8 border-t border-yellow-500/10">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="text-[9px] tracking-[3px] text-yellow-500/50 uppercase font-mono flex-shrink-0">Purgatory</span>
+        <div class="flex-1 h-px bg-yellow-500/10" />
+      </div>
+      <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 opacity-50">
+        {purgatory.map((m) => (
+          <ModuleCard {...m} />
+        ))}
+      </div>
+    </div>
+
   </div>
 </BaseLayout>
+
+<script>
+  const btn = document.getElementById('purgatory-toggle');
+  const section = document.getElementById('purgatory-section');
+  if (btn && section) {
+    btn.addEventListener('click', () => {
+      const showing = section.style.display !== 'none';
+      section.style.display = showing ? 'none' : 'block';
+      btn.innerHTML = showing
+        ? 'totally not ready for primetime &darr;'
+        : 'hide purgatory &uarr;';
+    });
+  }
+</script>

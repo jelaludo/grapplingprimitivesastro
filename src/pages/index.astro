@@ -52,28 +52,12 @@ const purgatorySections = [
     label: 'LEARN',
     modules: [
       {
-        title: 'Beyond Offense & Defense',
-        description: "It's always the same: improve your relative position. Both players, simultaneously.",
-        href: `${base}/modules/beyond-offense-defense`,
-        status: 'live' as const,
-        tag: 'CONCEPTS',
-        thumb: `${thumbBase}/beyond-offense-defense.webp`,
-      },
-      {
         title: 'Articles',
         description: 'Long-form writings on grappling concepts, heuristics, training philosophy, and more. Sourced from the Obsidian vault.',
         href: `${base}/modules/articles`,
         status: 'live' as const,
         tag: 'ARTICLES',
         thumb: `${thumbBase}/articles.webp`,
-      },
-      {
-        title: 'Visual Notes',
-        description: 'Hand-drawn diagrams and sketches collected over years of training.',
-        href: `${base}/modules/visual-notes`,
-        status: 'live' as const,
-        tag: 'MEDIA',
-        thumb: `${thumbBase}/visual-notes.webp`,
       },
     ],
   },
@@ -88,14 +72,6 @@ const purgatorySections = [
         status: 'live' as const,
         tag: 'TOOLS',
         thumb: `${thumbBase}/skill-check.webp`,
-      },
-      {
-        title: 'Grappling Timer',
-        description: 'Round timer with configurable duration, rest, and rounds. 3-2-1 countdown, beep cues, auto-cycle.',
-        href: `${base}/modules/timer`,
-        status: 'live' as const,
-        tag: 'TOOLS',
-        thumb: `${thumbBase}/timer.webp`,
       },
       {
         title: 'Weight Classes',
@@ -142,14 +118,6 @@ const purgatorySections = [
         thumb: `${thumbBase}/training-partner.webp`,
       },
       {
-        title: 'Belt Dropout',
-        description: 'Visualize belt progression and dropout statistics in BJJ.',
-        href: `${base}/modules/belt-dropout`,
-        status: 'live' as const,
-        tag: 'DATA',
-        thumb: `${thumbBase}/belt-dropout.webp`,
-      },
-      {
         title: 'Flash Cards',
         description: `Study and review all ${conceptCount} concepts with Anki-style flash cards. Filter by category, flip, stage for later.`,
         href: `${base}/modules/cards`,
@@ -193,7 +161,7 @@ const purgatorySections = [
         </div>
       )}
       <h1 class="text-3xl font-bold tracking-tight text-text-primary mb-4 glow-blue">
-        Grappling Primitives <span class="text-[#00ff41] text-2xl tracking-wide" style="text-shadow:0 0 16px rgba(0,255,65,0.5);">Work-in-Progress</span>
+        Grappling <span id="cycling-word" style="position:relative;display:inline;">Primitives</span><span id="cursor-blink" style="color:#00ff41;font-weight:400;animation:blink-cursor 0.8s step-end infinite;">|</span>
       </h1>
       <p class="text-sm text-text-muted leading-relaxed mb-4 italic">If you could tell your white belt self three things...</p>
       <ol class="text-sm text-text-muted leading-relaxed list-decimal list-inside space-y-2 mb-4">
@@ -207,6 +175,12 @@ const purgatorySections = [
       <p class="text-sm text-text-muted leading-relaxed">
         Start by reading the essays, <a href={`${base}/modules/jibunwotsukure`} class="text-accent underline hover:text-cyan transition-colors">Build Yourself First</a> and <a href={`${base}/modules/ideal-partner`} class="text-accent underline hover:text-cyan transition-colors">Ideal Training Partner</a>, or take this <a href={`${base}/modules/skill-check`} class="text-accent underline hover:text-cyan transition-colors">self-assessment</a>, then explore the <a href={`${base}/modules/quadtree`} class="text-accent underline hover:text-cyan transition-colors">map</a>.
       </p>
+    </div>
+
+    <!-- WIP badge -->
+    <div class="flex items-center gap-3 mb-6">
+      <span class="text-[10px] tracking-[3px] text-[#00ff41] uppercase font-mono flex-shrink-0" style="text-shadow:0 0 12px rgba(0,255,65,0.4);">Work-in-Progress</span>
+      <div class="flex-1 h-px bg-[#00ff41]/20" />
     </div>
 
     <!-- Core modules -->
@@ -344,6 +318,67 @@ const purgatorySections = [
       ['keydown', 'scroll', 'wheel'].forEach(evt =>
         window.addEventListener(evt, dismiss, { once: true })
       );
+    })();
+  </script>
+
+  <!-- Cycling word animation -->
+  <style>
+    @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  </style>
+  <script>
+    (function() {
+      const el = document.getElementById('cycling-word');
+      const cursor = document.getElementById('cursor-blink');
+      if (!el) return;
+
+      const words = ['Primitives', 'Building Blocks', 'Fundamentals', 'Basic Components'];
+      let current = 0;
+      let phase = 'idle'; // idle, erasing, pausing, typing
+      let charIndex = 0;
+      let timer = null;
+
+      function startCycle() {
+        // Wait 4s on initial word, then start erasing
+        setTimeout(() => {
+          phase = 'erasing';
+          charIndex = el.textContent.length;
+          tick();
+        }, 4000);
+      }
+
+      function tick() {
+        if (phase === 'erasing') {
+          charIndex--;
+          el.textContent = words[current].substring(0, charIndex);
+          if (charIndex <= 0) {
+            phase = 'pausing';
+            current = (current + 1) % words.length;
+            charIndex = 0;
+            setTimeout(tick, 300);
+          } else {
+            timer = setTimeout(tick, 40 + Math.random() * 30);
+          }
+        } else if (phase === 'pausing') {
+          phase = 'typing';
+          tick();
+        } else if (phase === 'typing') {
+          charIndex++;
+          el.textContent = words[current].substring(0, charIndex);
+          if (charIndex >= words[current].length) {
+            phase = 'idle';
+            // Wait 3-5s then erase again
+            setTimeout(() => {
+              phase = 'erasing';
+              charIndex = el.textContent.length;
+              tick();
+            }, 3000 + Math.random() * 2000);
+          } else {
+            timer = setTimeout(tick, 60 + Math.random() * 50);
+          }
+        }
+      }
+
+      startCycle();
     })();
   </script>
 

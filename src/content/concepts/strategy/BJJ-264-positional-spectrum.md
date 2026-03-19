@@ -1,22 +1,22 @@
 ---
-id: "BJJ-264"
-concept: "Positional Spectrum"
-category: "Strategy"
-axis_self_opponent: 0.0
+id: BJJ-264
+concept: Positional Spectrum
+category: Strategy
+axis_self_opponent: 0
 axis_mental_physical: 0.7
 color: "#FF8C00"
-short_description: "Position in grappling is not binary offense/defense but a continuous spectrum from 'had to tap' to 'opponent tapped'. Both players always have the same goal: improve relative position by one step."
+short_description: "Position in grappling is not always a clearly defined position, but sometimes more of a vibe of dominating or being dominated.   Both players always have the same goal: improve relative position until the tap."
 tags: []
 related: []
 ---
 
-There is no switch that flips between "defending" and "attacking." Every moment on the mat exists on a continuous scale: from the worst case (you tapped) through neutral (disengaged, grip fighting) to the best case (they tapped).
+You can be in bottom side control vs a beginner and have them are your mercy.   There is no real position or switch that flips between "defending" and "attacking." Every moment on the mat exists on a continuous scale: from the worst case (you tapped) through neutral (disengaged, grip fighting) to the best case (they tapped).
 
-At every single point on this spectrum, both players are doing the same thing: trying to move one step closer to a better position. The guy escaping side control and the guy hunting the armbar are both playing the same game, just from different starting points.
+At every single point on this spectrum, both players are doing the same thing: trying to move one step closer to a better position. 
 
-This reframe matters because it eliminates the mental trap of "I'm just surviving." You're never just surviving. You're advancing from a difficult position on the same scale everyone else is on. The escape IS offense. Recovering guard from bottom mount IS an attack on their positional advantage.
+This reframe is interesting to me because it simplifies everything.   And it gets rid of the dangerous illusion that somehow you're safe because you're in mount or have a saddle.  Both of these positions can half a move away from a reversal.   An escape can be an offense and immediately switch the tempo.  
 
-Once you internalize this, bad positions feel less hopeless. You stop thinking in terms of "I need to get out of here" and start thinking "what's my next incremental gain?" That shift changes everything.
+Once you internalize this, bad positions feel less hopeless, good positions feel less secure. You stop thinking in terms of "I need to get out of here" or "good job me! look at that side control1" and start thinking "what's my next incremental gain?"   It's a small shift but I found it influential. Thanks Wim.
 
 ---
 Category: [[Strategy]]
