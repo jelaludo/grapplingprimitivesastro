@@ -62,64 +62,111 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   </div>
 </section>
 
-<!-- ACT 2 — The Fork (CLD Diagram) -->
+<!-- ACT 2 — Confidence Creates Options (CLD Diagram) -->
 <section id="act-2" class="act" data-act="2">
   <div class="act-inner" style="max-width:1000px;">
-    <h2 class="act-title"><span class="act-number">02</span>Confidence Creates a Fork</h2>
-    <p class="act-lead">Once you're comfortable surviving, confidence emerges. And confidence opens a choice.</p>
+    <h2 class="act-title"><span class="act-number">02</span>Confidence Creates Options</h2>
+    <p class="act-lead">With surviving skills, confidence emerges.  You can live to fight another day, you can counter-attack.  I find the explore-exploit algorithm suitable here.</p>
 
-    <!-- CLD: pure flexbox, bottom-to-top, click nodes for annotation -->
-    <div class="cld" id="cld-container">
+    <!-- CLD: Pure SVG with baked coordinates -->
+    <div class="cld-wrap" id="cld-container">
+      <svg class="cld-diagram" viewBox="0 0 680 520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="cld-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
 
-      <!-- TOP ROW: Exploit chain -->
-      <div class="cld-row">
-        <span class="cld-branch">EXPLOIT: "A GAME"</span>
-      </div>
-      <div class="cld-row">
-        <div class="cld-node" data-node="dominant">% Chance of Reaching Dominant Positions</div>
-        <span class="cld-plus">+</span>
-        <div class="cld-node" data-node="maintain">Maintain Dominant Positions</div>
-        <span class="cld-plus">+</span>
-        <div class="cld-node cld-node-strong" data-node="submit">Achieve Submissions</div>
-      </div>
+        <!-- ── Edges (behind nodes) ── -->
+        <!-- Escaping Pins → Confidence -->
+        <line class="cld-edge" data-edge="escape-confidence" x1="200" y1="396" x2="228" y2="346" stroke="var(--green)" stroke-width="1.5" marker-end="url(#cld-arrow)"/>
+        <text class="cld-edge-label" data-edge="escape-confidence" x="205" y="372" text-anchor="middle" fill="var(--green)" font-size="13" font-weight="bold" font-family="var(--font-mono)">+</text>
 
-      <!-- MIDDLE: The fork -->
-      <div class="cld-row cld-row-split">
-        <div class="cld-side cld-side-explore">
-          <span class="cld-branch">EXPLORE</span>
-          <div class="cld-node cld-node-accent" data-node="creativity">Creativity / Mindful Practice</div>
-          <div class="cld-explore-list">
-            <span>Trying new techniques</span>
-            <span>Trying new transitions</span>
-            <span>Starting from bad position</span>
-            <span>Relaxing / reducing tension</span>
-            <span>Playing with "invisible jiu-jitsu"</span>
-            <span>Getting creative</span>
-          </div>
-        </div>
-        <div class="cld-side cld-side-center">
-          <span class="cld-arrow-up">&uarr; + &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + &uarr;</span>
-          <span class="cld-fork-label">explore | exploit</span>
-          <div class="cld-node cld-node-amber" data-node="confidence">Confidence<br><strong>Taking Risks</strong></div>
-        </div>
-      </div>
+        <!-- Retaining Guard → Confidence -->
+        <line class="cld-edge" data-edge="guard-confidence" x1="365" y1="396" x2="322" y2="346" stroke="var(--cyan)" stroke-width="1.5" marker-end="url(#cld-arrow)"/>
+        <text class="cld-edge-label" data-edge="guard-confidence" x="358" y="372" text-anchor="middle" fill="var(--cyan)" font-size="13" font-weight="bold" font-family="var(--font-mono)">+</text>
 
-      <!-- Arrow from creativity back up to exploit -->
-      <div class="cld-row cld-feedback-row">
-        <span class="cld-feedback">+ feedback from exploration feeds back into exploit &uarr;</span>
-      </div>
+        <!-- Confidence → Creativity (explore) -->
+        <line class="cld-edge" data-edge="confidence-creativity" x1="208" y1="310" x2="184" y2="256" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#cld-arrow)"/>
+        <text class="cld-edge-label" data-edge="confidence-creativity" x="188" y="284" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="bold" font-family="var(--font-mono)">+</text>
 
-      <!-- BOTTOM: Foundation -->
-      <div class="cld-row cld-row-up">
-        <span class="cld-arrow-up" style="color:var(--green);">+ &uarr;</span>
-        <span style="width:40px;"></span>
-        <span class="cld-arrow-up" style="color:var(--cyan);">&uarr; +</span>
-      </div>
-      <div class="cld-row">
-        <div class="cld-node cld-node-green" data-node="escape">Comfort<br><strong>Escaping Pins</strong><br><span class="cld-goal">(Goal 1)</span></div>
-        <div class="cld-node cld-node-cyan" data-node="guard">Comfort<br><strong>Retaining Guard</strong><br><span class="cld-goal">(Goal 2)</span></div>
-      </div>
+        <!-- Confidence → Dominant (exploit) -->
+        <line class="cld-edge" data-edge="confidence-dominant" x1="352" y1="306" x2="396" y2="256" stroke="var(--amber)" stroke-width="1.5" marker-end="url(#cld-arrow)"/>
+        <text class="cld-edge-label" data-edge="confidence-dominant" x="382" y="282" text-anchor="middle" fill="var(--amber)" font-size="13" font-weight="bold" font-family="var(--font-mono)">+</text>
 
+        <!-- Dominant → Maintain -->
+        <line class="cld-edge" data-edge="dominant-maintain" x1="480" y1="178" x2="480" y2="148" stroke="var(--text-dim)" stroke-width="1.5" marker-end="url(#cld-arrow)"/>
+        <text class="cld-edge-label" data-edge="dominant-maintain" x="494" y="166" text-anchor="start" fill="var(--text-dim)" font-size="13" font-weight="bold" font-family="var(--font-mono)">+</text>
+
+        <!-- Maintain → Submissions -->
+        <line class="cld-edge" data-edge="maintain-submit" x1="540" y1="110" x2="568" y2="110" stroke="var(--text-dim)" stroke-width="1.5" marker-end="url(#cld-arrow)"/>
+        <text class="cld-edge-label" data-edge="maintain-submit" x="545" y="100" text-anchor="middle" fill="var(--text-dim)" font-size="13" font-weight="bold" font-family="var(--font-mono)">+</text>
+
+        <!-- Feedback arc: Creativity → Dominant (curved) -->
+        <path class="cld-edge cld-edge-feedback" data-edge="creativity-dominant" d="M 186 196 Q 300 80 388 186" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.5" marker-end="url(#cld-arrow)"/>
+        <text class="cld-edge-label" data-edge="creativity-dominant" x="292" y="106" text-anchor="middle" fill="var(--accent)" font-size="11" font-style="italic" opacity="0.7" font-family="var(--font-mono)">+ feedback</text>
+
+        <!-- ── Nodes ── -->
+        <!-- Escaping Pins -->
+        <g class="cld-node-g" data-node="escape" cursor="pointer">
+          <ellipse cx="160" cy="430" rx="110" ry="46" fill="rgba(52,211,153,0.06)" stroke="var(--green)" stroke-width="1.5"/>
+          <text x="160" y="416" text-anchor="middle" dominant-baseline="central" fill="var(--text-dim)" font-size="12" font-family="var(--font-mono)">Comfort</text>
+          <text x="160" y="434" text-anchor="middle" dominant-baseline="central" fill="var(--text-primary)" font-size="14" font-weight="600" font-family="var(--font-mono)">Escaping Pins</text>
+          <text x="160" y="454" text-anchor="middle" dominant-baseline="central" fill="var(--text-dim)" font-size="11" font-family="var(--font-mono)">(Goal 1)</text>
+        </g>
+
+        <!-- Retaining Guard -->
+        <g class="cld-node-g" data-node="guard" cursor="pointer">
+          <ellipse cx="400" cy="430" rx="110" ry="46" fill="rgba(0,255,255,0.04)" stroke="var(--cyan)" stroke-width="1.5"/>
+          <text x="400" y="416" text-anchor="middle" dominant-baseline="central" fill="var(--text-dim)" font-size="12" font-family="var(--font-mono)">Comfort</text>
+          <text x="400" y="434" text-anchor="middle" dominant-baseline="central" fill="var(--text-primary)" font-size="14" font-weight="600" font-family="var(--font-mono)">Retaining Guard</text>
+          <text x="400" y="454" text-anchor="middle" dominant-baseline="central" fill="var(--text-dim)" font-size="11" font-family="var(--font-mono)">(Goal 2)</text>
+        </g>
+
+        <!-- Confidence (center, diamond) -->
+        <g class="cld-node-g" data-node="confidence" cursor="pointer">
+          <polygon points="280,280 380,318 280,356 180,318" fill="rgba(251,191,36,0.08)" stroke="var(--amber)" stroke-width="2"/>
+          <text x="280" y="311" text-anchor="middle" dominant-baseline="central" fill="var(--text-primary)" font-size="13" font-family="var(--font-mono)">Confidence /</text>
+          <text x="280" y="329" text-anchor="middle" dominant-baseline="central" fill="var(--amber)" font-size="15" font-weight="700" font-family="var(--font-mono)">Taking Risks</text>
+        </g>
+        <!-- Fork labels, offset from lines, linking to BJJ-265 -->
+        <a href="/concepts/BJJ-265-explore-vs-exploit">
+          <text x="168" y="280" text-anchor="end" dominant-baseline="central" fill="var(--accent)" font-size="11" font-style="italic" opacity="0.7" font-family="var(--font-mono)">explore</text>
+        </a>
+        <a href="/concepts/BJJ-265-explore-vs-exploit">
+          <text x="396" y="280" text-anchor="start" dominant-baseline="central" fill="var(--amber)" font-size="11" font-style="italic" opacity="0.7" font-family="var(--font-mono)">exploit</text>
+        </a>
+
+        <!-- Creativity (upper-left) -->
+        <g class="cld-node-g" data-node="creativity" cursor="pointer">
+          <ellipse cx="100" cy="220" rx="90" ry="42" fill="rgba(76,141,255,0.06)" stroke="var(--accent)" stroke-width="1.5"/>
+          <text x="100" y="212" text-anchor="middle" dominant-baseline="central" fill="var(--text-primary)" font-size="13" font-family="var(--font-mono)">Creativity /</text>
+          <text x="100" y="232" text-anchor="middle" dominant-baseline="central" fill="var(--accent)" font-size="14" font-weight="600" font-family="var(--font-mono)">Mindful Practice</text>
+        </g>
+        <text x="70" y="168" text-anchor="middle" fill="var(--accent)" font-size="11" letter-spacing="0.15em" opacity="0.7" font-family="var(--font-mono)">EXPLORE</text>
+
+        <!-- Dominant Positions (upper-right) -->
+        <g class="cld-node-g" data-node="dominant" cursor="pointer">
+          <ellipse cx="480" cy="220" rx="100" ry="42" fill="rgba(255,255,255,0.03)" stroke="var(--border)" stroke-width="1"/>
+          <text x="480" y="210" text-anchor="middle" dominant-baseline="central" fill="var(--text-dim)" font-size="12" font-family="var(--font-mono)">% Chance of Reaching</text>
+          <text x="480" y="230" text-anchor="middle" dominant-baseline="central" fill="var(--text-primary)" font-size="14" font-weight="600" font-family="var(--font-mono)">Dominant Positions</text>
+        </g>
+
+        <!-- Maintain -->
+        <g class="cld-node-g" data-node="maintain" cursor="pointer">
+          <ellipse cx="480" cy="110" rx="80" ry="34" fill="rgba(255,255,255,0.03)" stroke="var(--border)" stroke-width="1"/>
+          <text x="480" y="103" text-anchor="middle" dominant-baseline="central" fill="var(--text-dim)" font-size="12" font-family="var(--font-mono)">Maintain</text>
+          <text x="480" y="121" text-anchor="middle" dominant-baseline="central" fill="var(--text-primary)" font-size="14" font-weight="600" font-family="var(--font-mono)">Dominant Positions</text>
+        </g>
+
+        <!-- Submissions -->
+        <g class="cld-node-g" data-node="submit" cursor="pointer">
+          <rect x="572" y="86" rx="4" width="96" height="48" fill="rgba(255,255,255,0.03)" stroke="var(--text-dim)" stroke-width="1.5"/>
+          <text x="620" y="103" text-anchor="middle" dominant-baseline="central" fill="var(--text-dim)" font-size="12" font-family="var(--font-mono)">Achieve</text>
+          <text x="620" y="121" text-anchor="middle" dominant-baseline="central" fill="var(--text-primary)" font-size="14" font-weight="700" font-family="var(--font-mono)">Submissions</text>
+        </g>
+        <text x="535" y="62" text-anchor="middle" fill="var(--text-dim)" font-size="11" letter-spacing="0.15em" font-family="var(--font-mono)">EXPLOIT: "Your 'A' GAME"</text>
+      </svg>
     </div>
 
     <!-- Annotation panel -->
@@ -133,17 +180,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <!-- ACT 3 — The Insight Loop -->
 <section id="act-3" class="act" data-act="3">
   <div class="act-inner">
-    <h2 class="act-title"><span class="act-number">03</span>Why Exploring Matters</h2>
+    <h2 class="act-title"><span class="act-number">03</span>Why Exploring and Creativity Matters</h2>
     <p class="act-lead">There's a difference between logging mat time and extracting signal from it.  Just showing up vs active learning.</p>
 
     <div class="prose-block">
       <p>
-        Confidence unlocks the option to explore. Exploring creates variance in the situations you encounter.
-        Variance is the precondition for insights. You cannot extract signal from a roll when you are either 1) trying to completely dominate the other or 2) getting totally smeshed.
+        Confidence born from skills unlocks the option to explore. To not stress and tense from every  exchange.  Exploring creates variance in the situations you encounter.
+        Variance is the precondition for gaining new insights.
       </p>
       <p>
-        High comfort leads to high willingness to experiment. More novel situations encountered per session.
-        More signal per roll. This is how training becomes generative instead of repetitive.
+        The higher your comfort with escapes, the higher your ability to experiment. More novel situations encountered per session.
+        More signal per roll. This is one way to have training become generative instead of repetitive.
       </p>
     </div>
 
@@ -152,18 +199,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <span class="explore-chip">Trying new transitions</span>
       <span class="explore-chip">Starting from bad positions voluntarily</span>
       <span class="explore-chip">Relaxing / reducing tension on purpose</span>
+	  <span class="explore-chip">Exploring your limits</span>
       <span class="explore-chip">Playing with "invisible jiu-jitsu"</span>
       <span class="explore-chip">Getting creative</span>
     </div>
 
     <blockquote class="pull-quote">
-      Insight requires variance. You cannot extract signal from a roll you are trying to control completely.
+      It's hard to extract much signal from a roll when you are either 1) trying to completely dominate the other or 2) getting totally smeshed.
     </blockquote>
 
     <div class="prose-block">
       <p>
-        The explore branch feeds back into the exploit chain. Exploration isn't just developmental; it compounds into your competitive game.
-        The whole system is a positive feedback loop.
+        The explore branch feeds back into the exploit chain. Exploration allows your to discover better ways of doing things you already did, and plugging holes in your game.
+        The whole system is a positive feedback loop.  Another key element not quite in the graph is that having a deep knowledge of all the escape patterns makes you that much better at shutting them down.
       </p>
     </div>
   </div>
@@ -328,120 +376,48 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   border-radius: 0 4px 4px 0;
 }
 
-/* ─── Act 2: CLD Diagram (flexbox, no SVG, no absolute positioning) ─── */
-.cld {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+/* ─── Act 2: CLD Diagram (pure SVG) ─── */
+.cld-wrap {
   margin: 32px auto;
   max-width: 860px;
-  padding: 24px 16px;
+  padding: 24px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(14,16,20,0.5);
 }
-.cld-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
+.cld-diagram {
   width: 100%;
-}
-.cld-row-split {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 32px;
-}
-.cld-row-up {
-  gap: 40px;
-}
-.cld-side {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  height: auto;
+  display: block;
 }
 
-/* Nodes */
-.cld-node {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--text-primary);
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 12px 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  line-height: 1.4;
+/* Animated flow on edges */
+.cld-edge {
+  stroke-dasharray: 6 4;
+  animation: cld-flow 1.2s linear infinite;
 }
-.cld-node:hover { border-color: var(--text-dim); }
-.cld-node.active { transform: scale(1.05); }
-.cld-node strong { display: block; }
+.cld-edge-feedback {
+  animation: cld-flow-reverse 2s linear infinite;
+}
+@keyframes cld-flow {
+  to { stroke-dashoffset: -10; }
+}
+@keyframes cld-flow-reverse {
+  to { stroke-dashoffset: 10; }
+}
 
-.cld-node-green { border: 2px solid var(--green); border-radius: 20px; }
-.cld-node-green.active { box-shadow: 0 0 16px rgba(52,211,153,0.3); }
-.cld-node-cyan { border: 2px solid var(--cyan); border-radius: 20px; }
-.cld-node-cyan.active { box-shadow: 0 0 16px rgba(0,255,255,0.3); }
-.cld-node-amber { border: 2px solid var(--amber); }
-.cld-node-amber.active { box-shadow: 0 0 16px rgba(251,191,36,0.3); }
-.cld-node-accent { border: 2px solid var(--accent); border-radius: 20px; }
-.cld-node-accent.active { box-shadow: 0 0 16px rgba(76,141,255,0.3); }
-.cld-node-strong { border-width: 2px; font-weight: bold; }
+/* Node hover */
+.cld-node-g { transition: opacity 0.2s; }
+.cld-node-g:hover { opacity: 0.8; }
 
-/* Dimmed state */
-.cld.has-selection .cld-node:not(.active):not(.connected) { opacity: 0.25; }
-
-/* Labels and arrows */
-.cld-branch {
-  font-size: var(--text-xs);
-  color: var(--text-dim);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-.cld-plus {
-  font-size: var(--text-lg);
-  color: var(--text-dim);
-  font-weight: bold;
-}
-.cld-arrow-up {
-  font-size: var(--text-base);
-  font-weight: bold;
-}
-.cld-fork-label {
-  font-size: var(--text-xs);
-  color: var(--amber);
-  letter-spacing: 0.1em;
-}
-.cld-goal {
-  font-size: var(--text-xs);
-  color: var(--text-dim);
-}
-.cld-feedback {
-  font-size: var(--text-xs);
-  color: var(--accent);
-  font-style: italic;
-  opacity: 0.7;
-}
-.cld-explore-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: center;
-  max-width: 280px;
-}
-.cld-explore-list span {
-  font-size: var(--text-xs);
-  color: var(--text-dim);
-  border: 1px solid rgba(76,141,255,0.15);
-  border-radius: 3px;
-  padding: 2px 8px;
-  background: rgba(76,141,255,0.03);
-}
+/* Dimmed state when a node is selected */
+.cld-wrap.has-selection .cld-node-g { opacity: 0.15; }
+.cld-wrap.has-selection .cld-node-g.active { opacity: 1; }
+.cld-wrap.has-selection .cld-node-g.connected { opacity: 0.7; }
+.cld-wrap.has-selection .cld-edge { opacity: 0.08; }
+.cld-wrap.has-selection .cld-edge.edge-active { opacity: 1; }
+.cld-wrap.has-selection .cld-edge-label { opacity: 0.08; }
+.cld-wrap.has-selection .cld-edge-label.label-active { opacity: 1; }
 
 /* Annotation */
 .cld-annotation {
@@ -469,11 +445,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   line-height: 1.6;
 }
 
-/* Mobile: everything stacks naturally since it's already flex-wrap */
+/* Mobile: SVG scales naturally via viewBox */
 @media (max-width: 600px) {
-  .cld-row-split { flex-direction: column; gap: 16px; }
-  .cld-plus { display: none; }
-  .cld-row { gap: 8px; }
+  .cld-wrap { padding: 12px; }
 }
 
 /* ─── Act 3: Prose + Chips ─── */
@@ -598,11 +572,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   });
 })();
 
-// ═══ CLD Node Interaction (flexbox, no SVG) ═══
+// ═══ CLD: Pure SVG Node Interaction ═══
 (function() {
   const container = document.getElementById('cld-container');
   if (!container) return;
-  const nodes = container.querySelectorAll('.cld-node');
+  const nodes = container.querySelectorAll('.cld-node-g');
+  const edges = container.querySelectorAll('.cld-edge');
+  const edgeLabels = container.querySelectorAll('.cld-edge-label');
   const titleEl = document.getElementById('cld-annotation-title');
   const textEl = document.getElementById('cld-annotation-text');
 
@@ -647,15 +623,21 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     creativity: ['confidence', 'dominant']
   };
 
+  function edgeTouches(edgeId, nodeId) {
+    return edgeId.split('-').indexOf(nodeId) !== -1;
+  }
+
   let active = null;
 
-  nodes.forEach(n => {
-    n.addEventListener('click', () => {
+  nodes.forEach(function(n) {
+    n.addEventListener('click', function() {
       const id = n.getAttribute('data-node');
       if (active === id) {
         active = null;
         container.classList.remove('has-selection');
-        nodes.forEach(x => x.classList.remove('active', 'connected'));
+        nodes.forEach(function(x) { x.classList.remove('active', 'connected'); });
+        edges.forEach(function(e) { e.classList.remove('edge-active'); });
+        edgeLabels.forEach(function(t) { t.classList.remove('label-active'); });
         titleEl.textContent = '';
         textEl.textContent = 'Click any node to learn its role in the system.';
         return;
@@ -663,12 +645,21 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       active = id;
       container.classList.add('has-selection');
       const nb = neighbors[id] || [];
-      nodes.forEach(x => {
+
+      nodes.forEach(function(x) {
         const xid = x.getAttribute('data-node');
         x.classList.remove('active', 'connected');
         if (xid === id) x.classList.add('active');
         else if (nb.indexOf(xid) !== -1) x.classList.add('connected');
       });
+
+      edges.forEach(function(e) {
+        e.classList.toggle('edge-active', edgeTouches(e.getAttribute('data-edge'), id));
+      });
+      edgeLabels.forEach(function(t) {
+        t.classList.toggle('label-active', edgeTouches(t.getAttribute('data-edge'), id));
+      });
+
       const ann = annotations[id];
       if (ann) { titleEl.textContent = ann.title; textEl.textContent = ann.text; }
     });
