@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-270-kinetic-chain" # glutes are the power center of the chain
   - "BJJ-203-base"          # glute strength drives bridging, the primary base escape
+  - BJJ-142-pelvic-tilt # back-link from Pelvic Tilt
 ---
 
 The Glutes are the engine of bridging, and having strong glutes is key to protecting one's knees.

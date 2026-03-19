@@ -12,6 +12,11 @@ related:
   - "BJJ-086-back-heeling"        # back-heeling is a form of loading the clamp
   - "BJJ-196-penetrative-step"    # penetration step loads weight into the opponent's space
   - "BJJ-200-overlapping-pressure" # overlapping pressure sequences loading points
+  - BJJ-055-14-32-tension-apply-release # back-link from 14/32 Tension (Apply & Release)
+  - BJJ-068-27-32-buoyancy # back-link from 27/32 buoyancy
+  - BJJ-136-heel # back-link from Heel
+  - BJJ-203-base # back-link from Base
+  - BJJ-212-impulse # back-link from Impulse
 ---
 
 Loading and Unloading Limbs

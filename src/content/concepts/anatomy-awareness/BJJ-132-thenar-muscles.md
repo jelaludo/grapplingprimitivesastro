@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-003-grip-fighting"   # thenar pads are the grip surface
   - "BJJ-241-hands-connection" # thenar engagement in grip configurations
+  - BJJ-020-12-21-anatomy # back-link from #12/21 Anatomy
 ---
 
 They're the fat pads at the base of the thumb and the base of the little finger.  Crucial to control the hand.

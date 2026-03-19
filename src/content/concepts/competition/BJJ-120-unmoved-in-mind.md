@@ -10,6 +10,11 @@ tags: []
 related:
   - "BJJ-012-4-21-zen"         # zen composure under pressure
   - "BJJ-267-tension-economy"   # mental tension economy
+  - BJJ-181-sandbag-tournaments # back-link from Sandbag tournaments
+  - BJJ-246-match-vs-fight # back-link from Match vs Fight
+  - BJJ-146-arrhichion-of-phigalia # back-link from Arrhichion of Phigalia
+  - BJJ-130-young-competition-beast # back-link from Young Competition Beast
+  - BJJ-161-competition-as-entertainment # back-link from Competition as Entertainment
 ---
 
 "[...] learn to be unmoved in mind even in the heat of battle."

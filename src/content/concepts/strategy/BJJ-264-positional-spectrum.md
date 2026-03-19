@@ -10,6 +10,9 @@ tags: []
 related:
   - "BJJ-109-flow-pressure-finish"  # the spectrum is traversed via flow-pressure-finish
   - "BJJ-111-positional-dominance"  # positional dominance is a region on the spectrum
+  - BJJ-015-7-21-improve-position # back-link from #7/21 Improve Position
+  - BJJ-249-shi # back-link from 勢 (Shi)
+  - BJJ-087-guard-allure # back-link from Guard Allure
 ---
 
 You can be in bottom side control vs a beginner and have them at your mercy.   There is no real position or switch that flips between "defending" and "attacking." Every moment on the mat exists on a continuous scale: from the worst case (you tapped) through neutral (disengaged, grip fighting) to the best case (they tapped).

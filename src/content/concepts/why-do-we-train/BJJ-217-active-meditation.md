@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-012-4-21-zen"         # meditation and zen are connected
   - "BJJ-267-tension-economy"   # meditation cultivates tension awareness
+  - BJJ-157-therapy # back-link from Therapy
 ---
 
 Most of us have trouble counting 10 breaths without being distracted.   Sparring offers a relatively safe environment that requires a lot of focus when facing someone of equal or higher skills.  It requires all our focus to stay alive.  Some see this as a form of forced active meditation, where for the duration of training none of life's problems matter, only escaping this armbar, or surviving the RNC, or finally getting rid of this dangerous lapel grip.

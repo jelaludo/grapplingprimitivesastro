@@ -11,6 +11,10 @@ related:
   - "BJJ-265-explore-vs-exploit"  # exploring multiplies insight probability
   - "BJJ-088-sponge"              # sponge mindset maximizes accumulation
   - "BJJ-033-real-time-learning"  # insights crystallize during real-time problem solving
+  - BJJ-145-1-21-persistence # back-link from #1/21 Persistence
+  - BJJ-073-32-32-grandmaster # back-link from 32/32 Grandmaster 
+  - BJJ-116-keep-learning # back-link from Keep Learning.
+  - BJJ-167-show-up-consistently # back-link from Show up Consistently
 ---
 
 Insights, those moments where two unrelated techniques or concepts suddenly click into a connected system, cannot really be directly taught. They have to be self-discovered. But you can dramatically increase the odds.

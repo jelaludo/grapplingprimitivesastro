@@ -11,6 +11,8 @@ related:
   - "BJJ-083-knee-elbow"       # knee-elbow keeps limbs close = stable
   - "BJJ-102-distance-management" # extending limbs = giving distance = giving handles
   - "BJJ-267-tension-economy"  # compact posture is more tension-efficient
+  - BJJ-017-9-21-overreaching # back-link from #9/21 Overreaching
+  - BJJ-041-always-protect-yourself # back-link from Always Protect Yourself
 ---
 
 Your limbs are handles for the opponent.

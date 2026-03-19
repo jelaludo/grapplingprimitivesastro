@@ -11,6 +11,7 @@ related:
   - "BJJ-035-overload-their-system"  # dilemmas are the mechanism of overloading
   - "BJJ-036-bait-trap"              # a dilemma is two baits that both lead to traps
   - "BJJ-262-secondary-limb-control" # "deal with this OR that limb" is a classic dilemma
+  - BJJ-056-15-32-fork # back-link from 15/32 Fork
 ---
 
 Create positions where all choices are undesirable for the opponent.

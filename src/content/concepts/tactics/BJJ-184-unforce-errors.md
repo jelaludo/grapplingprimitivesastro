@@ -11,6 +11,9 @@ related:
   - "BJJ-036-bait-trap"    # baiting creates unforced errors
   - "BJJ-032-empathy"      # recognizing when the opponent is about to make an error
   - "BJJ-004-anticipation" # anticipating the error lets you capitalize on it
+  - BJJ-009-patience-5-7 # back-link from Patience (5/7)
+  - BJJ-021-13-21-let-the-enemy-defeat-himself # back-link from #13/21 let the enemy defeat himself.
+  - BJJ-238-initiate-movement # back-link from Initiate Movement
 ---
 
 Unforced Errors in Tennis. Blunder in Chess.

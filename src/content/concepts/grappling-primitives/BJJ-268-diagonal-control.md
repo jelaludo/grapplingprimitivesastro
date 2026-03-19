@@ -11,6 +11,9 @@ related:
   - "BJJ-261-rotational-control" # diagonal control is a strategy for rotational control
   - "BJJ-240-axis-awareness"     # the diagonal attacks across two axes
   - "BJJ-200-overlapping-pressure" # diagonal pressure overlaps two control points
+  - BJJ-072-31-32-centerline # back-link from 31/32 Centerline
+  - BJJ-141-scapular-glide # back-link from Scapular Glide
+  - BJJ-207-shear # back-link from Shear
 ---
 
 Most people think of control as pinning things in place: hold the hips, hold the shoulders. But the strongest control comes from working on a diagonal. Far shoulder plus near hip creates a torsional force through the torso that the spine has very little ability to resist.

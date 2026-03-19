@@ -11,6 +11,7 @@ related:
   - "BJJ-082-far-end-lever" # far-end lever is leverage applied at optimal point
   - "BJJ-206-torque"        # leverage creates torque around a joint
   - "BJJ-085-joint-above"   # leverage requires anchoring the joint above
+  - BJJ-208-axial-load # back-link from Axial Load
 ---
 
 Every joint in your body is a lever, and grappling is basically the art of using them well. The basic idea is simple: the further from the fulcrum (the joint) you grip, the more force you can generate with less effort. That's why an armbar works so much better when you control near the wrist instead of near the elbow. Same force from your hips, but way more breaking pressure on their arm.

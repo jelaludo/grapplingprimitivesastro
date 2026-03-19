@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-236-stay-connected" # same core idea
   - "BJJ-081-alioception"    # connection enables sensing
+  - BJJ-043-2-32-detachment # back-link from 2/32 Detachment
 ---
 
 Establishing a connection with the opponent is how we ensure that our movements affects their center of gravity and balance and ability to recover.

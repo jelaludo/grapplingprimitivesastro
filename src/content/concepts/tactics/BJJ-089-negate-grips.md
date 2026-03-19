@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-003-grip-fighting" # negating grips is a subset of grip fighting
   - "BJJ-201-active-denial" # negating grips is active denial of their control handles
+  - BJJ-185-grip-decay # back-link from Grip θ Decay
 ---
 
 Sometimes a grip needs to be broken, often you can simply render it useless.

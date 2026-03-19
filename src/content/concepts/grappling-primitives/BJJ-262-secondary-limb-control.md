@@ -12,6 +12,10 @@ related:
   - "BJJ-003-grip-fighting"         # the secondary limb's grip is often the key variable
   - "BJJ-242-submission-requirements" # secondary limb control is a submission requirement
   - "BJJ-201-active-denial"         # denying the free limb is active denial
+  - BJJ-028-20-21-limb-vs-limb # back-link from #20/21 Limb vs Limb
+  - BJJ-059-19-32-isolation # back-link from 19/32 Isolation
+  - BJJ-082-far-end-lever # back-link from Far-End Lever
+  - BJJ-218-create-dilemmas # back-link from Create Dilemmas
 ---
 
 The "other limb" principle. In most limb attacks (armbar, knee-bar, heel hook), the free limb is a large part of any escape attempts.  90% (made up number) of leg lock defense comes from the other leg. A free hand grabbing your arm-pit can shut down a kimura. 

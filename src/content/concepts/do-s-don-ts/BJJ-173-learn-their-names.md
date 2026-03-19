@@ -9,6 +9,7 @@ short_description: "Teammates, coaches, students... it's important in human inte
 tags: []
 related:
   - "BJJ-099-remember-names"   # same principle from coaching perspective
+  - BJJ-182-make-creepy-comments # back-link from Make Creepy Comments
 ---
 
 Teammates, coaches, students... it's important in human interactions to remember names.  “Remember that a person’s name is to that person, the sweetest and most important sound in any language” --Dale Carnegie

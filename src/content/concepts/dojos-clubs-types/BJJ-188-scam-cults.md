@@ -9,6 +9,7 @@ short_description: "False advertising, cultish tendencies, nickel and diming stu
 tags: []
 related:
   - "BJJ-098-transparent-pricing" # antidote to scams
+  - BJJ-192-mc-dojos # back-link from Mc Dojos
 ---
 
 False advertising, cultish tendencies, nickel and diming students with extra fees for everything, forbidding students to cross-train, little or no live-rolling.  "Our techniques are too dangerous to train live".

@@ -12,6 +12,11 @@ related:
   - "BJJ-083-knee-elbow"       # knee-elbow is itself a wedge shape
   - "BJJ-082-far-end-lever"    # wedges provide the fulcrum for lever mechanics
   - "BJJ-128-passing-definition" # wedging into the knee-armpit space is passing
+  - BJJ-023-15-21-big-rock # back-link from #15/21 Big Rock
+  - BJJ-133-elbow-point # back-link from Elbow Point
+  - BJJ-134-tibia # back-link from Tibia
+  - BJJ-135-ulna # back-link from Ulna
+  - BJJ-250-bite # back-link from \"Bite\"
 ---
 
 A wedge is a structural insertion that creates or preserves space, disrupts alignment, or amplifies force. In grappling, wedges are anatomical tools—elbows, knees, feet, hands—placed between the opponent and the ground or between limbs to create mechanical advantage.

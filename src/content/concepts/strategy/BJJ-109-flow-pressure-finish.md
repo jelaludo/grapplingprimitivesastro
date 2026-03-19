@@ -11,6 +11,9 @@ related:
   - "BJJ-110-kuzushi-tsukuri-kake" # parallel frameworks: flow=tsukuri, pressure=kuzushi, finish=kake
   - "BJJ-264-positional-spectrum"  # flow-pressure-finish is how you move up the positional spectrum
   - "BJJ-200-overlapping-pressure" # "pressure" phase is overlapping pressure in action
+  - BJJ-107-4-steps-system # back-link from 4-Steps-System
+  - BJJ-108-fluid-momentum # back-link from Fluid Momentum
+  - BJJ-249-shi # back-link from 勢 (Shi)
 ---
 
 Antother Triadic Model, Flow–Pressure–Finish model is with the Ribeiro Ryuuha.

@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-271-shu-ha-ri"          # basics = Shu phase
   - "BJJ-265-explore-vs-exploit" # basics = exploit your fundamentals
+  - BJJ-147-roger-gracie # back-link from Roger Gracie
 ---
 
 in general, extremely honed basics will serve you better than flashy shiny new techniques.  

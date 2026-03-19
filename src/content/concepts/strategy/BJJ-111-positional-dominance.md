@@ -11,6 +11,8 @@ related:
   - "BJJ-264-positional-spectrum"  # dominance is the upper region of the spectrum
   - "BJJ-200-overlapping-pressure" # you maintain dominance through overlapping pressure
   - "BJJ-128-passing-definition"   # passing is achieving positional dominance past the legs
+  - BJJ-026-18-21-real-estate # back-link from #18/21 Real Estate
+  - BJJ-087-guard-allure # back-link from Guard Allure
 ---
 
 "Position before submission"

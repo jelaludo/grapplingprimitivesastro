@@ -11,6 +11,7 @@ related:
   - "BJJ-261-rotational-control" # hooks via back-heeling control the hip line in back position
   - "BJJ-077-loading-unloading"  # back-heeling loads the clamp; releasing unloads it
   - "BJJ-267-tension-economy"    # back-heeling uses hamstrings efficiently, not quads fighting gravity
+  - BJJ-136-heel # back-link from Heel
 ---
 
 retracting your heel backward into your own body to generate clamping pressure.  Hamstrings for knee flexion.  Tension and rotational torque.

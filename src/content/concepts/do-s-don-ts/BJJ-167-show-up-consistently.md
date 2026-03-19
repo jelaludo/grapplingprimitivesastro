@@ -10,6 +10,8 @@ tags: []
 related:
   - "BJJ-269-insight-accumulation" # consistency compounds insights
   - "BJJ-145-1-21-persistence"     # showing up is persistence
+  - BJJ-124-beltchecker-com # back-link from BeltChecker.com
+  - BJJ-159-routine-structure # back-link from Routine & Structure
 ---
 
 it's difficult to progress meaningfully without consistency.

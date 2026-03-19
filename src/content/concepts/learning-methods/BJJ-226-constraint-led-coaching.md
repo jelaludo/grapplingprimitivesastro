@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-227-ecological-w-feedback" # constraint-led is a subset of ecological approach
   - "BJJ-228-position-sparring"     # position sparring is constraint-led in practice
+  - BJJ-093-different-learning-patterns # back-link from Different learning patterns
 ---
 
 Coach sets the scenarios, but doesn't micromanage.

@@ -11,6 +11,8 @@ related:
   - "BJJ-004-anticipation"  # recognizing affordances lets you anticipate what's possible
   - "BJJ-039-puzzle-solving" # affordances are the available puzzle pieces
   - "BJJ-032-empathy"       # reading what the opponent perceives as their affordances
+  - BJJ-009-patience-5-7 # back-link from Patience (5/7)
+  - BJJ-036-bait-trap # back-link from Bait & Trap
 ---
 
 Affordance comes from design theory (Gibson/Norman) and describes the action possibilities that an object, surface, or situation “offers” to an agent. 

@@ -13,6 +13,12 @@ related:
   - "BJJ-085-joint-above"        # controlling shoulder/hip = controlling the joints that define the rotation axis
   - "BJJ-086-back-heeling"       # hooks are a primary tool for hip line control in back position
   - "BJJ-030-6dof"               # rotation is 3 of the 6 degrees of freedom
+  - BJJ-069-28-32-head-control # back-link from 28/32 Head Control
+  - BJJ-072-31-32-centerline # back-link from 31/32 Centerline
+  - BJJ-137-inion # back-link from Inion
+  - BJJ-142-pelvic-tilt # back-link from Pelvic Tilt
+  - BJJ-206-torque # back-link from Torque
+  - BJJ-209-centripetal-centrifugal # back-link from Centripetal/Centrifugal
 ---
 
 Rotational Control is the single unifying primitive beneath all back control systems. The back is the dominant position in grappling because of geometric asymmetry: the attacker has full vision, access to the neck, and structural advantage, while the defender's strongest muscles push into empty space, vision is gone, and arms are trapped in defensive roles. Every escape from back control is, at its core, a rotation attempt: the defender tries to turn their spine to face the attacker.

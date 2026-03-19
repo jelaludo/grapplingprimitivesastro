@@ -10,6 +10,11 @@ tags: []
 related:
   - "BJJ-004-anticipation"      # protection starts with anticipating threats
   - "BJJ-214-proximity-stability" # keeping limbs close protects structure
+  - BJJ-165-tap-early-tap-often # back-link from Tap Early, Tap Often
+  - BJJ-169-it-s-ok-to-say-no # back-link from it's ok to say \"no\"
+  - BJJ-179-ignore-your-injuries # back-link from Ignore your injuries
+  - BJJ-097-jewelry-off # back-link from Jewelry off
+  - BJJ-151-self-defense # back-link from Self-Defense
 ---
 
 Don’t Put Yourself at the Mercy of Others.  In training, relying solely on your partner’s control, restraint, or decision-making to avoid injury can be reckless. A single mistake can result in sudden, serious injury.  Position before trust.  Your safety is your responsibility.  Don't outsource control.  

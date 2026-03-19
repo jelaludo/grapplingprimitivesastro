@@ -12,6 +12,12 @@ related:
   - "BJJ-270-kinetic-chain"      # connected chain = built body
   - "BJJ-031-form-tension"       # structural integrity is what "built" looks like
   - "BJJ-080-proprioception"     # you can't build what you can't feel
+  - BJJ-057-16-32-posture # back-link from 16/32 Posture
+  - BJJ-140-ribcage-stacking # back-link from Ribcage Stacking
+  - BJJ-101-invisible-jiu-jitsu # back-link from Invisible Jiu Jitsu
+  - BJJ-225-one-size-fits-all-warmup # back-link from One-Size-Fits-All Warmup
+  - BJJ-110-kuzushi-tsukuri-kake # back-link from Kuzushi-Tsukuri-Kake
+  - BJJ-153-self-mastery # back-link from Self-Mastery
 ---
 
 "自分を作れ" ("build yourself", as an imperative. Jibun wo Tsukure) represents my reframing of how we typically understand what makes technique work in grappling. The conventional teaching model, inherited from Kodokan Judo's Kuzushi → Tsukuri → Kake sequence, is typically rendered as "off-balance your opponent, then set up your throw, then execute." This places the opponent as the primary object of attention from the very first step. But buried inside the concept of Tsukuri (作り, "making/preparation") is a quieter, more foundational instruction from Kano Jigoro (founder of Judo): 自分を作る, i.e. to make yourself, to organize your own body first. This project's core argument is that this half of Tsukuri is actually the prerequisite for everything else. You cannot reliably disrupt the opponent's structure if your own is not in order, and once you understand how to stack and build your body, it helps you understand the opponent's structure as well.

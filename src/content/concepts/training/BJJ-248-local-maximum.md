@@ -10,6 +10,8 @@ tags: []
 related:
   - "BJJ-265-explore-vs-exploit" # stuck at local max = over-exploiting, need to explore
   - "BJJ-271-shu-ha-ri"         # breaking through local max is the Ha transition
+  - BJJ-229-fix-biggest-leak # back-link from Fix biggest leak
+  - BJJ-244-blue-belt-blues # back-link from Blue Belt Blues
 ---
 
 In a skills acquisition curve, one grappler might reach a local peak, (higher than some peers who started around the same time), but to reach higher in the next mountain, they might have to go down a notch once before climbing higher.

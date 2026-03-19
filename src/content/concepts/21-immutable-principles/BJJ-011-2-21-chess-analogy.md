@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-039-puzzle-solving" # chess = sequential problem solving
   - "BJJ-194-ooda-loop"     # chess = sequential decision cycles
+  - BJJ-237-kinetic-chess # back-link from Kinetic Chess
 ---
 
 #2/21 by Paulo Guillobel.

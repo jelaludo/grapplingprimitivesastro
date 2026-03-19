@@ -10,6 +10,8 @@ tags: []
 related:
   - "BJJ-032-empathy"         # catch and release requires reading your partner's level
   - "BJJ-263-intensity-drift"  # catch and release prevents intensity drift when rolling with lower belts
+  - BJJ-168-roll-ligh-when-asked # back-link from Roll Ligh when asked
+  - BJJ-234-flow-roll-to-test # back-link from Flow Roll to Test
 ---
 
 When there's an obvious experience discrepancy, you get close to lock-in a submission (the “catch”) to the point where you know you could have gotten it (don't lie to yourself either), then let go without finishing (the “release”).

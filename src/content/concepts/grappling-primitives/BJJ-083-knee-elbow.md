@@ -11,6 +11,8 @@ related:
   - "BJJ-002-collapse-frames" # knee-elbow is one of the primary frames to create or collapse
   - "BJJ-084-wedges"          # knee-elbow connection forms a structural wedge
   - "BJJ-031-form-tension"    # the frame holds because of form tension in the structure
+  - BJJ-018-10-21-fortress # back-link from #10/21 Fortress
+  - BJJ-214-proximity-stability # back-link from Proximity = Stability
 ---
 
 A biomechanical closed frame formed by connecting the knee and elbow on the same side of the body. It is one of the most fundamental and versatile defensive structures in grappling.

@@ -11,6 +11,8 @@ related:
   - "BJJ-081-alioception"    # cloth tension is a primary feedback channel for sensing the opponent
   - "BJJ-003-grip-fighting"  # grips create and manipulate cloth tension
   - "BJJ-079-joint-slack"    # slack in cloth parallels slack in joints; both must be eliminated
+  - BJJ-220-gi-check # back-link from Gi Check
+  - BJJ-204-friction # back-link from Friction
 ---
 
 Cloth Tension (in Judo)

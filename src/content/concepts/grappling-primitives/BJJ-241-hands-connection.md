@@ -11,6 +11,7 @@ related:
   - "BJJ-003-grip-fighting"  # hands connection is a grip configuration
   - "BJJ-270-kinetic-chain"  # connecting your own hands closes the kinetic chain loop
   - "BJJ-267-tension-economy" # connected hands distribute force more efficiently than isolated grips
+  - BJJ-132-thenar-muscles # back-link from Thenar Muscles
 ---
 
 Maintaining continuous physical contact between your own hands (gripping your own wrist, palm-to-palm, finger lock, gable grip, S-grip, Neil 3-finger grip etc.) to create a closed kinetic chain. 

@@ -11,6 +11,10 @@ related:
   - "BJJ-082-far-end-lever"         # both are lever mechanics; joint above is the anchor, far-end is the force point
   - "BJJ-262-secondary-limb-control" # the "joint above" is often on the secondary limb
   - "BJJ-079-joint-slack"           # slack in the joint above defeats the lever
+  - BJJ-059-19-32-isolation # back-link from 19/32 Isolation
+  - BJJ-242-submission-requirements # back-link from Submission Requirements
+  - BJJ-261-rotational-control # back-link from Rotational Control
+  - BJJ-205-leverage # back-link from Leverage
 ---
 
 To apply breaking pressure to a joint, you must immobilize or control the joint above it in the kinetic chain. This prevents your opponent from moving their body in a way that dissipates force, rotates out, or structurally relieves the pressure.

@@ -11,6 +11,8 @@ related:
   - "BJJ-240-axis-awareness"     # axes are the rotational subset of 6DoF
   - "BJJ-261-rotational-control" # rotation is 3 of the 6 degrees
   - "BJJ-102-distance-management" # translation (the other 3 DoF) is distance management
+  - BJJ-071-30-32-mobility # back-link from 30/32 Mobility
+  - BJJ-215-base-of-support-bos # back-link from Base of Support (BoS)
 ---
 
 six degrees of freedom.  Realize there's more to mobility than left-right front-back.  6DoF (Six Degrees of Freedom)

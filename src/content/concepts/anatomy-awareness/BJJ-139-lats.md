@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-270-kinetic-chain" # lats link arms to core in the chain
   - "BJJ-236-stay-connected" # lats maintain connection during transitions
+  - BJJ-141-scapular-glide # back-link from Scapular Glide
 ---
 
 The latissimus dorsi forms a powerful link between your arms and core. I mainly focus on that when doing armpit grips a la Silver Fox.

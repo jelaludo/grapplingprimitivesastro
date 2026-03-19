@@ -11,6 +11,8 @@ related:
   - "BJJ-266-building-resilience"     # end-game confidence is a form of resilience
   - "BJJ-242-submission-requirements" # working backwards reveals each submission's requirements
   - "BJJ-265-explore-vs-exploit"      # end-game training is deep exploitation of a specific chain
+  - BJJ-224-prescribed-sequence # back-link from Prescribed Sequence
+  - BJJ-231-deep-dive # back-link from Deep Dive
 ---
 
 Start from the end. Take a fully extended armbar, locked in, your partner's arm is out. Your only job is to finish from there. Do that until it's automatic, until you don't even think about it. Then rewind one step: now the arm is almost extended but they still have a grip. Break the grip and finish. Drill that. Then one more step back: you have the arm isolated but haven't started the extension yet. Then further back: you've just secured the position but haven't isolated anything.

@@ -12,6 +12,8 @@ related:
   - "BJJ-262-secondary-limb-control" # neutralizing the secondary limb is a submission requirement
   - "BJJ-082-far-end-lever"         # proper lever placement is a submission requirement
   - "BJJ-207-shear"                 # shear forces are part of virtually every submission mechanic
+  - BJJ-008-legal-strangulation # back-link from Legal Strangulation
+  - BJJ-272-end-game-training # back-link from End-Game Training
 ---
 
 Each Submission has a checklist of what it requires to be effective.

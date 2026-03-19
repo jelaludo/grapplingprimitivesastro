@@ -10,6 +10,8 @@ tags: []
 related:
   - "BJJ-260-build-yourself"   # invisible JJ IS the built body
   - "BJJ-267-tension-economy"   # the invisible part is efficient tension
+  - BJJ-122-craighutchisonjj # back-link from @craighutchisonjj
+  - BJJ-197-hidden-jiu-jitsu # back-link from Hidden Jiu Jitsu
 ---
 
 Rickson Gracie, Henry Akins... Miyamoto Musashi before them.

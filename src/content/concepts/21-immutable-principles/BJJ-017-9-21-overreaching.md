@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-214-proximity-stability" # overreaching = extending limbs = instability
   - "BJJ-267-tension-economy"     # overreaching wastes tension
+  - BJJ-009-patience-5-7 # back-link from Patience (5/7)
 ---
 
 Avoid overreaching (grab too far, maintain a grip that is compromised, try to finish a submission that is now too low percentage, etc.)

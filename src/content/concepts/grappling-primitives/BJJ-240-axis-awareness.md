@@ -11,6 +11,9 @@ related:
   - "BJJ-261-rotational-control" # controlling rotation requires knowing the axis
   - "BJJ-030-6dof"               # axes are the rotational dimensions within 6DoF
   - "BJJ-268-diagonal-control"   # diagonal control works across two axes simultaneously
+  - BJJ-063-22-32-pivot # back-link from 22/32 Pivot
+  - BJJ-206-torque # back-link from Torque
+  - BJJ-209-centripetal-centrifugal # back-link from Centripetal/Centrifugal
 ---
 
 Similar to Pivot.

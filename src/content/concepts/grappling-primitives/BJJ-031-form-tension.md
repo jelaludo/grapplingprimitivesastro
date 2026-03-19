@@ -12,6 +12,9 @@ related:
   - "BJJ-002-collapse-frames"  # frames are form tension; collapsing them breaks structure
   - "BJJ-260-build-yourself"   # building yourself creates productive form tension
   - "BJJ-270-kinetic-chain"    # form tension travels along the kinetic chain
+  - BJJ-076-fascia-activation # back-link from Fascia Activation
+  - BJJ-082-far-end-lever # back-link from Far-End Lever
+  - BJJ-083-knee-elbow # back-link from Knee-Elbow
 ---
 
 Form tension in biomechanics refers to the internal force generated within a structure—such as a muscle, tendon, or connective tissue—when it is stretched or deformed, acting to resist the applied load and maintain the shape or integrity of the structure. This tension is a combination of passive (from non-contractile elements like connective tissue) and active (from contractile muscle fibers) components, and is fundamental for stabilizing and supporting body forms during movement and posture.   See Peng in Taichi.    The baseline muscular engagement required to maintain structural integrity during movement or static holds. Not maximal contraction—just enough to preserve alignment, transmit force, and prevent collapse under external load or pressure.

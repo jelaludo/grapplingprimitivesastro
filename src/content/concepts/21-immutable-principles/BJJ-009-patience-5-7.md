@@ -13,6 +13,7 @@ related:
   - "BJJ-036-bait-trap"        # patience resists baits
   - "BJJ-017-9-21-overreaching" # patience prevents overreaching
   - "BJJ-184-unforce-errors"   # patience lets the opponent make unforced errors
+  - BJJ-145-1-21-persistence # back-link from #1/21 Persistence
 ---
 
 #1/21 one of the "7P's" in Paulo Guillobel's 21 immutable principles of Jiu Jitsu.

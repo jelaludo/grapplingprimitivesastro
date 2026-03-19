@@ -11,6 +11,9 @@ related:
   - "BJJ-033-real-time-learning"    # OODA is the cycle that drives real-time learning
   - "BJJ-035-overload-their-system" # cycling faster than your opponent overloads their OODA
   - "BJJ-004-anticipation"          # the "orient" phase is anticipation
+  - BJJ-011-2-21-chess-analogy # back-link from #2/21 Chess Analogy
+  - BJJ-042-last-battle # back-link from Last Battle
+  - BJJ-040-heuristics # back-link from Heuristics
 ---
 
 OODA Loop: Observe, Orient, Decide, Act.

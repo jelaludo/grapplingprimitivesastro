@@ -12,6 +12,11 @@ related:
   - "BJJ-260-build-yourself"   # building yourself requires feeling your own body state
   - "BJJ-267-tension-economy"  # sensing parasitic tension is a proprioceptive skill
   - "BJJ-076-fascia-activation" # fascia is a proprioceptive feedback network
+  - BJJ-144-diaphragm-breathing # back-link from Diaphragm Breathing
+  - BJJ-075-vibration # back-link from Vibration
+  - BJJ-106-cursing-cursor # back-link from Cursing Cursor
+  - BJJ-225-one-size-fits-all-warmup # back-link from One-Size-Fits-All Warmup
+  - BJJ-117-noob-spaz # back-link from Noob Spaz
 ---
 
 The body's internal sense of position, movement, and force—joint awareness without sight. It's how you know where your arm is in space, or how much pressure you're applying, even with eyes closed.

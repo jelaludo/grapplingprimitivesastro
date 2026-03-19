@@ -10,6 +10,9 @@ tags: []
 related:
   - "BJJ-267-tension-economy"      # being comfortable while applying pressure = efficient tension
   - "BJJ-200-overlapping-pressure" # suffocating comfort is overlapping pressure applied relaxedly
+  - BJJ-021-13-21-let-the-enemy-defeat-himself # back-link from #13/21 let the enemy defeat himself.
+  - BJJ-060-18-32-depletion # back-link from 18/32 Depletion
+  - BJJ-118-chill-veteran # back-link from Chill Veteran
 ---
 
 You're chilling, they're dying.

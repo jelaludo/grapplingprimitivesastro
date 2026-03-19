@@ -12,6 +12,16 @@ related:
   - "BJJ-084-wedges"                 # wedges create the fulcrum that levers need
   - "BJJ-031-form-tension"           # a lever works against the opponent's form tension
   - "BJJ-262-secondary-limb-control" # the "other limb" often needs controlling to make the lever work
+  - BJJ-020-12-21-anatomy # back-link from #12/21 Anatomy
+  - BJJ-133-elbow-point # back-link from Elbow Point
+  - BJJ-137-inion # back-link from Inion
+  - BJJ-113-two-inches # back-link from Two Inches
+  - BJJ-075-vibration # back-link from Vibration
+  - BJJ-079-joint-slack # back-link from Joint Slack
+  - BJJ-242-submission-requirements # back-link from Submission Requirements
+  - BJJ-250-bite # back-link from \"Bite\"
+  - "BJJ-112-micro-adjustments 1" # back-link from Micro-Adjustments
+  - BJJ-205-leverage # back-link from Leverage
 ---
 
 The specific point on a skeletal or soft-tissue lever—external or internal—where minimal force yields maximal positional or structural disruption to the target segment.

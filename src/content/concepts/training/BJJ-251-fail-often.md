@@ -10,6 +10,8 @@ tags: []
 related:
   - "BJJ-266-building-resilience" # failing in controlled doses builds resilience
   - "BJJ-265-explore-vs-exploit"  # failing is the cost of exploring
+  - BJJ-014-6-21-braveheart # back-link from #6/21 Braveheart
+  - BJJ-165-tap-early-tap-often # back-link from Tap Early, Tap Often
 ---
 
 Fail Often, Fail Early.

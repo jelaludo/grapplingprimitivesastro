@@ -12,6 +12,15 @@ related:
   - "BJJ-236-stay-connected"   # never let go of one connection before establishing the next
   - "BJJ-128-passing-definition" # passing is overlapping pressure moving through the guard
   - "BJJ-267-tension-economy"  # overlapping pressure is efficient; you're always loaded somewhere
+  - BJJ-010-1-21-7-p-s # back-link from #1/21 \"7 P's\"
+  - BJJ-027-19-21-max-pressure # back-link from #19/21 Max Pressure
+  - BJJ-066-25-32-anchor # back-link from 25/32 Anchor
+  - BJJ-067-26-32-ratchet # back-link from 26/32 Ratchet
+  - BJJ-077-loading-unloading # back-link from Loading & Unloading
+  - BJJ-268-diagonal-control # back-link from Diagonal Control
+  - BJJ-109-flow-pressure-finish # back-link from Flow-Pressure-Finish
+  - BJJ-111-positional-dominance # back-link from Positional Dominance
+  - BJJ-129-suffocating-comfort # back-link from Suffocating Comfort
 ---
 
 Never let go of one point of pressure/compression before moving on.

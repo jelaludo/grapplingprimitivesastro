@@ -12,6 +12,7 @@ related:
   - "BJJ-138-glute-dominance"    # pelvic tilt is controlled by glute/hip flexor balance
   - "BJJ-203-base"               # pelvic tilt affects base stability
   - "BJJ-140-ribcage-stacking"   # ribcage stacking and pelvic tilt are connected in the spinal chain
+  - BJJ-143-psoas # back-link from Psoas
 ---
 
 The sacrum's orientation can be 1) tucking (posterior tilt) or 2) arching (anterior tilt).

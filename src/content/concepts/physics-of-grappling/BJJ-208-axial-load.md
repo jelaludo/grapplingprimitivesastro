@@ -8,7 +8,7 @@ color: "#888888"
 short_description: "Compressive or tensile force applied along the length of a limb or spine"
 tags: []
 related:
-  - "BJJ-140-sternum-stacking" # stacking creates axial load on their spine
+  - "BJJ-140-ribcage-stacking" # stacking creates axial load on their spine
   - "BJJ-205-leverage"         # axial load and leverage are complementary force types
   - "BJJ-270-kinetic-chain"    # axial load travels along the chain
 ---

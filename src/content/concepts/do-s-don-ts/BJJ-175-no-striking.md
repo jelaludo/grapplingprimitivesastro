@@ -9,6 +9,7 @@ short_description: "Punches, kicks, elbows, knees, headbutts.  Grappling trainin
 tags: []
 related:
   - "BJJ-174-eye-gouge"       # dangerous behavior cluster
+  - BJJ-176-bending-digits # back-link from Bending Digits
 ---
 
 Punches, kicks, elbows, knees, headbutts.  Grappling training is neither MMA nor Lethwei nor a vale tudo street fight.

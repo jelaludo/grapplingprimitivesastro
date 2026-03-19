@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-230-focused-solo-experimentation" # solo experimentation feeds deep dives
   - "BJJ-272-end-game-training"            # deep dives into a technique chain often use end-game approach
+  - BJJ-123-bjj-fanatics # back-link from BJJ Fanatics
 ---
 
 Select one skill you're working one, find good partners, explore every aspects of it.  Ask the partner to give you specific looks (grab my shin, don't let me pass the knee, etc.)

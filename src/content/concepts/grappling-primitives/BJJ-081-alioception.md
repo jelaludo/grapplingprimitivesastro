@@ -12,6 +12,12 @@ related:
   - "BJJ-032-empathy"         # reading the opponent's state requires sensing them
   - "BJJ-004-anticipation"    # alioception feeds anticipation; you feel what's coming
   - "BJJ-078-cloth-tension"   # in gi, cloth is a primary alioception channel
+  - BJJ-053-12-32-reconnaissance # back-link from 12/32 Reconnaissance
+  - BJJ-064-23-32-tag-along # back-link from 23/32 Tag Along
+  - BJJ-103-1-32-connection # back-link from 1/32 Connection
+  - BJJ-236-stay-connected # back-link from Stay Connected
+  - BJJ-033-real-time-learning # back-link from Real-Time Learning
+  - BJJ-037-suspicion # back-link from Suspicion
 ---
 
 analogous to proprioception, but directed outward to the opponent. Afaik Coined by me Jelaludo.  

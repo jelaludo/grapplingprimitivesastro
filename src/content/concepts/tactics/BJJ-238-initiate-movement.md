@@ -11,6 +11,8 @@ related:
   - "BJJ-036-bait-trap"       # initiating movement can be a bait
   - "BJJ-210-redirection"     # you initiate to create energy you can then redirect
   - "BJJ-184-unforce-errors"  # initiated movement provokes unforced errors
+  - BJJ-019-11-21-action-reaction # back-link from #11/21 Action & Reaction
+  - BJJ-045-5-32-creation # back-link from 5/32 Creation
 ---
 
 Sometimes it can pay off to initiate a movement that looks like a mistake they want to capitalize on, but be ready with the full force of your strong posture and back-up plans.

@@ -9,6 +9,7 @@ short_description: "Teaching someone grateful to learn is an extremely rewarding
 tags: []
 related:
   - "BJJ-092-communicate-well" # coaching requires communication
+  - BJJ-160-career # back-link from Career
 ---
 
 Teaching someone grateful to learn is an extremely rewarding human interaction.   Teaching can be more rewarding than winning. Watching someone get light-bulbs moments, seeing confidence and competence bloom, techniques sharpening, etc. can be a profound source of satisfaction. Coaching others also deepens your own understanding, as you need to grok everything more deeply.

@@ -11,6 +11,12 @@ related:
   - "BJJ-109-flow-pressure-finish" # parallel execution frameworks
   - "BJJ-260-build-yourself"       # tsukuri literally means "building"; jibun wo tsukure is the self-directed half
   - "BJJ-002-collapse-frames"      # kuzushi (breaking) includes collapsing frames
+  - BJJ-052-11-32-kuzushi # back-link from 11/32 Kuzushi
+  - BJJ-070-29-32-redirection # back-link from 29/32 Redirection
+  - BJJ-216-cog # back-link from CoG
+  - BJJ-210-redirection # back-link from Redirection
+  - BJJ-107-4-steps-system # back-link from 4-Steps-System
+  - BJJ-195-standing-clinch-ground # back-link from Standing-Clinch-Ground
 ---
 
 We hear a lot of people talk about Kuzushi (often mispronunced Kazushi like Sakuraba's firt name, lol)

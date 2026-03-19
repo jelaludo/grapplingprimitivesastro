@@ -11,6 +11,12 @@ related:
   - "BJJ-215-base-of-support-bos" # base is supported by the base of support geometry
   - "BJJ-077-loading-unloading"    # base shifts as you load and unload limbs
   - "BJJ-270-kinetic-chain"        # base is the ground connection of the kinetic chain
+  - BJJ-029-21-21-base # back-link from #21/21 Base
+  - BJJ-044-4-32-pyramid # back-link from 4/32 Pyramid
+  - BJJ-138-glute-dominance # back-link from Glute Dominance
+  - BJJ-142-pelvic-tilt # back-link from Pelvic Tilt
+  - BJJ-216-cog # back-link from CoG
+  - BJJ-186-match-head-height # back-link from Match Head Height
 ---
 
 Base and Base of Support are related but slightly different.

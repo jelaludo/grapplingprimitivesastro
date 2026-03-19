@@ -10,6 +10,8 @@ tags: []
 related:
   - "BJJ-041-always-protect-yourself" # self-protection
   - "BJJ-251-fail-often"       # tapping is how you fail safely
+  - BJJ-177-crank-submissions # back-link from Crank submissions
+  - BJJ-178-respect-the-tap # back-link from Respect the Tap
 ---
 
 The interesting part of learning happened before you got stuck that deep into a submission that is not threatening your with injuries.

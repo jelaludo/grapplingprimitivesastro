@@ -9,6 +9,9 @@ short_description: "Everything has limitations, many martial arts claim to be \"
 tags: []
 related:
   - "BJJ-041-always-protect-yourself" # self-defense = protecting yourself
+  - BJJ-243-train-for-da-streetz # back-link from Train for Da Streetz
+  - BJJ-245-2nd-best-self-defense # back-link from 2nd Best Self-Defense
+  - BJJ-247-95-of-fights-go-to-the-ground # back-link from 95% of Fights go to the Ground
 ---
 
 Everything has limitations, many martial arts claim to be "the best" for self-defense.  There's a case to be made that striking arts can be better at self-defense via offense, e.g. knocking out someone cold.  That comes with a host of other potential legal issues.

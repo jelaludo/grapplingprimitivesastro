@@ -9,6 +9,8 @@ short_description: "The need for belonging is 3rd in Maslow's pyramid (well, 4th
 tags: []
 related:
   - "BJJ-158-shared-practice-bonding" # tribe and bonding overlap
+  - BJJ-127-r-bjj # back-link from r/bjj
+  - BJJ-156-recognition # back-link from Recognition
 ---
 
 The need for belonging is 3rd in Maslow's pyramid (well, 4th if you consider Wifi access before physiological needs).

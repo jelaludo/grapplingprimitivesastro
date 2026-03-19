@@ -11,6 +11,8 @@ related:
   - "BJJ-203-base"              # BoS defines where your base can exist
   - "BJJ-030-6dof"              # BoS constrains your available degrees of freedom
   - "BJJ-102-distance-management" # BoS determines your range and vulnerability
+  - BJJ-029-21-21-base # back-link from #21/21 Base
+  - BJJ-216-cog # back-link from CoG
 ---
 
 In sports science, the Base of Support (BoS) refers to the area beneath a person that includes every point of contact with the supporting surface. A wider BOS generally equates to greater stability, while a smaller one BOS leads to increased mobility, or vulnerability to falling.

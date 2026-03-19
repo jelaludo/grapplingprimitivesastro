@@ -10,6 +10,7 @@ tags: []
 related:
   - "BJJ-240-axis-awareness"     # circular motion requires knowing the pivot axis
   - "BJJ-261-rotational-control" # centripetal forces resist rotation attempts
+  - BJJ-063-22-32-pivot # back-link from 22/32 Pivot
 ---
 
 When you move in a circular path around your opponent, centripetal force is what keeps you on that arc, pulling you inward toward the center. The reaction you feel pulling outward is the centrifugal effect. Both matter in grappling more than people realize.
