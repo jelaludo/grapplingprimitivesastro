@@ -7,7 +7,11 @@ axis_mental_physical: -0.5
 color: "#848a94"
 short_description: "Self-organization of the body as the prerequisite for grappling technique. Reframing Kano's Tsukuri (作り) as 'build yourself first' — organize your tension, connections, force paths, and alignment before attempting to disrupt the opponent."
 tags: []
-related: []
+related:
+  - "BJJ-267-tension-economy"    # efficient tension is the core of "building yourself"
+  - "BJJ-270-kinetic-chain"      # connected chain = built body
+  - "BJJ-031-form-tension"       # structural integrity is what "built" looks like
+  - "BJJ-080-proprioception"     # you can't build what you can't feel
 ---
 
 "自分を作れ" ("build yourself", as an imperative. Jibun wo Tsukure) represents my reframing of how we typically understand what makes technique work in grappling. The conventional teaching model, inherited from Kodokan Judo's Kuzushi → Tsukuri → Kake sequence, is typically rendered as "off-balance your opponent, then set up your throw, then execute." This places the opponent as the primary object of attention from the very first step. But buried inside the concept of Tsukuri (作り, "making/preparation") is a quieter, more foundational instruction from Kano Jigoro (founder of Judo): 自分を作る, i.e. to make yourself, to organize your own body first. This project's core argument is that this half of Tsukuri is actually the prerequisite for everything else. You cannot reliably disrupt the opponent's structure if your own is not in order, and once you understand how to stack and build your body, it helps you understand the opponent's structure as well.

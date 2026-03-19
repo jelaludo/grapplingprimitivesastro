@@ -7,7 +7,12 @@ axis_mental_physical: -0.7
 color: "#ea580c"
 short_description: "Preventing spinal rotation by controlling both the hip line (rotation base) and shoulder line (rotation top). The fundamental mechanism beneath all back control systems."
 tags: []
-related: []
+related:
+  - "BJJ-268-diagonal-control"   # spiral is one strategy for achieving rotational control
+  - "BJJ-240-axis-awareness"     # rotation is around an axis; you need to know which one
+  - "BJJ-085-joint-above"        # controlling shoulder/hip = controlling the joints that define the rotation axis
+  - "BJJ-086-back-heeling"       # hooks are a primary tool for hip line control in back position
+  - "BJJ-030-6dof"               # rotation is 3 of the 6 degrees of freedom
 ---
 
 Rotational Control is the single unifying primitive beneath all back control systems. The back is the dominant position in grappling because of geometric asymmetry: the attacker has full vision, access to the neck, and structural advantage, while the defender's strongest muscles push into empty space, vision is gone, and arms are trapped in defensive roles. Every escape from back control is, at its core, a rotation attempt: the defender tries to turn their spine to face the attacker.

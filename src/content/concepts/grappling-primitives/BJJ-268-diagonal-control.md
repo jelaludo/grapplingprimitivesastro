@@ -7,7 +7,10 @@ axis_mental_physical: -0.6
 color: "#848a94"
 short_description: "Controlling opposite corners of the opponent's body. Far shoulder plus near hip (or vice versa) creates diagonal torsion that the spine cannot easily resist."
 tags: []
-related: []
+related:
+  - "BJJ-261-rotational-control" # diagonal control is a strategy for rotational control
+  - "BJJ-240-axis-awareness"     # the diagonal attacks across two axes
+  - "BJJ-200-overlapping-pressure" # diagonal pressure overlaps two control points
 ---
 
 Most people think of control as pinning things in place: hold the hips, hold the shoulders. But the strongest control comes from working on a diagonal. Far shoulder plus near hip creates a torsional force through the torso that the spine has very little ability to resist.

@@ -7,7 +7,11 @@ axis_mental_physical: -0.2339
 color: "#848a94"
 short_description: "Loading and Unloading Limbs\n\nRefers to the shifting of weight and tension through the limbs to enable or restrict movement—core to mobility, balance, and attack setups in grappling.\n\nLoading = transferring weight onto a limb.\n\nFunction: creates base, applies pressure, pins opponent.\n\nExample: posting a leg during a guard pass, weighting an elbow to trap an arm.\n\nBiomechanics: compressive force through joints; engages stabilizers and closes kinetic chains.\n\nUnloading = removing weight from a limb.\n\nFunction: frees limb for movement, redirection, or attack.\n\nExample: lifting a foot for a knee cut, freeing an arm to post or grip.\n\nBiomechanics: initiates open-chain movement; reduces friction and muscular load.\n\nTraining Implication: Elite grapplers cycle load dynamically—loading to create structure, unloading to strike or transition. Mastery lies in timing: unloading just as balance is preserved elsewhere.\n\ne.g. : if the knee is above the heel, pointing upwards, the leg is loaded and a shin-to-shin won't be very effective.  if their knee is forward, the foot will be lighter, and shin-to-shin might be very effective."
 tags: []
-related: []
+related:
+  - "BJJ-075-vibration"           # vibration is rapid loading/unloading cycles
+  - "BJJ-086-back-heeling"        # back-heeling is a form of loading the clamp
+  - "BJJ-196-penetrative-step"    # penetration step loads weight into the opponent's space
+  - "BJJ-200-overlapping-pressure" # overlapping pressure sequences loading points
 ---
 
 Loading and Unloading Limbs

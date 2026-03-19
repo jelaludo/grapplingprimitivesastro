@@ -7,7 +7,9 @@ axis_mental_physical: 0.54
 color: "#848a94"
 short_description: "Golden Mean in everything.  Moderation in everyting, including moderation."
 tags: []
-related: []
+related:
+  - "BJJ-267-tension-economy" # tension economy IS the golden mean applied to muscular effort
+  - "BJJ-039-puzzle-solving"   # moderation in approach; not too aggressive, not too passive
 ---
 
 Golden Mean in everything.  Moderation in everyting, including moderation.

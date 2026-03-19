@@ -7,7 +7,11 @@ axis_mental_physical: 0.96
 color: "#848a94"
 short_description: "The body's internal sense of position, movement, and force—joint awareness without sight. It's how you know where your arm is in space, or how much pressure you're applying, even with eyes closed.\n\nIn grappling: Proprioception guides balance, grip adjustment, limb positioning, and subtle angle changes under resistance.\n\nExample: adjusting hip angle in closed guard to set up an armbar without visual confirmation.\n\nHigh-level athletes can “read” opponents through tactile input alone—via pressure, resistance, and micro-movements.\n\nBiomechanically: Relies on mechanoreceptors in muscles (muscle spindles), tendons (Golgi tendon organs), and joint capsules. Fast, subconscious feedback loops.\n\nTrained proprioception enables smoother transitions, better weight distribution, and earlier detection of imbalance or threat.\n\nTraining Methodologies:\n\nClosed-eye drills, unstable surfaces, flow rolling, and positional sparring under constraint sharpen this system.\n\nInjury often disrupts proprioception—rehab must include retraining it, not just strength.\n\nIn essence: Proprioception is your sixth sense on the mat—feel without seeing, react without thinking."
 tags: []
-related: []
+related:
+  - "BJJ-081-alioception"      # proprioception's outward-facing twin
+  - "BJJ-260-build-yourself"   # building yourself requires feeling your own body state
+  - "BJJ-267-tension-economy"  # sensing parasitic tension is a proprioceptive skill
+  - "BJJ-076-fascia-activation" # fascia is a proprioceptive feedback network
 ---
 
 The body's internal sense of position, movement, and force—joint awareness without sight. It's how you know where your arm is in space, or how much pressure you're applying, even with eyes closed.

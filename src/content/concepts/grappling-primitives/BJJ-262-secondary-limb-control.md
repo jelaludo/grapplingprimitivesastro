@@ -7,7 +7,11 @@ axis_mental_physical: -0.4
 color: "#848a94"
 short_description: When one limb is being attacked for a sub, the success is often highly dependent on controlling the other limb. The untargeted limb is a key resource to escape.
 tags: []
-related: []
+related:
+  - "BJJ-085-joint-above"           # controlling the joint above the secondary limb
+  - "BJJ-003-grip-fighting"         # the secondary limb's grip is often the key variable
+  - "BJJ-242-submission-requirements" # secondary limb control is a submission requirement
+  - "BJJ-201-active-denial"         # denying the free limb is active denial
 ---
 
 The "other limb" principle. In most limb attacks (armbar, knee-bar, heel hook), the free limb is a large part of any escape attempts.  90% (made up number) of leg lock defense comes from the other leg. A free hand grabbing your arm-pit can shut down a kimura. 
