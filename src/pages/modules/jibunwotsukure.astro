@@ -24,20 +24,24 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <!-- ACT 0 — Hero                                                              -->
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 <section id="act-0" class="act" data-act="0">
-  <div class="act-inner" style="text-align:center;">
-    <h1 class="hero-title hero-ja-accent">自分を作れ</h1>
-    <h2 class="hero-subtitle">
-      <span lang="en">Build Yourself First</span>
-      <span lang="ja">まず自分を作れ</span>
-    </h2>
+  <div class="act-inner hero-layout">
     <blockquote class="hero-quote">
       <p>
         <span lang="en">"If you could tell your white belt self one thing, what would it be?"</span>
         <span lang="ja">「白帯の自分に一つだけ伝えられるとしたら、何を伝える？」</span>
       </p>
     </blockquote>
+
+    <div class="hero-center">
+      <h2 class="hero-subtitle">
+        <span lang="en">Build<br>Yourself<br>First</span>
+        <span lang="ja">まず<br>自分を<br>作れ</span>
+      </h2>
+      <img class="hero-calligraphy" src="/images/jibunwotsukure/calligraphy.png" alt="自分を作れ calligraphy" />
+    </div>
+
     <p class="act-subtitle">
-      <span lang="en">The answer isn't more techniques. It's about your body state, it is the primary and essential variable.</span>
+      <span lang="en">The answer isn't more techniques, it is your 'body state'.<br>That is the most essential variable.</span>
       <span lang="ja">答えは技を増やすことではない。身体の状態こそが最も重要で本質的な変数。</span>
     </p>
   </div>
@@ -255,6 +259,11 @@ We can call Tsukuri and Kake the technical principles that follow the basic prin
         <div class="by-panel"><canvas id="by-canvas-stacking"></canvas></div>
       </div>
     </div>
+
+    <p class="disclaimer">
+      <span lang="en">Disclaimer! This is <strong>NOT</strong> scientific at all, it is mostly what it 'feels' like to see the difference between your body collapsing under pressure, keeping the opponent at bay by muscling through, or setting up this more esoteric relaxed tai-chi like 'internal' structure.</span>
+      <span lang="ja">免責事項！これは<strong>科学的ではまったくありません</strong>。プレッシャーで身体が崩れる感覚、力で相手を押さえ込む感覚、あるいはより神秘的でリラックスした太極拳のような「内的」構造を組み立てる感覚の違いを、主観的に表現したものです。</span>
+    </p>
   </div>
 </section>
 
@@ -268,7 +277,10 @@ We can call Tsukuri and Kake the technical principles that follow the basic prin
       <span lang="en">"Tsukuri" can be unpacked into so many building blocks. Here's one model. "All models are wrong, some are useful."</span>
       <span lang="ja">「作り」は多くの構成要素に分解できる。これは一つのモデル。「全てのモデルは間違っている。しかし有用なものもある。」</span>
     </p>
-    <div id="viz-tsukuri" class="viz-container"></div>
+    <div class="viz-zoomable">
+      <div id="viz-tsukuri" class="viz-container"></div>
+      <p class="zoom-hint"><span lang="en">Pinch to zoom</span><span lang="ja">ピンチでズーム</span></p>
+    </div>
   </div>
 </section>
 
@@ -282,8 +294,10 @@ We can call Tsukuri and Kake the technical principles that follow the basic prin
       <span lang="en">Kuzushi is used in English as a shortcut for "imbalance" or "disrupting" the other grappler. But I also find it helpful to unpack what it is made of, to recognize the various elements that can create that destabilization. Some food for thought.</span>
       <span lang="ja">崩しは英語では「不均衡」や「相手の撹乱」の略語として使われる。しかしその構成要素を分解し、不安定化を生み出す様々な要素を認識することも有用だと思う。考えるきっかけになれば。</span>
     </p>
-    <div id="viz-kuzushi" class="viz-container"></div>
-
+    <div class="viz-zoomable">
+      <div id="viz-kuzushi" class="viz-container"></div>
+      <p class="zoom-hint"><span lang="en">Pinch to zoom</span><span lang="ja">ピンチでズーム</span></p>
+    </div>
   </div>
 </section>
 
@@ -329,20 +343,22 @@ We can call Tsukuri and Kake the technical principles that follow the basic prin
 <!-- ACT 6 — The Multiplier Effect                                             -->
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 <section id="act-6" class="act act--cta" data-act="6">
-  <div class="act-inner" style="text-align:center;">
-    <h2 class="act-title"><span class="act-number">06</span><span lang="en">The <span style="color:var(--cyan);text-shadow:var(--glow-cyan);">Multiplier</span> Effect</span><span lang="ja"><span style="color:var(--cyan);text-shadow:var(--glow-cyan);">乗数</span>効果</span></h2>
-    <p class="act-lead" style="max-width:640px;margin:0 auto 24px;">
-      <span lang="en">A strong "Build Yourself" base is a multiplier for all techniques. Every sweep, pass, and submission works better when your body is organized first.</span>
-      <span lang="ja">強力な「自分を作る」基盤は全ての技の乗数となる。スイープもパスもサブミッションも、身体が先に組織化されていればより良く機能する。</span>
-    </p>
-    <blockquote class="hero-quote">
-      <p style="font-size:clamp(0.9rem,2.5vw,1.15rem);">
-        <span lang="en">"It is possible to break the arm or heel of a beginner even with poor base and structure... but ideally the path we pursue is towards a more efficient body."</span>
-        <span lang="ja">「初心者の腕や踵は、ベースや構造が悪くても折れるだろう…しかし理想的には、我々が追求する道はより効率的な身体に向かうものだ。」</span>
-      </p>
-    </blockquote>
+  <div class="act-inner cta-layout">
+    <div class="cta-center">
+      <div class="cta-left">
+        <h2 class="cta-title">
+          <span lang="en">The<br><span style="color:var(--cyan);text-shadow:var(--glow-cyan);">Multiplier</span><br>Effect</span>
+          <span lang="ja"><span style="color:var(--cyan);text-shadow:var(--glow-cyan);">乗数</span><br>効果</span>
+        </h2>
+        <p class="cta-lead">
+          <span lang="en">A strong "Build Yourself" base is a multiplier for all techniques. Every sweep, pass, and submission works better when your body is organized first.</span>
+          <span lang="ja">強力な「自分を作る」基盤は全ての技の乗数となる。スイープもパスもサブミッションも、身体が先に組織化されていればより良く機能する。</span>
+        </p>
+      </div>
+      <img class="cta-calligraphy" src="/images/jibunwotsukure/shingitai.png" alt="心技体 Shin Gi Tai calligraphy" />
+    </div>
 
-    <p class="act-lead" style="max-width:640px;margin:24px auto 0;text-align:center;">
+    <p class="cta-bottom-right">
       <span lang="en">One of the fastest ways to develop those skills is to have <a href={`${base}/modules/ideal-partner`} class="inline-link">ideal training partners</a> and to become one yourself. Another is to start filling your mind with the Grappling Primitives that underlie all techniques, with the building blocks of which every complex technique is made of. Explore these in the <a href={`${base}/modules/quadtree`} class="inline-link">QuadTree concept map</a>.</span>
       <span lang="ja">これらのスキルを最速で身につける方法の一つは、<a href={`${base}/modules/ideal-partner`} class="inline-link">理想のトレーニングパートナー</a>を持ち、自分自身がそうなることだ。もう一つは、全ての技の根底にあるグラップリングの基本要素、あらゆる複雑な技を構成するビルディングブロックで頭を満たすこと。<a href={`${base}/modules/quadtree`} class="inline-link">QuadTreeコンセプトマップ</a>で探索しよう。</span>
     </p>
@@ -443,24 +459,41 @@ body.lang-ja [lang="en"] { display: none; }
 }
 
 /* ─── Hero (Act 0) ─── */
-.hero-title {
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
-  font-weight: 300;
-  color: var(--cyan-dim);
-  text-shadow: var(--glow-cyan);
-  margin-bottom: 8px;
-  letter-spacing: 0.05em;
+.hero-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0;
 }
-.hero-ja-accent {
-  display: inline;
+.hero-center {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+}
+.hero-calligraphy {
+  width: clamp(280px, 50vw, 520px);
+  height: auto;
+  opacity: 0.85;
+  pointer-events: none;
+  user-select: none;
 }
 .hero-subtitle {
-  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  position: absolute;
+  left: 0;
+  width: 50%;
+  text-align: center;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
   font-weight: 400;
   color: var(--text-primary);
-  margin-bottom: 32px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  line-height: 1.6;
+  margin: 0;
+  z-index: 1;
 }
 
 /* ─── Hero Quote ─── */
@@ -866,6 +899,36 @@ body.lang-ja [lang="en"] { display: none; }
   touch-action: pan-x pan-y pinch-zoom;
 }
 
+.disclaimer {
+  margin-top: 24px;
+  padding: 12px 16px;
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  border-left: 2px solid var(--border);
+  line-height: 1.6;
+}
+
+.viz-zoomable {
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+}
+.viz-zoomable .viz-container {
+  transform-origin: 0 0;
+  overflow: visible;
+}
+.zoom-hint {
+  display: none;
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  margin-top: 6px;
+  opacity: 0.6;
+}
+@media (max-width: 600px) {
+  .zoom-hint { display: block; }
+}
+
 /* ─── Examples Box (Act 5) ─── */
 .examples-box {
   margin-top: 32px;
@@ -898,6 +961,59 @@ body.lang-ja [lang="en"] { display: none; }
   margin-bottom: 4px;
 }
 
+/* ─── CTA / Act 6 ─── */
+.cta-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.cta-center {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+}
+.cta-left {
+  position: absolute;
+  left: 0;
+  width: 45%;
+  text-align: left;
+  z-index: 1;
+}
+.cta-title {
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 400;
+  color: var(--text-primary);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  margin: 0 0 16px 0;
+}
+.cta-lead {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 320px;
+}
+.cta-calligraphy {
+  width: clamp(260px, 45vw, 480px);
+  height: auto;
+  opacity: 0.8;
+  pointer-events: none;
+  user-select: none;
+}
+.cta-bottom-right {
+  align-self: flex-end;
+  text-align: right;
+  max-width: 520px;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-top: 8px;
+}
+
 /* ─── Inline Links ─── */
 .inline-link {
   color: var(--cyan);
@@ -917,6 +1033,27 @@ body.lang-ja [lang="en"] { display: none; }
   .act { padding: 60px 16px; }
   .contrast-callout { flex-direction: column; gap: 8px; }
   .translation-row { flex-direction: column; gap: 4px; }
+  .hero-center { flex-direction: column; }
+  .hero-subtitle {
+    position: relative;
+    left: auto;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  .cta-center { flex-direction: column; }
+  .cta-left {
+    position: relative;
+    left: auto;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .cta-lead { max-width: none; }
+  .cta-bottom-right {
+    align-self: center;
+    text-align: center;
+    max-width: none;
+  }
 }
 </style>
 
@@ -2421,5 +2558,69 @@ requestAnimationFrame(render);
 } // end initBuildYourselfViz
 
 initBuildYourselfViz();
+
+// ═══ Pinch-to-Zoom on .viz-zoomable ═══
+document.querySelectorAll('.viz-zoomable').forEach(function(wrapper) {
+  var inner = wrapper.querySelector('.viz-container');
+  var scale = 1, originX = 0, originY = 0;
+  var startDist = 0, startScale = 1;
+  var panStartX = 0, panStartY = 0, panX = 0, panY = 0, startPanX = 0, startPanY = 0;
+
+  function getDist(touches) {
+    var dx = touches[0].clientX - touches[1].clientX;
+    var dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  wrapper.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      startDist = getDist(e.touches);
+      startScale = scale;
+      var rect = wrapper.getBoundingClientRect();
+      originX = ((e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left);
+      originY = ((e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top);
+      startPanX = panX; startPanY = panY;
+      panStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      panStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    }
+  }, { passive: false });
+
+  wrapper.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      var d = getDist(e.touches);
+      scale = Math.min(Math.max(startScale * (d / startDist), 1), 4);
+      var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      panX = startPanX + (midX - panStartX);
+      panY = startPanY + (midY - panStartY);
+      if (scale <= 1) { panX = 0; panY = 0; }
+      inner.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+      inner.style.transformOrigin = originX + 'px ' + originY + 'px';
+    }
+  }, { passive: false });
+
+  wrapper.addEventListener('touchend', function() {
+    if (scale <= 1.05) {
+      scale = 1; panX = 0; panY = 0;
+      inner.style.transform = '';
+      inner.style.transformOrigin = '';
+    }
+  });
+
+  // Double-tap to reset
+  var lastTap = 0;
+  wrapper.addEventListener('touchend', function(e) {
+    if (e.touches.length > 0) return;
+    var now = Date.now();
+    if (now - lastTap < 300) {
+      scale = 1; panX = 0; panY = 0;
+      inner.style.transform = '';
+      inner.style.transformOrigin = '';
+    }
+    lastTap = now;
+  });
+});
 
 </script>
