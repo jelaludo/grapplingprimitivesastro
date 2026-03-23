@@ -56,11 +56,11 @@ const rows = STEPS.map((_, i) => {
 
   <!-- ── Toolbar ──────────────────────────────────────────────────────────── -->
   <div style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Courier New',Consolas,Monaco,monospace;">
-    <a href={`${base}/`} style="font-size:10px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+    <a href={`${base}/`} style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
     <span style="color:#21262d;">|</span>
     <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Beyond Offense &amp; Defense</span>
     <div style="flex:1;"></div>
-    <button id="btn-deeplink" style="font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;">Link</button>
+    <button id="btn-deeplink" style="font-family:inherit;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;">Link</button>
   </div>
 
   <!-- ── Content ──────────────────────────────────────────────────────────── -->
@@ -68,7 +68,7 @@ const rows = STEPS.map((_, i) => {
 
     <!-- Header -->
     <div style="margin-bottom:32px;padding-top:28px;">
-      <p style="font-size:9px;letter-spacing:4px;color:#00d4ff;text-transform:uppercase;margin:0 0 8px;">Modules / Concepts</p>
+      <p style="font-size:12px;letter-spacing:4px;color:#00d4ff;text-transform:uppercase;margin:0 0 8px;">Modules / Concepts</p>
       <h1 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:800;letter-spacing:-0.02em;color:#c9d1d9;margin:0 0 8px;line-height:1.1;">Beyond Offense &amp; Defense</h1>
       <p style="font-size:13px;color:#8b949e;margin:0;letter-spacing:0.05em;font-style:italic;">Wherever you are in an exchange, it's always the same; improve your relative position</p>
     </div>
@@ -78,9 +78,9 @@ const rows = STEPS.map((_, i) => {
 
       <!-- Column headers -->
       <div style="display:grid;grid-template-columns:1fr 48px 1fr;margin-bottom:8px;padding:0 4px;">
-        <div style="font-size:9px;letter-spacing:3px;color:#00d4ff;text-transform:uppercase;text-align:right;padding-right:16px;">YOU ↑</div>
+        <div style="font-size:12px;letter-spacing:3px;color:#00d4ff;text-transform:uppercase;text-align:right;padding-right:16px;">YOU ↑</div>
         <div></div>
-        <div style="font-size:9px;letter-spacing:3px;color:#b71c1c;text-transform:uppercase;text-align:left;padding-left:16px;">↓ OPPONENT</div>
+        <div style="font-size:12px;letter-spacing:3px;color:#b71c1c;text-transform:uppercase;text-align:left;padding-left:16px;">↓ OPPONENT</div>
       </div>
 
       <!-- Gradient axis line (absolute, behind dots) -->
@@ -140,16 +140,16 @@ const rows = STEPS.map((_, i) => {
     <div id="info-panel" style="display:none;border:1px solid #21262d;border-radius:4px;padding:16px 20px;margin-bottom:28px;background:rgba(13,17,23,0.8);">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;">
         <div>
-          <div style="font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">YOUR POSITION</div>
+          <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">YOUR POSITION</div>
           <div id="info-you-label" style="font-size:18px;font-weight:800;line-height:1.2;"></div>
         </div>
         <div>
-          <div style="font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">OPPONENT IS AT</div>
+          <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">OPPONENT IS AT</div>
           <div id="info-opp-label" style="font-size:18px;font-weight:800;line-height:1.2;"></div>
         </div>
       </div>
       <div id="info-note" style="font-size:11px;color:#8b949e;font-style:italic;margin-bottom:10px;line-height:1.6;"></div>
-      <div style="font-size:9px;letter-spacing:2px;color:#6b7280;text-transform:uppercase;border-top:1px solid #21262d;padding-top:8px;">↑ both players always want to improve — in opposite directions</div>
+      <div style="font-size:12px;letter-spacing:2px;color:#6b7280;text-transform:uppercase;border-top:1px solid #21262d;padding-top:8px;">↑ both players always want to improve — in opposite directions</div>
     </div>
 
     <!-- Note -->
@@ -168,7 +168,7 @@ const rows = STEPS.map((_, i) => {
     .step-row.active .step-dot { transform: scale(1.8); box-shadow: 0 0 14px currentColor; }
     #scale.has-active .step-row:not(.active) { opacity: 0.3; }
     @media (max-width: 600px) {
-      .you-label, .opp-label { font-size: clamp(9px, 2.5vw, 12px) !important; }
+      .you-label, .opp-label { font-size: clamp(11px, 2.5vw, 14px) !important; }
     }
   </style>
 
