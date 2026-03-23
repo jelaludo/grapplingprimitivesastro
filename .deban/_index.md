@@ -28,6 +28,7 @@ An Astro-based interactive learning platform that treats grappling knowledge as 
 - Shared calligraphy at `public/images/calligraphy/`, module-specific at `public/images/{module}/` (2026-03-23, [[arch]])
 - Shared `.act-*` essay CSS in `global.css`, modules override only what differs (2026-03-23, [[arch]])
 - Toolbar component extraction deferred — 14 modules, too many variations for safe abstraction now (2026-03-23, [[arch]])
+- WebP as default image format, manual conversion script, originals deleted post-conversion (2026-03-23, [[arch]], [[devops]])
 
 ## Open Questions (cross-role)
 - Future CLD addition: "Understanding of Escapes" node feeding into Maintain Dominant Positions (knowing escapes = better at shutting them down)

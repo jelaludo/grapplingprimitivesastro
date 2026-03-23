@@ -34,6 +34,8 @@ Implementation of modules, primitives, visualizations, and interactive elements.
 | 2026-03-23 | `:global()` required for CSS selectors targeting `set:html` injected elements | Astro scoped styles add `data-astro-cid` attributes, but `set:html` content lacks them. Parent selector is scoped, child selectors use `:global()`. | [[arch]] |
 | 2026-03-23 | Site-wide font size sweep: 13 modules fixed (7→10, 8→11, 9→12px) | Batch `replace_all` per file for DOM inline styles + canvas ctx.font. Toolbar chrome (10-11px tracking-heavy uppercase) left intentionally small. No modules remain with sub-10px readable text. | [[ux]] |
 | 2026-03-23 | Shared `.act-*` CSS extracted from 4 modules to `global.css` | .act, .act.visible, .act-inner, .act-number, .act-title, .act-lead, .act-subtitle, .act-subtitle em defined once. Modules keep only overrides (max-width, font-size, text-align). Removed ~120 duplicate lines. | [[arch]], [[ux]] |
+| 2026-03-23 | Image optimization: 113 PNG/JPG → WebP via sharp script | `scripts/optimize-images.mjs` converts at quality 80, skips memory/ (already optimized). 60.6MB originals → 12.8MB WebP (79% reduction). All code refs updated. 100 originals deleted, 13 article PNGs kept for Obsidian embed compat. Build: 79MB → 43MB. | [[devops]], [[arch]] |
+| 2026-03-23 | QuadTree category label: raised font floor (6.5→9px) + hover enlargement (12-16px bold) | Added `hoveredCat` state variable. On hover: label scales up, goes bold, full opacity. On leave: reverts. ~15 lines of code. | [[ux]] |
 
 ## Dead Ends
 <!-- APPEND ONLY. Never delete. -->
@@ -59,6 +61,7 @@ Feeds into: [[ux]], [[qa]]
 
 ## Session Log
 <!-- One line per session, newest first -->
+2026-03-23 (session 5 optimization) — Image optimization: 113 PNG/JPG → WebP (-47.8MB, build 79→43MB). All refs updated, 100 originals deleted. QuadTree category hover enlargement. sharp installed + optimize-images.mjs script.
 2026-03-23 (session 5 audit) — Site-wide font size sweep: 13 modules fixed, zero remain with sub-10px text. Shared .act-* CSS extracted to global.css from 4 essay modules (-317 source lines, -1.8KB JS+CSS). Baseline metrics captured before/after.
 2026-03-23 (session 5) — Content collection system: `module-text` collection + `mdInline` utility for Obsidian-editable text blocks with inline markdown. TLDRs for jibunwotsukure + ideal-partner. Landing page text (6 blocks) extracted. Calligraphy assets reorganized. Landing page: 3 principles with flanking calligraphy, module reorder, clickable principle links. Back-control orange dot linked to QuadTree. Vault README at `src/content/README.md`.
 2026-03-20 (session 4) — Flow-Roll module: ported two standalone HTML articles (flow-bjj + flow-theory) into single tabbed Astro page. 1683 lines. Interactive slider (6 zones), 8-channel canvas diagram, 3 SVG vis-cards, evidence cards, verdict table, 10 paper references. All content preserved, visual identity adapted to site terminal palette. Registered in experiments page.
