@@ -50,7 +50,7 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
     <span style="color:#21262d;">|</span>
     <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;user-select:none;">Skill Assessment</span>
     <div style="flex:1;"></div>
-    <button id="btn-deeplink" style="font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;">Link</button>
+    <button id="btn-deeplink" style="font-family:inherit;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;">Link</button>
   </div>
 
   <!-- ── Content ──────────────────────────────────────────────────────────────── -->
@@ -60,7 +60,7 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
     <div id="v-setup">
 
       <div style="margin-bottom:40px;padding-top:20px;">
-        <p style="font-size:9px;letter-spacing:4px;color:#00d4ff;text-transform:uppercase;margin:0 0 8px;">Modules / Tools</p>
+        <p style="font-size:12px;letter-spacing:4px;color:#00d4ff;text-transform:uppercase;margin:0 0 8px;">Modules / Tools</p>
         <h1 style="font-size:clamp(1.8rem,5vw,3rem);font-weight:800;letter-spacing:-0.02em;color:#c9d1d9;margin:0 0 8px;line-height:1.1;">Skill Assessment</h1>
         <p style="font-size:13px;color:#8b949e;margin:0;letter-spacing:0.04em;line-height:1.6;">Rate your confidence on each topic, 1–10. No right or wrong answers — just honest self-reflection.</p>
       </div>
@@ -91,8 +91,8 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
       <!-- Progress header -->
       <div style="margin-bottom:32px;">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
-          <span id="q-cat" style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#00d4ff;"></span>
-          <span id="q-num" style="font-size:9px;letter-spacing:2px;color:#6b7280;"></span>
+          <span id="q-cat" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#00d4ff;"></span>
+          <span id="q-num" style="font-size:12px;letter-spacing:2px;color:#6b7280;"></span>
         </div>
         <div style="height:2px;background:#21262d;border-radius:2px;">
           <div id="q-bar" style="height:100%;background:#00d4ff;border-radius:2px;transition:width 0.3s;width:0%;"></div>
@@ -101,7 +101,7 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
 
       <!-- Question -->
       <div style="margin-bottom:28px;min-height:80px;">
-        <div id="q-level" style="font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#6b7280;margin-bottom:10px;"></div>
+        <div id="q-level" style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#6b7280;margin-bottom:10px;"></div>
         <div id="q-text" style="font-size:clamp(14px,3vw,20px);color:#c9d1d9;line-height:1.6;font-weight:500;"></div>
       </div>
 
@@ -114,8 +114,8 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
             style="position:absolute;inset:0;width:100%;height:100%;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;z-index:2;">
         </div>
         <div style="display:flex;justify-content:space-between;">
-          <span style="font-size:9px;letter-spacing:1px;color:#6b7280;">Not confident</span>
-          <span style="font-size:9px;letter-spacing:1px;color:#6b7280;">Fully confident</span>
+          <span style="font-size:12px;letter-spacing:1px;color:#6b7280;">Not confident</span>
+          <span style="font-size:12px;letter-spacing:1px;color:#6b7280;">Fully confident</span>
         </div>
         <button id="q-confirm"
           style="margin-top:16px;width:100%;font-family:inherit;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px 24px;border-radius:3px;cursor:pointer;border:1px solid #00d4ff44;background:rgba(0,212,255,0.08);color:#00d4ff;transition:all 0.15s;">
@@ -125,7 +125,7 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
 
       <!-- Belt-Curve Widget -->
       <div id="q-belt-curve" style="display:none;margin-bottom:16px;">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-bottom:10px;text-align:center;">Draw across belt levels</div>
+        <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-bottom:10px;text-align:center;">Draw across belt levels</div>
         <div id="bc-container" style="position:relative;height:200px;display:flex;gap:6px;justify-content:center;touch-action:none;user-select:none;">
           <div class="bc-col" data-belt="0" style="width:48px;height:100%;border-radius:4px;background:linear-gradient(to top,rgba(198,40,40,0.25),rgba(0,212,255,0.25));position:relative;"></div>
           <div class="bc-col" data-belt="1" style="width:48px;height:100%;border-radius:4px;background:linear-gradient(to top,rgba(198,40,40,0.25),rgba(0,212,255,0.25));position:relative;"></div>
@@ -146,7 +146,7 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
           <div class="bc-label" style="width:48px;text-align:center;font-size:10px;font-weight:700;color:#6d4c41;">Br</div>
           <div class="bc-label" style="width:48px;text-align:center;font-size:10px;font-weight:700;color:#ccc;">Bk</div>
         </div>
-        <div id="bc-hint" style="text-align:center;font-size:9px;color:#6b7280;margin-top:8px;">5 belt levels remaining</div>
+        <div id="bc-hint" style="text-align:center;font-size:12px;color:#6b7280;margin-top:8px;">5 belt levels remaining</div>
         <button id="bc-confirm"
           style="margin-top:16px;width:100%;font-family:inherit;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px 24px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:rgba(0,212,255,0.03);color:#6b7280;transition:all 0.15s;opacity:0.5;"
           disabled>
@@ -155,14 +155,14 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
       </div>
 
       <!-- Skip -->
-      <button id="q-skip" style="font-family:inherit;font-size:9px;letter-spacing:2px;text-transform:uppercase;background:transparent;border:none;color:#6b7280;cursor:pointer;padding:4px 0;transition:color 0.15s;" onmouseover="this.style.color='#c9d1d9'" onmouseout="this.style.color='#6b7280'">Skip →</button>
+      <button id="q-skip" style="font-family:inherit;font-size:12px;letter-spacing:2px;text-transform:uppercase;background:transparent;border:none;color:#6b7280;cursor:pointer;padding:4px 0;transition:color 0.15s;" onmouseover="this.style.color='#c9d1d9'" onmouseout="this.style.color='#6b7280'">Skip →</button>
     </div>
 
     <!-- ── VIEW: RESULTS ─────────────────────────────────────────────────────── -->
     <div id="v-results" style="display:none;">
 
       <div style="margin-bottom:28px;">
-        <p style="font-size:9px;letter-spacing:4px;color:#00d4ff;text-transform:uppercase;margin:0 0 8px;">Assessment Complete</p>
+        <p style="font-size:12px;letter-spacing:4px;color:#00d4ff;text-transform:uppercase;margin:0 0 8px;">Assessment Complete</p>
         <h2 style="font-size:clamp(1.5rem,4vw,2.5rem);font-weight:800;letter-spacing:-0.02em;color:#c9d1d9;margin:0;line-height:1.1;">Your Results</h2>
       </div>
 
@@ -558,7 +558,7 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
       document.getElementById('r-overall').innerHTML = `
         <div style="font-size:52px;font-weight:800;color:${oc};line-height:1;letter-spacing:-0.02em;">${overall}<span style="font-size:22px;color:#6b7280;font-weight:400;">%</span></div>
         <div>
-          <div style="font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Overall Confidence</div>
+          <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Overall Confidence</div>
           <div style="font-size:11px;color:#8b949e;">${valid.length} of ${CAT_DATA.length} areas assessed</div>
         </div>
       `;
@@ -579,7 +579,7 @@ const totalShort = CAT_DATA.reduce((s, c) => s + c.questions.filter(q => q.short
             <div style="flex:1;position:relative;height:16px;border-radius:2px;overflow:hidden;background:#0d1117;">
               <div style="position:absolute;inset:0;background:${ZONE_GRADIENT};"></div>
               ${na
-                ? `<div style="font-size:9px;color:#6b7280;line-height:16px;padding-left:8px;position:relative;z-index:1;">—</div>`
+                ? `<div style="font-size:12px;color:#6b7280;line-height:16px;padding-left:8px;position:relative;z-index:1;">—</div>`
                 : `<div style="position:absolute;top:0;left:0;height:100%;width:${pct}%;background:${color};opacity:0.75;transition:width 0.7s;z-index:1;"></div>`
               }
             </div>

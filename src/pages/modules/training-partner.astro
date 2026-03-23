@@ -14,7 +14,7 @@ const imgBase = base + '/images/partners/';
   <span class="toolbar-title" style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;white-space:nowrap;flex-shrink:0;">Training Partners</span>
   <div style="flex:1;min-width:4px;flex-shrink:1;"></div>
   <!-- Deep Link -->
-  <button id="btn-deeplink" style="font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;white-space:nowrap;flex-shrink:0;">Link</button>
+  <button id="btn-deeplink" style="font-family:inherit;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;white-space:nowrap;flex-shrink:0;">Link</button>
   <span style="color:#21262d;">|</span>
   <!-- Font size -->
   <span id="btn-sm"  title="Small text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;flex-shrink:0;">小</span>
@@ -22,10 +22,10 @@ const imgBase = base + '/images/partners/';
   <span id="btn-lg"  title="Large text"  style="font-family:inherit;font-size:11px;padding:2px 5px;cursor:pointer;color:#6b7280;border:1px solid transparent;border-radius:2px;line-height:1;user-select:none;flex-shrink:0;">大</span>
   <span style="color:#21262d;">|</span>
   <!-- Download (self-assess only) -->
-  <button id="btn-download" style="display:none;font-family:inherit;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" title="Click to download an image of your self-assessment">↓ Save</button>
+  <button id="btn-download" style="display:none;font-family:inherit;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" title="Click to download an image of your self-assessment">↓ Save</button>
   <!-- Mode buttons -->
-  <button id="btn-archetypes" style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;white-space:nowrap;flex-shrink:0;">Archetypes ▾</button>
-  <button id="btn-self"       style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;white-space:nowrap;flex-shrink:0;">Self-Assess</button>
+  <button id="btn-archetypes" style="font-family:inherit;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #00d4ff;background:rgba(0,212,255,0.1);color:#00d4ff;white-space:nowrap;flex-shrink:0;">Archetypes ▾</button>
+  <button id="btn-self"       style="font-family:inherit;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;white-space:nowrap;flex-shrink:0;">Self-Assess</button>
   <!-- Admin — injected by JS on localhost only -->
 </div>
 
@@ -44,12 +44,12 @@ const imgBase = base + '/images/partners/';
     </div>
     <div style="padding:14px 14px 6px;flex-shrink:0;">
       <div id="char-name"    style="font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c9d1d9;margin-bottom:3px;"></div>
-      <div id="char-tagline" style="font-size:8px;letter-spacing:0.14em;color:#6b7280;text-transform:uppercase;margin-bottom:10px;font-style:italic;"></div>
+      <div id="char-tagline" style="font-size:11px;letter-spacing:0.14em;color:#6b7280;text-transform:uppercase;margin-bottom:10px;font-style:italic;"></div>
       <div id="char-desc"    style="font-size:10px;color:#8b949e;line-height:1.75;"></div>
     </div>
     <!-- Self-assess: closest match -->
     <div id="match-panel" style="display:none;margin:10px 12px 12px;padding:11px 12px;border:1px solid #21262d;border-radius:3px;flex-shrink:0;">
-      <div style="font-size:7px;letter-spacing:0.18em;color:#6b7280;text-transform:uppercase;margin-bottom:8px;">Closest match</div>
+      <div style="font-size:10px;letter-spacing:0.18em;color:#6b7280;text-transform:uppercase;margin-bottom:8px;">Closest match</div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
         <img id="match-img" src="" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:2px;flex-shrink:0;" />
         <div>
@@ -57,14 +57,14 @@ const imgBase = base + '/images/partners/';
           <div id="match-pct"  style="font-family:'DS-Digital',monospace;font-size:13px;font-weight:700;color:#6b7280;letter-spacing:0.04em;"></div>
         </div>
       </div>
-      <div id="match-msg" style="font-size:9px;color:#8b949e;line-height:1.65;font-style:italic;"></div>
+      <div id="match-msg" style="font-size:12px;color:#8b949e;line-height:1.65;font-style:italic;"></div>
     </div>
     <div id="self-portrait" style="display:none;padding:12px 14px;">
-      <div style="font-size:7px;letter-spacing:0.2em;color:#30363d;text-transform:uppercase;margin-bottom:8px;">YOUR PROFILE</div>
-      <div style="font-size:9px;color:#6b7280;line-height:1.75;font-style:italic;">Rate yourself honestly on each attribute.</div>
+      <div style="font-size:10px;letter-spacing:0.2em;color:#30363d;text-transform:uppercase;margin-bottom:8px;">YOUR PROFILE</div>
+      <div style="font-size:12px;color:#6b7280;line-height:1.75;font-style:italic;">Rate yourself honestly on each attribute.</div>
     </div>
     <!-- Legend anchored to bottom of left panel -->
-    <div style="margin-top:auto;padding:10px 12px;border-top:1px solid #0d1117;display:flex;flex-direction:column;gap:4px;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280;">
+    <div style="margin-top:auto;padding:10px 12px;border-top:1px solid #0d1117;display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280;">
       <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;background:rgba(230,100,80,0.6);display:inline-block;border-radius:1px;flex-shrink:0;"></span>Needs Work (1–3)</span>
       <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;background:rgba(210,170,50,0.6);display:inline-block;border-radius:1px;flex-shrink:0;"></span>Developing (4–7)</span>
       <span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;background:rgba(30,180,150,0.6);display:inline-block;border-radius:1px;flex-shrink:0;"></span>Excellent (8–10)</span>
@@ -106,7 +106,7 @@ const imgBase = base + '/images/partners/';
     #panel-left { width:33% !important; min-width:110px !important; border-right:1px solid #0d1117 !important; border-bottom:none !important; max-height:none !important; overflow-y:auto !important; }
     #panel-right { padding:6px 8px 12px !important; }
     #char-desc { display:none !important; }
-    #char-tagline { font-size:7px !important; margin-bottom:4px !important; }
+    #char-tagline { font-size:10px !important; margin-bottom:4px !important; }
     #char-name { font-size:11px !important; margin-bottom:2px !important; }
     #match-panel { margin:6px 8px !important; padding:8px !important; }
     .toolbar-title { display:none !important; }
@@ -218,7 +218,7 @@ const toolbar       = document.getElementById('toolbar');
 
 // ─── Tooltip ──────────────────────────────────────────────────────────────────
 const tip = document.createElement('div');
-tip.style.cssText = 'position:fixed;z-index:9000;background:#0d1117;border:1px solid #30363d;border-radius:3px;padding:9px 12px;font-size:9px;line-height:1.7;color:#8b949e;font-family:inherit;pointer-events:none;max-width:260px;white-space:pre-wrap;letter-spacing:0.03em;opacity:0;transition:opacity 0.15s;box-shadow:0 4px 16px rgba(0,0,0,0.6);';
+tip.style.cssText = 'position:fixed;z-index:9000;background:#0d1117;border:1px solid #30363d;border-radius:3px;padding:9px 12px;font-size:12px;line-height:1.7;color:#8b949e;font-family:inherit;pointer-events:none;max-width:260px;white-space:pre-wrap;letter-spacing:0.03em;opacity:0;transition:opacity 0.15s;box-shadow:0 4px 16px rgba(0,0,0,0.6);';
 document.body.appendChild(tip);
 function showTip(text, e) {
   tip.textContent = text;
@@ -266,7 +266,7 @@ function buildPills() {
     const btn = document.createElement('button');
     btn.id = 'pill-' + arch.id;
     btn.textContent = arch.name;
-    btn.style.cssText = 'font-family:inherit;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 9px;border-radius:2px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s;';
+    btn.style.cssText = 'font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 9px;border-radius:2px;border:1px solid #21262d;background:transparent;color:#6b7280;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s;';
     btn.addEventListener('click', () => selectArchetype(arch));
     pillRail.appendChild(btn);
   });
@@ -537,8 +537,8 @@ function selectArchetype(arch) {
 function setMode(m) {
   mode = m;
   const A = m==='archetypes';
-  btnArch.style.cssText = `font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid ${A?'#00d4ff':'#21262d'};background:${A?'rgba(0,212,255,0.1)':'transparent'};color:${A?'#00d4ff':'#6b7280'};`;
-  btnSelf.style.cssText = `font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid ${!A?'#00d4ff':'#21262d'};background:${!A?'rgba(0,212,255,0.1)':'transparent'};color:${!A?'#00d4ff':'#6b7280'};`;
+  btnArch.style.cssText = `font-family:inherit;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid ${A?'#00d4ff':'#21262d'};background:${A?'rgba(0,212,255,0.1)':'transparent'};color:${A?'#00d4ff':'#6b7280'};`;
+  btnSelf.style.cssText = `font-family:inherit;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid ${!A?'#00d4ff':'#21262d'};background:${!A?'rgba(0,212,255,0.1)':'transparent'};color:${!A?'#00d4ff':'#6b7280'};`;
   if (!A) { pillRail.style.display = 'none'; history.replaceState(null, '', location.pathname + '#mode=self'); }
   barsView.style.display     = A ? ''     : 'none';
   selfView.style.display     = A ? 'none' : '';
@@ -580,7 +580,7 @@ function downloadSelf() {
   // Title
   ctx.font=`bold 15px 'Courier New',monospace`; ctx.fillStyle='#c9d1d9'; ctx.textAlign='left';
   ctx.fillText('TRAINING PARTNER  ·  SELF-ASSESSMENT',LP,26);
-  ctx.font=`9px 'Courier New',monospace`; ctx.fillStyle='#6b7280';
+  ctx.font=`12px 'Courier New',monospace`; ctx.fillStyle='#6b7280';
   const {arch,pct}=findClosest(selfScores);
   ctx.fillText(`AVG ${avgScore(selfScores)}  ·  Closest match: ${arch.name} (${pct}%)`,LP,44);
 
@@ -597,7 +597,7 @@ function downloadSelf() {
     const v=selfScores[attr.id]??0, pct2=v/10;
     const barX=LP+LW, barY=y+(RH-BH)/2;
     // label
-    ctx.font=`9px 'Courier New',monospace`; ctx.fillStyle='#8b949e'; ctx.textAlign='right';
+    ctx.font=`12px 'Courier New',monospace`; ctx.fillStyle='#8b949e'; ctx.textAlign='right';
     ctx.fillText(attr.label, barX-8, barY+BH/2+3);
     // zone gradient strip
     ctx.globalAlpha=1;
@@ -609,7 +609,7 @@ function downloadSelf() {
     const fc2=fillColor(attr.inverted?10-v:v); ctx.globalAlpha=0.72; ctx.fillStyle=fc2;
     ctx.fillRect(barX,barY,BW*pct2,BH); ctx.globalAlpha=1;
     // number
-    ctx.font=`bold 9px 'Courier New',monospace`; ctx.fillStyle=fc2; ctx.textAlign='right';
+    ctx.font=`bold 12px 'Courier New',monospace`; ctx.fillStyle=fc2; ctx.textAlign='right';
     ctx.fillText(String(v),barX+BW-4,barY+BH/2+3);
     // dot pos
     dots.push({x:barX+BW*pct2, y:barY+BH/2, c:fc2});
@@ -783,7 +783,7 @@ if (isLocal) {
     function makeCtrlBtn(label,title,onClick,color='#6b7280') {
       const b=document.createElement('button');
       b.textContent=label; b.title=title||'';
-      b.style.cssText=`font-family:inherit;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 9px;border-radius:2px;border:1px solid ${color}44;background:transparent;color:${color};cursor:pointer;`;
+      b.style.cssText=`font-family:inherit;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 9px;border-radius:2px;border:1px solid ${color}44;background:transparent;color:${color};cursor:pointer;`;
       b.addEventListener('click',onClick); return b;
     }
     ctrl.appendChild(makeCtrlBtn('+ Add','Clone selected archetype',()=>{
@@ -829,7 +829,7 @@ if (isLocal) {
       }
     } catch(e) {}
     const toast=document.createElement('span'); toast.setAttribute('data-toast','1');
-    toast.textContent=''; toast.style.cssText='font-size:7px;color:#9ccc65;opacity:0;transition:opacity 0.3s;align-self:center;letter-spacing:0.04em;';
+    toast.textContent=''; toast.style.cssText='font-size:10px;color:#9ccc65;opacity:0;transition:opacity 0.3s;align-self:center;letter-spacing:0.04em;';
     ctrl.appendChild(toast); panel.appendChild(ctrl);
 
     // Archetype selector pills
@@ -839,7 +839,7 @@ if (isLocal) {
       const b=document.createElement('button');
       b.textContent=arch.name;
       const active=arch.id===kanriArch.id;
-      b.style.cssText=`font-family:inherit;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid ${active?arch.color:'#21262d'};background:${active?arch.color+'22':'transparent'};color:${active?arch.color:'#6b7280'};cursor:pointer;`;
+      b.style.cssText=`font-family:inherit;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid ${active?arch.color:'#21262d'};background:${active?arch.color+'22':'transparent'};color:${active?arch.color:'#6b7280'};cursor:pointer;`;
       b.addEventListener('click',()=>{ kanriArch=arch; selectArchetype(arch); renderKanriPanel(); });
       pills.appendChild(b);
     }); panel.appendChild(pills);
@@ -850,14 +850,14 @@ if (isLocal) {
 
     function field(label,val,onInput,type='text',opts={}) {
       const wrap=document.createElement('div'); wrap.style.cssText='margin-bottom:10px;';
-      const lbl2=document.createElement('div'); lbl2.textContent=label; lbl2.style.cssText='font-size:7px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:4px;';
+      const lbl2=document.createElement('div'); lbl2.textContent=label; lbl2.style.cssText='font-size:10px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin-bottom:4px;';
       let inp;
       if(type==='textarea'){
         inp=document.createElement('textarea');
-        inp.style.cssText='width:100%;box-sizing:border-box;background:#0a0a12;color:#c9d1d9;border:1px solid #21262d;border-radius:2px;padding:5px 7px;font-family:inherit;font-size:9px;line-height:1.5;resize:vertical;min-height:60px;';
+        inp.style.cssText='width:100%;box-sizing:border-box;background:#0a0a12;color:#c9d1d9;border:1px solid #21262d;border-radius:2px;padding:5px 7px;font-family:inherit;font-size:12px;line-height:1.5;resize:vertical;min-height:60px;';
       } else {
         inp=document.createElement('input'); inp.type=type;
-        inp.style.cssText='width:100%;box-sizing:border-box;background:#0a0a12;color:#c9d1d9;border:1px solid #21262d;border-radius:2px;padding:5px 7px;font-family:inherit;font-size:9px;';
+        inp.style.cssText='width:100%;box-sizing:border-box;background:#0a0a12;color:#c9d1d9;border:1px solid #21262d;border-radius:2px;padding:5px 7px;font-family:inherit;font-size:12px;';
       }
       inp.value=val;
       if(type==='color') inp.style.cssText='height:28px;background:#0a0a12;border:1px solid #21262d;border-radius:2px;cursor:pointer;padding:2px;';
@@ -893,7 +893,7 @@ if (isLocal) {
 
     // Score sliders
     const scoreHdr=document.createElement('div');
-    scoreHdr.style.cssText='font-size:7px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin:14px 0 8px;padding-top:10px;border-top:1px solid #0d1117;';
+    scoreHdr.style.cssText='font-size:10px;letter-spacing:0.16em;color:#6b7280;text-transform:uppercase;margin:14px 0 8px;padding-top:10px;border-top:1px solid #0d1117;';
     scoreHdr.textContent='Attribute Scores'; form.appendChild(scoreHdr);
 
     let lastScoreCat='';
@@ -901,13 +901,13 @@ if (isLocal) {
       if(attr.cat!==lastScoreCat){
         lastScoreCat=attr.cat;
         const ch=document.createElement('div');
-        ch.style.cssText='font-size:8px;font-weight:700;color:#42a5f5;margin:10px 0 5px;';
+        ch.style.cssText='font-size:11px;font-weight:700;color:#42a5f5;margin:10px 0 5px;';
         ch.textContent=attr.cat; form.appendChild(ch);
       }
       const sv = kanriArch.scores[attr.id]??0;
       const srow=document.createElement('div'); srow.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:6px;';
-      const slbl=document.createElement('div'); slbl.style.cssText='flex:1;font-size:8px;color:#8b949e;'; slbl.textContent=attr.label;
-      const snum=document.createElement('div'); snum.style.cssText='width:18px;text-align:right;font-size:9px;font-weight:700;color:'+fillColor(attr.inverted?10-sv:sv)+';'; snum.textContent=sv;
+      const slbl=document.createElement('div'); slbl.style.cssText='flex:1;font-size:11px;color:#8b949e;'; slbl.textContent=attr.label;
+      const snum=document.createElement('div'); snum.style.cssText='width:18px;text-align:right;font-size:12px;font-weight:700;color:'+fillColor(attr.inverted?10-sv:sv)+';'; snum.textContent=sv;
       const sslider=document.createElement('input'); sslider.type='range'; sslider.min='0'; sslider.max='10'; sslider.step='1'; sslider.value=sv;
       sslider.style.cssText='width:80px;flex-shrink:0;accent-color:#00d4ff;cursor:pointer;';
       sslider.addEventListener('input',()=>{

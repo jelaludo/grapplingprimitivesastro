@@ -12,7 +12,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <span style="font-size:11px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;">Control Their Rotation</span>
   <div style="flex:1;"></div>
   <button id="deeplink-btn" style="font-family:inherit;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)';this.style.color='#00d4ff'" onmouseout="if(this.textContent==='Link'){this.style.borderColor='#21262d';this.style.color='#6b7280'}">Link</button>
-  <button id="lang-toggle" style="font-family:inherit;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;">
+  <button id="lang-toggle" style="font-family:inherit;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;">
     <span class="lang-label" data-active="en">EN</span> / <span class="lang-label">JP</span>
   </button>
 </div>
@@ -307,7 +307,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <span><span class="sim-legend-dot sim-ctrl"></span> Controlled (decays)</span>
       <span><span class="sim-legend-dot sim-cont"></span> Contested</span>
       <span><span class="sim-legend-dot sim-lost"></span> Lost</span>
-      <span><span class="sim-tool sim-tool-active" style="font-size:9px;">tool</span> Active</span>
+      <span><span class="sim-tool sim-tool-active" style="font-size:12px;">tool</span> Active</span>
     </div>
 
     <!-- Event Log -->
@@ -526,49 +526,8 @@ body.lang-ja [lang="en"] { display: none; }
 .lang-label[data-active] { color: #00FFFF; text-shadow: 0 0 12px #00FFFF88; }
 
 /* ─── Acts ─── */
-.act {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 24px;
-  border-bottom: 1px solid var(--border);
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
-.act.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.act-inner {
-  max-width: 780px;
-  width: 100%;
-}
-.sim-act .act-inner {
-  max-width: 1100px;
-}
-
-.act-number {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  color: var(--text-dim);
-  margin-bottom: 4px;
-}
-.act-title {
-  font-size: clamp(1.4rem, 4vw, 2rem);
-  font-weight: 400;
-  color: var(--text-primary);
-  margin-bottom: 16px;
-  text-shadow: var(--glow-blue);
-}
-.act-lead {
-  color: var(--text-muted);
-  font-size: var(--text-sm);
-  margin-bottom: 32px;
-  max-width: 600px;
-}
+/* Module overrides (base .act-* in global.css) */
+.sim-act .act-inner { max-width: 1100px; }
 
 /* ─── Act 0 — Hero ─── */
 .hero-title {

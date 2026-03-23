@@ -99,4 +99,55 @@
     font-style: normal;
     text-shadow: 0 0 12px #00FFFF88;
   }
+
+  /* ─── Essay act pattern (shared across scrollytelling modules) ─── */
+  .act {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  .act.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .act-inner {
+    max-width: 780px;
+    width: 100%;
+  }
+  .act-number {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .act-title {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    text-shadow: 0 0 12px #4C8DFF88;
+  }
+  .act-lead {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    margin-bottom: 32px;
+    max-width: 600px;
+  }
+  .act-subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-top: 24px;
+  }
+  .act-subtitle em, .act-lead em {
+    color: var(--cyan);
+    font-style: normal;
+    text-shadow: 0 0 12px #00FFFF88;
+  }
 }
