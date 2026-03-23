@@ -4,14 +4,15 @@
   "version": "0.1.0",
   "scripts": {
     "sync-images": "node scripts/sync-images.mjs",
-    "dev": "node scripts/sync-images.mjs && astro dev",
+    "dev": "node scripts/sync-images.mjs && node scripts/open-roadmap.mjs && astro dev --open",
     "build": "node scripts/sync-images.mjs && astro build",
     "preview": "astro preview",
     "migrate": "node scripts/json-to-md.mjs"
   },
   "dependencies": {
-    "astro": "^5.0.0",
     "@astrojs/tailwind": "^5.1.0",
+    "astro": "^5.0.0",
+    "marked": "^17.0.5",
     "tailwindcss": "^3.4.0"
   }
 }

@@ -465,9 +465,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <text x="176" y="28" fill="#6B7280" font-family="'Courier New',Consolas,Monaco,monospace" font-size="12">Mental</text>
         <text x="176" y="322" fill="#6B7280" font-family="'Courier New',Consolas,Monaco,monospace" font-size="12">Physical</text>
         <!-- Concept dot: opponent-focused (-0.3 => x=219), physical (-0.7 => y=282) -->
-        <circle cx="219" cy="282" r="7" fill="#ea580c" opacity="0.9"/>
-        <circle cx="219" cy="282" r="14" fill="none" stroke="#ea580c" stroke-width="0.8" opacity="0.4"/>
-        <text x="219" y="262" text-anchor="middle" fill="#9CA3AF" font-family="'Courier New',Consolas,Monaco,monospace" font-size="12" font-weight="bold">Rotational Control</text>
+        <a href={`${base}/modules/quadtree#cat=Grappling%20Primitives`} class="qt-dot-link">
+          <circle cx="219" cy="282" r="7" fill="#ea580c" opacity="0.9"/>
+          <circle cx="219" cy="282" r="14" fill="none" stroke="#ea580c" stroke-width="0.8" opacity="0.4"/>
+          <circle cx="219" cy="282" r="18" fill="transparent" class="qt-dot-hit"/>
+          <text x="219" y="262" text-anchor="middle" fill="#9CA3AF" font-family="'Courier New',Consolas,Monaco,monospace" font-size="12" font-weight="bold">Rotational Control</text>
+        </a>
       </svg>
     </div>
 
@@ -1405,6 +1408,12 @@ body.lang-ja [lang="en"] { display: none; }
   background: rgba(0,212,255,0.05);
   color: var(--cyan);
 }
+
+/* ─── QuadTree dot link ─── */
+.qt-dot-link { cursor: pointer; }
+.qt-dot-link:hover circle:first-child { opacity: 1; filter: drop-shadow(0 0 6px #ea580c); }
+.qt-dot-link:hover text { fill: #ea580c; }
+.qt-dot-hit { cursor: pointer; }
 
 /* ─── QuadTree Modal ─── */
 .qt-modal-overlay {

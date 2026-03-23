@@ -2,7 +2,7 @@
 role: arch
 owner: Gerald
 status: active
-last-updated: 2026-03-20
+last-updated: 2026-03-23
 ---
 
 # Architecture
@@ -25,6 +25,10 @@ System structure, module patterns, data model, component boundaries, and cross-m
 | 2026-03-20 | Two-tab pattern for companion articles within a single module | flow-bjj and flow-theory are distinct articles with different visual origins but share a conceptual dependency (theory -> application). Combined into one module with sticky tab bar at top:36px (below toolbar). Alternative rejected: two separate module pages cross-linking each other (loses the "companion" relationship, user may never find the second piece). | [[dev]], [[ux]] |
 | 2026-03-20 | CSS custom properties scoped with `--fr-` prefix for module-specific palette | Avoids leaking into global scope or conflicting with other modules. Pattern: `--fr-bg`, `--fr-surface`, `--fr-accent`, etc. Mirrors site palette values but scoped to the module. | [[dev]] |
 | 2026-03-20 | Condition/characteristic/consequence tab JS scoped to `#tab-research` | Page-level tab switcher uses `.fr-tab` class. Inner tab toggles in Tab 2 use `.fr-tab-btn` class scoped with `#tab-research .fr-tab-btn` selectors to avoid conflict. | [[dev]] |
+| 2026-03-23 | `module-text` content collection: frontmatter-as-content pattern for Obsidian editability | `.md` files with `type: 'content'`, en/ja text in frontmatter (not body). Enables Obsidian editing while Astro consumes at build time. Alternative rejected: `.yaml` data files (Obsidian doesn't render them). Alternative rejected: markdown body with delimiter convention for bilingual split (fragile parsing). | [[dev]], [[pm]] |
+| 2026-03-23 | `mdInline` utility over Astro's built-in markdown rendering for frontmatter strings | Astro's `<Content />` component only renders the markdown body. Frontmatter strings need separate inline parsing. `marked.parseInline()` handles bold/italic/links without `<p>` wrapping. Lightweight (35kb). | [[dev]] |
+| 2026-03-23 | `resolve()` helper for content blocks with dynamic values | Chains: placeholder replacement (`{{conceptCount}}`) → relative link resolution (`](/` → `](${base}/`) → `mdInline()`. Keeps .md files clean of build-time concerns. | [[dev]] |
+| 2026-03-23 | Shared calligraphy assets at `public/images/calligraphy/`, module-specific at `public/images/{module}/` | Landing page calligraphy (used across the site) lives in shared directory. Module-specific artwork (enso circle, shingitai painting) stays scoped to its module directory. | [[dev]], [[ux]] |
 
 ## Dead Ends
 <!-- APPEND ONLY. Never delete. -->
@@ -47,6 +51,7 @@ Feeds into: [[dev]], [[pm]]
 
 ## Session Log
 <!-- One line per session, newest first -->
+2026-03-23 (session 5) — module-text content collection: frontmatter-as-content for Obsidian editability. mdInline utility for inline markdown in YAML strings. resolve() helper for dynamic placeholders + link resolution. Shared vs module-specific asset directory convention. :global() pattern for set:html content styling.
 2026-03-20 (session 4) — Two-tab module pattern for companion articles. CSS variable scoping with --fr- prefix. Inner tab JS scoping to avoid page-level tab conflicts.
 2026-03-19 (session 3) — Pure SVG architecture for CLD diagram resolved long-standing hybrid layout failures. Purgatory->experiments promotion lifecycle formalized.
 2026-03-19 — Taxonomy audit findings. Future architecture: ConceptLink hover-cards, Move Deconstruction collection. Related-field population strategy defined.

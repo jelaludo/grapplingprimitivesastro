@@ -24,6 +24,8 @@ An Astro-based interactive learning platform that treats grappling knowledge as 
 - Module lifecycle: purgatory (dev-only) -> experiments (live) -> featured. Remove from prior stage on promotion. (2026-03-19, [[arch]])
 - Two-tab pattern for companion articles within a single module (2026-03-20, [[arch]])
 - CSS custom properties scoped with module-specific prefix (--fr-) to avoid global conflicts (2026-03-20, [[arch]])
+- `module-text` content collection: Obsidian-editable .md files with en/ja frontmatter + mdInline for inline markdown (2026-03-23, [[arch]], [[dev]])
+- Shared calligraphy at `public/images/calligraphy/`, module-specific at `public/images/{module}/` (2026-03-23, [[arch]])
 
 ## Open Questions (cross-role)
 - Future CLD addition: "Understanding of Escapes" node feeding into Maintain Dominant Positions (knowing escapes = better at shutting them down)

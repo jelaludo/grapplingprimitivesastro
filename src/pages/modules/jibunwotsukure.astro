@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+import { mdInline } from '@/lib/md-inline';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const tldr = await getEntry('module-text', 'jibunwotsukure-tldr');
 ---
 
 <BaseLayout title="自分を作れ / Build Yourself First / Grappling Primitives" fullscreen={true}>
@@ -19,6 +22,20 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <!-- ── Scrolling Content ───────────────────────────────────────────────────── -->
 <div style="padding-top:36px;">
+
+<!-- TLDR (from src/content/module-text/) -->
+<details class="tldr tldr--top">
+  <summary class="tldr__toggle">
+    <span lang="en">TL;DR. The whole argument in 30 seconds.</span>
+    <span lang="ja">要約。30秒で全体の論点。</span>
+  </summary>
+  <div class="tldr__body">
+    <p>
+      <span lang="en"><Fragment set:html={mdInline(tldr.data.en)} /></span>
+      <span lang="ja"><Fragment set:html={mdInline(tldr.data.ja)} /></span>
+    </p>
+  </div>
+</details>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 <!-- ACT 0 — Hero                                                              -->
@@ -44,6 +61,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <span lang="en">The answer isn't more techniques, it is your 'body state'.<br>That is the most essential variable.</span>
       <span lang="ja">答えは技を増やすことではない。身体の状態こそが最も重要で本質的な変数。</span>
     </p>
+
   </div>
 </section>
 
@@ -483,9 +501,10 @@ body.lang-ja [lang="en"] { display: none; }
 }
 .hero-subtitle {
   position: absolute;
+  top: 12px;
   left: 0;
-  width: 50%;
   text-align: center;
+  width: 50%;
   font-size: clamp(1.4rem, 3.5vw, 2.2rem);
   font-weight: 400;
   color: var(--text-primary);

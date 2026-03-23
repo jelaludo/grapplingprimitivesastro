@@ -2,7 +2,8 @@
 // build-test: repo rename verified 2026-03-23
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ModuleCard from '@/components/ui/ModuleCard.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
+import { mdInline } from '@/lib/md-inline';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -13,6 +14,24 @@ const categoryCount = allCategories.length;
 
 const thumbBase = `${base}/images/thumbs`;
 
+// ── Content blocks (editable in Obsidian) ────────────────────────────────────
+const txt = {
+  tagline:     (await getEntry('module-text', 'landing-tagline'))!,
+  principle1:  (await getEntry('module-text', 'landing-principle-1'))!,
+  principle2:  (await getEntry('module-text', 'landing-principle-2'))!,
+  principle3:  (await getEntry('module-text', 'landing-principle-3'))!,
+  intro:       (await getEntry('module-text', 'landing-intro'))!,
+  cta:         (await getEntry('module-text', 'landing-cta'))!,
+};
+
+// Resolve placeholders and relative links in a content string
+const resolve = (s: string) =>
+  mdInline(
+    s.replace(/\{\{conceptCount\}\}/g, String(conceptCount))
+     .replace(/\{\{categoryCount\}\}/g, String(categoryCount))
+     .replace(/\]\(\//g, `](${base}/`)
+  );
+
 const coreSections = [
   {
     id: 'core',
@@ -21,7 +40,7 @@ const coreSections = [
     modules: [
       {
         title: 'Build Yourself First',
-        description: '自分を作れ — Tsukuri is upstream of everything. An interactive essay on building your game before breaking theirs.',
+        description: '自分を作れ — Organize your body before collecting techniques. The invisible skill that multiplies everything else.',
         href: `${base}/modules/jibunwotsukure`,
         status: 'live' as const,
         tag: 'INTERACTIVE ESSAY',
@@ -29,7 +48,7 @@ const coreSections = [
       },
       {
         title: 'Ideal Training Partner',
-        description: 'An interactive essay on training intensity, mismatch danger, and ego drift. With watercolor illustrations.',
+        description: 'Intensity is a skill. Match it, modulate it, or waste your mat time.',
         href: `${base}/modules/ideal-partner`,
         status: 'live' as const,
         tag: 'INTERACTIVE ESSAY',
@@ -37,7 +56,7 @@ const coreSections = [
       },
       {
         title: 'QuadTree Map',
-        description: `${conceptCount} concepts across ${categoryCount} categories. THE MAT · THE MIND · THE DOJO · THE PATH. Click to zoom into any category.`,
+        description: `${conceptCount} concepts, ${categoryCount} categories. Zoomable 2D map of grappling building blocks.`,
         href: `${base}/modules/quadtree`,
         status: 'live' as const,
         tag: 'CONCEPT MAP',
@@ -164,7 +183,7 @@ const purgatorySections = [
       <h1 class="text-3xl font-bold tracking-tight text-text-primary mb-4 glow-blue">
         Grappling <span id="cycling-word" style="position:relative;display:inline;">Primitives</span><span id="cursor-blink" style="color:#00ff41;font-weight:400;animation:blink-cursor 0.8s step-end infinite;">|</span>
       </h1>
-      <p class="text-sm text-text-muted leading-relaxed mb-4 italic">If you could tell your white belt self three things...</p>
+      <p class="text-sm text-text-muted leading-relaxed mb-4 italic"><Fragment set:html={mdInline(txt.tagline.data.en)} /></p>
     </div>
 
     <!-- Three Principles with Calligraphy -->
@@ -175,7 +194,7 @@ const purgatorySections = [
         <img class="principle__calligraphy" src={`${base}/images/calligraphy/calligraphy_jibunwotsukure.png`} alt="自分を作れ" />
         <div class="principle__text">
           <span class="principle__number">1.</span>
-          <p><a href={`${base}/modules/jibunwotsukure`} class="text-accent font-semibold hover:text-cyan transition-colors">"Build Yourself"</a> is upstream of everything. It comes before the focus on Kuzushi/disrupting of the other in so many ways.</p>
+          <p><Fragment set:html={resolve(txt.principle1.data.en)} /></p>
         </div>
       </div>
 
@@ -183,7 +202,7 @@ const purgatorySections = [
       <div class="principle principle--right fade-up" style="animation-delay:0.12s;">
         <div class="principle__text principle__text--right">
           <span class="principle__number">2.</span>
-          <p><a href={`${base}/modules/ideal-partner`} class="text-accent font-semibold hover:text-cyan transition-colors">"Be the training partner you wish you had"</a>. Not all training is equal, great training partners are rare. Being a good training partner is itself a trainable skill.</p>
+          <p><Fragment set:html={resolve(txt.principle2.data.en)} /></p>
         </div>
         <img class="principle__calligraphy" src={`${base}/images/calligraphy/calligraphy_tomoninare.png`} alt="友になれ" />
       </div>
@@ -193,18 +212,18 @@ const purgatorySections = [
         <img class="principle__calligraphy" src={`${base}/images/calligraphy/calligraphy_taishingi.png`} alt="體心技" />
         <div class="principle__text">
           <span class="principle__number">3.</span>
-          <p><a href={`${base}/modules/quadtree`} class="text-accent font-semibold hover:text-cyan transition-colors">"Concepts over Techniques"</a>. Engrave concepts into your brain, collecting techniques is a bonus.</p>
+          <p><Fragment set:html={resolve(txt.principle3.data.en)} /></p>
         </div>
       </div>
 
     </div>
 
-    <div class="max-w-2xl mb-16">
+    <div class="max-w-2xl mb-16 landing-prose">
       <p class="text-sm text-text-muted leading-relaxed mb-4">
-        I am organizing decades of notes, including <span class="text-accent font-semibold">{conceptCount}</span> concepts organized in <span class="text-accent font-semibold">{categoryCount}</span> categories in a <a href={`${base}/modules/quadtree`} class="text-accent underline hover:text-cyan transition-colors">quad tree map</a>, and interactive essays that represent how I would typically introduce these concepts live to new students. Although so much of what we do is highly kinetic and has a "it-has-to-be-felt" quality that is difficult to convey digitally. Doesn't mean we cannot try.
+        <Fragment set:html={resolve(txt.intro.data.en)} />
       </p>
       <p class="text-sm text-text-muted leading-relaxed">
-        Start by reading the essays, <a href={`${base}/modules/jibunwotsukure`} class="text-accent underline hover:text-cyan transition-colors">Build Yourself First</a> and <a href={`${base}/modules/ideal-partner`} class="text-accent underline hover:text-cyan transition-colors">Ideal Training Partner</a>, or take this <a href={`${base}/modules/skill-check`} class="text-accent underline hover:text-cyan transition-colors">self-assessment</a>, then explore the <a href={`${base}/modules/quadtree`} class="text-accent underline hover:text-cyan transition-colors">map</a>.
+        <Fragment set:html={resolve(txt.cta.data.en)} />
       </p>
     </div>
 
@@ -327,6 +346,34 @@ const purgatorySections = [
       display: inline;
     }
 
+    /* Style markdown-generated markup (set:html lacks scoped attrs, needs :global) */
+    .principle__text :global(strong) {
+      color: #4C8DFF;
+      font-weight: 600;
+    }
+    .principle__text :global(a) {
+      color: #4C8DFF;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .principle__text :global(a:hover) {
+      color: #00d4ff;
+    }
+
+    .landing-prose :global(strong) {
+      color: #4C8DFF;
+      font-weight: 600;
+    }
+    .landing-prose :global(a) {
+      color: #4C8DFF;
+      text-decoration: underline;
+      transition: color 0.15s;
+    }
+    .landing-prose :global(a:hover) {
+      color: #00d4ff;
+    }
+
     /* On small screens, reduce calligraphy size */
     @media (max-width: 640px) {
       .principle__calligraphy {
@@ -424,7 +471,7 @@ const purgatorySections = [
       const cursor = document.getElementById('cursor-blink');
       if (!el) return;
 
-      const words = ['Primitives', 'Building Blocks', 'Fundamentals', 'Basic Components'];
+      const words = ['Primitives', 'Building Blocks', 'Fundamentals'];
       let current = 0;
       let phase = 'idle'; // idle, erasing, pausing, typing
       let charIndex = 0;

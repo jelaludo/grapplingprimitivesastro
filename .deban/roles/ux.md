@@ -2,7 +2,7 @@
 role: ux
 owner: Gerald
 status: active
-last-updated: 2026-03-20
+last-updated: 2026-03-23
 ---
 
 # User Experience
@@ -18,6 +18,10 @@ Readability, interaction design, responsive behavior, visual hierarchy, and info
 | 2026-03-18 | Toolbox section placed below simulation, not above | User sees the simulation first (experiential), then reads the structural breakdown. Show then explain. | [[pm]] |
 | 2026-03-18 | Quadrant SVG label positioned above dot, not to the right | Right-positioned label was clipped. Top placement fits within viewBox. | [[dev]] |
 | 2026-03-18 | Primitive card clickable with confirmation modal before navigation | Prevents accidental navigation away from the essay. Modal confirms intent to leave for QuadTree. | [[dev]] |
+| 2026-03-23 | Landing page principles section: calligraphy flanking each principle, alternating left/right | Calligraphy images at 85% opacity (hover to 100%) alongside numbered principles. Creates visual rhythm. Principles are clickable links to their corresponding modules. | [[dev]] |
+| 2026-03-23 | Hero module card order: Build Yourself → Ideal Partner → QuadTree | Matches the "three things" priority order in the principles section. Previously was Ideal Partner → QuadTree → Build Yourself. | [[pm]] |
+| 2026-03-23 | TLDRs placed at top of page (above hero), collapsed by default | Reader sees the option immediately without scrolling. Collapsible `<details>` so it doesn't compete with the hero. Alternative rejected: TLDR inside hero section (buried below the visual centerpiece). | [[dev]] |
+| 2026-03-23 | Jibunwotsukure hero: "Build Yourself First" text repositioned to top-left of enso image | Occupies blank space above the brush circle. Previously overlaid left-center of the image. | [[dev]] |
 
 ## Dead Ends
 <!-- APPEND ONLY. Never delete. -->
@@ -53,6 +57,7 @@ Feeds into: [[dev]], [[qa]]
 
 ## Session Log
 <!-- One line per session, newest first -->
+2026-03-23 (session 5) — Landing page: calligraphy-flanked principles layout, module reorder, clickable principle links. TLDRs moved to page top. Jibunwotsukure hero text repositioned top-left. "Basic Components" dropped from title rotation (now 3 words).
 2026-03-20 (session 4) — Flow-Roll module visual adaptation: two articles with distinct themes (paper-light, dark-amber) unified under site terminal palette. Slider zones mapped to 6 distinguishable colors (dim/green/cyan/amber/accent/red). Cyan used for Tab 2 hero em to visually differentiate research tab from sparring tab. Chinese characters use system CJK fallback (platform-dependent rendering, accepted).
 2026-03-19 (session 3) — CLD diagram resolved via pure SVG. Animated border-width rejected (reflow jitter). Title changed from "Confidence Creates a Fork" to "Confidence Creates Options" (Gerald's correction: confidence opens possibilities, not a binary choice). explore/exploit labels color-coded and linked to BJJ-265.
 2026-03-19 (session 2) — Font scale overhaul (3 iterations to get right). CLD diagram failed 3 times (SVG overlay approach is dead). where-to-start module text/UX is solid, diagram WIP.

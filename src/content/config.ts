@@ -42,6 +42,19 @@ const Articles = defineCollection({
   }),
 });
 
+// ── Module Text ──────────────────────────────────────────────────────────────
+// Obsidian-editable text blocks for module pages (TLDRs, intros, etc.)
+// Frontmatter carries en/ja text; markdown body is unused.
+const module_text = defineCollection({
+  type: 'content',
+  schema: z.object({
+    module: z.string(),                   // e.g. "jibunwotsukure"
+    block: z.string(),                    // e.g. "tldr"
+    en: z.string(),                       // English text
+    ja: z.string(),                       // Japanese text
+  }),
+});
+
 // ── Word Lists ──────────────────────────────────────────────────────────────
 // Word lists for BJJ Wordle (4–7 letter words). No required frontmatter.
 const WordLists = defineCollection({
@@ -49,4 +62,4 @@ const WordLists = defineCollection({
   schema: z.object({}).passthrough(),
 });
 
-export const collections = { concepts, categories, Articles, WordLists };
+export const collections = { concepts, categories, Articles, 'module-text': module_text, WordLists };
