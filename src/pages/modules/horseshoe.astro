@@ -116,6 +116,9 @@ const { Content: EssayContent } = await essayEntry!.render();
     "Don't take it too seriously, relax",
     'Be aware of how you got tapped',
     'Give them challenges, not injuries',
+    'Focus and feel what\'s going on',
+    'Breathe, you learn motor skills better when calm',
+    'If you don\'t know what to do, don\'t explode',
   ];
 
   var aUsed = [], bUsed = [], cUsed = [];
@@ -251,20 +254,27 @@ const { Content: EssayContent } = await essayEntry!.render();
     idleTimeout = setTimeout(startAutoplay, 10000);
   }
 
-  // ── Manual mode: show quote on significant slide ──
-  var lastQuoteValue = 50;
+  // ── Manual mode: zone change = new quote ──
+  var lastZone = null;
+
+  function zoneFor(v) {
+    if (v <= 25)            return 'alpha';
+    if (v >= 75)            return 'buffoon';
+    if (v >= 36 && v <= 64) return 'craft';
+    return 'transition';
+  }
 
   sl.addEventListener('input', function (e) {
     stopAutoplay();
     var v = +e.target.value;
     render(v);
 
-    // trigger a new quote every 15+ units of movement
-    if (Math.abs(v - lastQuoteValue) >= 15) {
+    var zone = zoneFor(v);
+    if (zone !== lastZone) {
+      lastZone = zone;
       var q = quoteForValue(v);
       if (q) showQuote(q.text, q.cls);
       else clearQuote();
-      lastQuoteValue = v;
     }
 
     resetIdleTimer();
