@@ -471,6 +471,9 @@ const categories = categoryEntries
     </div>
   </div>
 
+  <script type="application/json" id="concept-data" set:html={JSON.stringify(concepts)} />
+  <script type="application/json" id="category-data" set:html={JSON.stringify(categories)} />
+
   <script is:inline>
   (function(){
     "use strict";
@@ -721,6 +724,4 @@ const categories = categoryEntries
   })();
   </script>
 
-  <script type="application/json" id="concept-data" set:html={JSON.stringify(concepts)} />
-  <script type="application/json" id="category-data" set:html={JSON.stringify(categories)} />
 </BaseLayout>
