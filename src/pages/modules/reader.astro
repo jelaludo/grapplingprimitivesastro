@@ -1,0 +1,726 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const conceptEntries = await getCollection('concepts');
+const categoryEntries = await getCollection('categories');
+
+// Build category lookup: name → color
+const catColorMap = new Map(categoryEntries.map(c => [c.data.name, c.data.color]));
+
+// Build concepts array for inline JSON
+const concepts = conceptEntries.map(e => ({
+  id: e.data.id,
+  slug: e.slug,
+  concept: e.data.concept,
+  category: e.data.category,
+  categoryColor: catColorMap.get(e.data.category) ?? '#888',
+  shortDescription: e.data.short_description ?? '',
+  body: e.body ?? '',
+  related: e.data.related ?? [],
+}));
+
+// Build categories array with counts
+const catCounts = new Map<string, number>();
+concepts.forEach(c => catCounts.set(c.category, (catCounts.get(c.category) ?? 0) + 1));
+
+const categories = categoryEntries
+  .map(e => ({
+    id: e.data.id,
+    name: e.data.name,
+    color: e.data.color,
+    count: catCounts.get(e.data.name) ?? 0,
+  }))
+  .filter(c => c.count > 0)
+  .sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout title="Concept Reader — Grappling Primitives" fullscreen={true}>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+
+  <style is:inline>
+    /* ===== Typography Tokens ===== */
+    :root {
+      --r-size-xs: 0.75rem;
+      --r-size-sm: 0.875rem;
+      --r-size-base: 1rem;
+      --r-size-md: 1.25rem;
+      --r-size-lg: 1.5625rem;
+      --r-size-xl: 1.953rem;
+      --r-size-2xl: 2.441rem;
+
+      --r-lh-body: 1.5;
+      --r-lh-body-mobile: 1.6;
+      --r-lh-heading: 1.1;
+
+      --r-paragraph-gap: 1.1em;
+
+      --r-color-text: #1a1a1a;
+      --r-color-text-secondary: #595959;
+      --r-color-bg: #f5f5f5;
+      --r-color-surface: #ffffff;
+
+      --r-column: min(90vw, 65ch);
+
+      --r-font-body: 'Literata', Georgia, serif;
+
+      --r-fs-scale: 1;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --r-color-text: #e8e8e8;
+        --r-color-text-secondary: #a0a0a0;
+        --r-color-bg: #121212;
+        --r-color-surface: #1e1e1e;
+      }
+    }
+
+    /* ===== Reader Reset (scoped to #reader-app) ===== */
+    #reader-app *, #reader-app *::before, #reader-app *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    #reader-app {
+      font-family: var(--r-font-body);
+      font-size: calc(clamp(16px, 1.1vw + 14px, 18px) * var(--r-fs-scale));
+      line-height: var(--r-lh-body);
+      color: var(--r-color-text);
+      background-color: var(--r-color-bg);
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100dvh;
+    }
+
+    @media (max-width: 768px) {
+      #reader-app { line-height: var(--r-lh-body-mobile); }
+    }
+
+    /* ===== Landing Page ===== */
+    .r-landing {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: max(2rem, 5vh) max(1.5rem, 5vw);
+    }
+
+    .r-landing-title {
+      font-size: var(--r-size-sm);
+      font-weight: 400;
+      color: var(--r-color-text-secondary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-block-end: max(2rem, 3vh);
+    }
+
+    .r-landing-count {
+      font-size: var(--r-size-xs);
+      color: var(--r-color-text-secondary);
+      margin-block-end: max(2rem, 3vh);
+    }
+
+    .r-category-list {
+      list-style: none;
+      width: min(90vw, 40rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* ===== Category Group ===== */
+    .r-category-group {
+      border-block-start: 1px solid var(--r-color-text-secondary);
+    }
+
+    .r-category-group:last-child {
+      border-block-end: 1px solid var(--r-color-text-secondary);
+    }
+
+    .r-category-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .r-category-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .r-category-name {
+      font-size: var(--r-size-md);
+      font-weight: 600;
+      line-height: var(--r-lh-heading);
+      flex: 1;
+    }
+
+    .r-category-count {
+      font-size: var(--r-size-xs);
+      color: var(--r-color-text-secondary);
+      flex-shrink: 0;
+    }
+
+    .r-category-toggle {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 1px solid var(--r-color-text-secondary);
+      color: var(--r-color-text);
+      font-family: var(--r-font-body);
+      font-size: var(--r-size-sm);
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .r-category-toggle[aria-expanded="true"] {
+      transform: rotate(45deg);
+    }
+
+    .r-concept-list {
+      list-style: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .r-concept-list.open {
+      max-height: 5000px;
+    }
+
+    /* ===== Concept Card ===== */
+    .r-concept-card {
+      padding: 0.75rem 0 0.75rem 1.25rem;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: border-color 0.15s ease;
+    }
+
+    .r-concept-card:hover {
+      border-left-color: var(--accent-color, var(--r-color-text-secondary));
+    }
+
+    .r-concept-card-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    .r-concept-card-id {
+      font-size: var(--r-size-xs);
+      color: var(--r-color-text-secondary);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .r-concept-card-title {
+      font-size: var(--r-size-base);
+      font-weight: 600;
+    }
+
+    .r-concept-card-excerpt {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, margin 0.3s ease;
+      color: var(--r-color-text-secondary);
+      font-size: var(--r-size-sm);
+      line-height: var(--r-lh-body);
+      padding-left: 0;
+    }
+
+    .r-concept-card-excerpt.open {
+      max-height: 8rem;
+      margin-block-start: 0.5rem;
+    }
+
+    /* ===== Reader View ===== */
+    .r-reader {
+      display: none;
+      min-height: 100dvh;
+      flex-direction: column;
+    }
+
+    .r-reader.active {
+      display: flex;
+    }
+
+    .r-reader-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem max(1.5rem, 5vw);
+      background-color: var(--r-color-bg);
+    }
+
+    .r-back-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      color: var(--r-color-text);
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .r-back-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .r-reader-meta {
+      font-size: var(--r-size-sm);
+      color: var(--r-color-text-secondary);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .r-reader-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .r-font-size-control {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      border: 1px solid var(--r-color-text-secondary);
+    }
+
+    .r-font-size-btn {
+      background: none;
+      border: none;
+      color: var(--r-color-text);
+      cursor: pointer;
+      padding: 0.35rem 0.5rem;
+      font-family: var(--r-font-body);
+      line-height: 1;
+      min-width: 36px;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .r-font-size-btn + .r-font-size-btn {
+      border-inline-start: 1px solid var(--r-color-text-secondary);
+    }
+
+    .r-font-size-btn.active {
+      background-color: var(--r-color-text);
+      color: var(--r-color-bg);
+    }
+
+    .r-font-size-btn:nth-child(1) { font-size: 0.7rem; }
+    .r-font-size-btn:nth-child(2) { font-size: 0.85rem; }
+    .r-font-size-btn:nth-child(3) { font-size: 1.05rem; }
+
+    /* ===== Story Content ===== */
+    .r-story-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 2vh max(1.5rem, 5vw) 8vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .r-story-content {
+      width: 100%;
+      max-width: var(--r-column);
+    }
+
+    .r-story-title {
+      font-size: var(--r-size-2xl);
+      font-weight: 600;
+      line-height: var(--r-lh-heading);
+      margin-block-end: 0.5em;
+    }
+
+    .r-story-subtitle {
+      font-size: var(--r-size-sm);
+      color: var(--r-color-text-secondary);
+      margin-block-end: 2em;
+    }
+
+    .r-story-body p + p {
+      margin-block-start: var(--r-paragraph-gap);
+    }
+
+    .r-story-body strong {
+      font-weight: 600;
+    }
+
+    /* ===== Related Concepts ===== */
+    .r-related {
+      margin-block-start: 3em;
+      padding-block-start: 1.5em;
+      border-block-start: 1px solid var(--r-color-text-secondary);
+    }
+
+    .r-related-title {
+      font-size: var(--r-size-xs);
+      color: var(--r-color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-block-end: 0.75em;
+    }
+
+    .r-related-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4em;
+    }
+
+    .r-related-link {
+      font-size: var(--r-size-sm);
+      color: var(--r-color-text);
+      cursor: pointer;
+      text-decoration: none;
+      padding: 0.25em 0;
+    }
+
+    .r-related-link:hover {
+      color: var(--r-color-text-secondary);
+    }
+
+    .r-related-link-id {
+      color: var(--r-color-text-secondary);
+      font-size: var(--r-size-xs);
+      margin-inline-end: 0.5em;
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 480px) {
+      .r-reader-header { gap: 0.4rem; padding: 0.5rem max(1rem, 3vw); }
+      .r-font-size-btn { min-width: 32px; min-height: 32px; padding: 0.25rem 0.35rem; }
+    }
+
+    @media print {
+      .r-landing, .r-reader-header { display: none; }
+      .r-reader { display: flex; }
+      .r-story-scroll { overflow: visible; padding: 0; }
+    }
+  </style>
+
+  <div id="reader-app">
+    <!-- Landing View -->
+    <main class="r-landing" id="r-landing">
+      <p class="r-landing-title">Concept Reader</p>
+      <p class="r-landing-count" id="r-landing-count"></p>
+      <ul class="r-category-list" id="r-category-list"></ul>
+    </main>
+
+    <!-- Reader View -->
+    <div class="r-reader" id="r-reader">
+      <header class="r-reader-header">
+        <button class="r-back-btn" id="r-back-btn" aria-label="Back to concepts">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <span class="r-reader-meta" id="r-reader-meta"></span>
+        <div class="r-reader-controls">
+          <div class="r-font-size-control">
+            <button class="r-font-size-btn" aria-label="Small text">a</button>
+            <button class="r-font-size-btn" aria-label="Medium text">a</button>
+            <button class="r-font-size-btn" aria-label="Large text">A</button>
+          </div>
+        </div>
+      </header>
+      <div class="r-story-scroll" id="r-story-scroll">
+        <article class="r-story-content" id="r-story-content">
+          <h1 class="r-story-title" id="r-story-title"></h1>
+          <p class="r-story-subtitle" id="r-story-subtitle"></p>
+          <div class="r-story-body" id="r-story-body"></div>
+          <div class="r-related" id="r-related" style="display:none">
+            <p class="r-related-title">Related Concepts</p>
+            <ul class="r-related-list" id="r-related-list"></ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+  (function(){
+    "use strict";
+
+    // ===== Data =====
+    var CONCEPTS = JSON.parse(document.getElementById("concept-data").textContent);
+    var CATEGORIES = JSON.parse(document.getElementById("category-data").textContent);
+    var currentConcept = null;
+
+    function $(id) { return document.getElementById(id); }
+
+    // ===== Font Size =====
+    var FS_SIZES = [1, 1.12, 1.25];
+    var fsIndex = parseInt(localStorage.getItem("reader-fs") || "0", 10);
+    if (fsIndex < 0 || fsIndex > 2) fsIndex = 0;
+
+    function applyFontSize(i) {
+      fsIndex = i;
+      document.documentElement.style.setProperty("--r-fs-scale", FS_SIZES[i]);
+      localStorage.setItem("reader-fs", String(i));
+      var btns = document.querySelectorAll(".r-font-size-btn");
+      btns.forEach(function(b, j) { b.classList.toggle("active", j === i); });
+    }
+
+    // ===== Markdown to HTML =====
+    function mdToHtml(text) {
+      if (!text || !text.trim()) return "<p style='color:var(--r-color-text-secondary)'>No description yet.</p>";
+      var content = text.trim();
+      // Remove trailing category backlink lines
+      content = content.replace(/\n---\s*\nCategory:\s*\[\[.*?\]\]\s*$/s, "");
+      content = content.trim();
+      if (!content) return "<p style='color:var(--r-color-text-secondary)'>No description yet.</p>";
+      var blocks = content.split(/\n{2,}/);
+      return blocks.filter(function(b) {
+        var t = b.trim();
+        return t && t.indexOf("---") !== 0;
+      }).map(function(b) {
+        var t = b.trim()
+          .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+          .replace(/\*(.+?)\*/g, "<em>$1</em>")
+          .replace(/\[\[(.+?)\]\]/g, "$1")
+          .replace(/\n/g, "<br>");
+        return "<p>" + t + "</p>";
+      }).join("\n");
+    }
+
+    // ===== Build Landing =====
+    function buildLanding() {
+      var list = $("r-category-list");
+      list.innerHTML = "";
+      $("r-landing-count").textContent = CONCEPTS.length + " concepts \u00b7 " + CATEGORIES.length + " categories";
+
+      // Group concepts by category
+      var grouped = {};
+      CONCEPTS.forEach(function(c) {
+        if (!grouped[c.category]) grouped[c.category] = [];
+        grouped[c.category].push(c);
+      });
+
+      CATEGORIES.forEach(function(cat) {
+        var concepts = grouped[cat.name] || [];
+        if (!concepts.length) return;
+
+        // Sort concepts by ID within category
+        concepts.sort(function(a, b) { return a.id.localeCompare(b.id); });
+
+        var li = document.createElement("li");
+        li.className = "r-category-group";
+
+        // Category header
+        var header = document.createElement("div");
+        header.className = "r-category-header";
+        header.innerHTML =
+          '<span class="r-category-dot" style="background-color:' + cat.color + '"></span>' +
+          '<span class="r-category-name">' + cat.name + '</span>' +
+          '<span class="r-category-count">' + cat.count + '</span>' +
+          '<button class="r-category-toggle" aria-expanded="false" aria-label="Expand ' + cat.name + '">+</button>';
+
+        // Concept list (collapsed)
+        var ul = document.createElement("ul");
+        ul.className = "r-concept-list";
+
+        concepts.forEach(function(concept) {
+          var cli = document.createElement("li");
+          cli.className = "r-concept-card";
+          cli.style.setProperty("--accent-color", cat.color);
+
+          var shortDesc = concept.shortDescription || "";
+          // Truncate long descriptions for the excerpt
+          if (shortDesc.length > 200) shortDesc = shortDesc.substring(0, 200) + "\u2026";
+
+          cli.innerHTML =
+            '<div class="r-concept-card-header">' +
+              '<span class="r-concept-card-id">' + concept.id + '</span>' +
+              '<span class="r-concept-card-title">' + concept.concept + '</span>' +
+            '</div>' +
+            (shortDesc ? '<div class="r-concept-card-excerpt">' + shortDesc + '</div>' : '');
+
+          cli.addEventListener("click", function() {
+            openConcept(concept);
+          });
+
+          // Show excerpt on hover
+          if (shortDesc) {
+            cli.addEventListener("mouseenter", function() {
+              var excerpt = cli.querySelector(".r-concept-card-excerpt");
+              if (excerpt) excerpt.classList.add("open");
+            });
+            cli.addEventListener("mouseleave", function() {
+              var excerpt = cli.querySelector(".r-concept-card-excerpt");
+              if (excerpt) excerpt.classList.remove("open");
+            });
+          }
+
+          ul.appendChild(cli);
+        });
+
+        // Toggle category expand/collapse
+        var toggle = header.querySelector(".r-category-toggle");
+        header.addEventListener("click", function() {
+          var expanded = toggle.getAttribute("aria-expanded") === "true";
+          toggle.setAttribute("aria-expanded", String(!expanded));
+          ul.classList.toggle("open");
+        });
+
+        li.appendChild(header);
+        li.appendChild(ul);
+        list.appendChild(li);
+      });
+    }
+
+    // ===== Open Concept =====
+    function openConcept(concept) {
+      currentConcept = concept;
+      history.pushState({ concept: concept.slug }, "", "#" + concept.slug);
+
+      $("r-reader-meta").textContent = concept.category + " \u00b7 " + concept.id;
+      $("r-story-title").textContent = concept.concept;
+      $("r-story-subtitle").textContent = concept.category;
+      $("r-story-body").innerHTML = mdToHtml(concept.body);
+
+      // Related concepts
+      var relatedDiv = $("r-related");
+      var relatedList = $("r-related-list");
+      relatedList.innerHTML = "";
+
+      if (concept.related && concept.related.length > 0) {
+        var hasRelated = false;
+        concept.related.forEach(function(relId) {
+          // Clean the related ID: strip comments, quotes, whitespace
+          var cleanId = relId.replace(/#.*$/, "").replace(/['"]/g, "").trim();
+          // Find the matching concept — try exact match on id, then prefix match
+          var found = CONCEPTS.find(function(c) {
+            return c.id === cleanId || c.slug === cleanId;
+          });
+          if (!found) {
+            // Try matching by id prefix (e.g., "BJJ-034-funnel" → "BJJ-034")
+            var idPrefix = cleanId.match(/^BJJ-\d+/);
+            if (idPrefix) {
+              found = CONCEPTS.find(function(c) { return c.id === idPrefix[0]; });
+            }
+          }
+          if (found) {
+            hasRelated = true;
+            var rli = document.createElement("li");
+            var a = document.createElement("a");
+            a.className = "r-related-link";
+            a.innerHTML = '<span class="r-related-link-id">' + found.id + '</span>' + found.concept;
+            a.addEventListener("click", function(e) {
+              e.preventDefault();
+              openConcept(found);
+            });
+            rli.appendChild(a);
+            relatedList.appendChild(rli);
+          }
+        });
+        relatedDiv.style.display = hasRelated ? "" : "none";
+      } else {
+        relatedDiv.style.display = "none";
+      }
+
+      // Show reader, hide landing
+      $("r-landing").style.display = "none";
+      $("r-reader").classList.add("active");
+      $("r-story-scroll").scrollTop = 0;
+    }
+
+    // ===== Close Concept =====
+    function closeConcept() {
+      currentConcept = null;
+      $("r-reader").classList.remove("active");
+      $("r-landing").style.display = "";
+      history.pushState(null, "", window.location.pathname);
+    }
+
+    // ===== Event Listeners =====
+    $("r-back-btn").addEventListener("click", closeConcept);
+
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && currentConcept) closeConcept();
+    });
+
+    // Swipe from left edge to go back (mobile)
+    var touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+    document.addEventListener("touchstart", function(e) {
+      if (!currentConcept) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    }, { passive: true });
+
+    document.addEventListener("touchend", function(e) {
+      if (!currentConcept) return;
+      var touch = e.changedTouches[0];
+      var dx = touch.clientX - touchStartX;
+      var dy = Math.abs(touch.clientY - touchStartY);
+      var dt = Date.now() - touchStartTime;
+      if (touchStartX < 30 && dx > 80 && Math.abs(dx) > dy && dt < 500) {
+        closeConcept();
+      }
+    }, { passive: true });
+
+    // Browser back/forward
+    window.addEventListener("popstate", function() {
+      var hash = window.location.hash.slice(1);
+      if (hash && CONCEPTS.length) {
+        var found = CONCEPTS.find(function(c) { return c.slug === hash; });
+        if (found) { openConcept(found); return; }
+      }
+      if (currentConcept) closeConcept();
+    });
+
+    // Font size button clicks
+    document.querySelectorAll(".r-font-size-btn").forEach(function(btn, i) {
+      btn.addEventListener("click", function() { applyFontSize(i); });
+    });
+
+    // ===== Init =====
+    applyFontSize(fsIndex);
+    buildLanding();
+
+    // Open concept from URL hash on load
+    var hash = window.location.hash.slice(1);
+    if (hash) {
+      var found = CONCEPTS.find(function(c) { return c.slug === hash; });
+      if (found) openConcept(found);
+    }
+  })();
+  </script>
+
+  <script type="application/json" id="concept-data" set:html={JSON.stringify(concepts)} />
+  <script type="application/json" id="category-data" set:html={JSON.stringify(categories)} />
+</BaseLayout>
