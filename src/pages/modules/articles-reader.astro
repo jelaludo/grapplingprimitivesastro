@@ -1,0 +1,629 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const articleEntries = await getCollection('Articles');
+
+const articles = articleEntries.map(e => ({
+  slug: e.slug,
+  title: e.data.title || e.slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+  date: e.data.date ?? '',
+  body: e.body ?? '',
+})).sort((a, b) => a.title.localeCompare(b.title));
+---
+
+<BaseLayout title="Article Reader — Grappling Primitives" fullscreen={true}>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+
+  <style is:inline>
+    /* ===== Typography Tokens ===== */
+    :root {
+      --r-size-xs: 0.75rem;
+      --r-size-sm: 0.875rem;
+      --r-size-base: 1rem;
+      --r-size-md: 1.25rem;
+      --r-size-lg: 1.5625rem;
+      --r-size-xl: 1.953rem;
+      --r-size-2xl: 2.441rem;
+
+      --r-lh-body: 1.5;
+      --r-lh-body-mobile: 1.6;
+      --r-lh-heading: 1.1;
+
+      --r-paragraph-gap: 1.1em;
+
+      --r-color-text: #1a1a1a;
+      --r-color-text-secondary: #595959;
+      --r-color-bg: #f5f5f5;
+      --r-color-surface: #ffffff;
+
+      --r-column: min(90vw, 65ch);
+
+      --r-font-body: 'Literata', Georgia, serif;
+
+      --r-fs-scale: 1;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --r-color-text: #e8e8e8;
+        --r-color-text-secondary: #a0a0a0;
+        --r-color-bg: #121212;
+        --r-color-surface: #1e1e1e;
+      }
+    }
+
+    /* ===== Reader Reset (scoped to #reader-app) ===== */
+    #reader-app *, #reader-app *::before, #reader-app *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    #reader-app {
+      font-family: var(--r-font-body);
+      font-size: calc(clamp(16px, 1.1vw + 14px, 18px) * var(--r-fs-scale));
+      line-height: var(--r-lh-body);
+      color: var(--r-color-text);
+      background-color: var(--r-color-bg);
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100dvh;
+    }
+
+    @media (max-width: 768px) {
+      #reader-app { line-height: var(--r-lh-body-mobile); }
+    }
+
+    /* ===== Landing Page ===== */
+    .r-landing {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: max(2rem, 5vh) max(1.5rem, 5vw);
+    }
+
+    .r-landing-title {
+      font-size: var(--r-size-sm);
+      font-weight: 400;
+      color: var(--r-color-text-secondary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-block-end: max(2rem, 3vh);
+    }
+
+    .r-landing-count {
+      font-size: var(--r-size-xs);
+      color: var(--r-color-text-secondary);
+      margin-block-end: max(2rem, 3vh);
+    }
+
+    .r-category-list {
+      list-style: none;
+      width: min(90vw, 40rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* ===== Concept Card ===== */
+    .r-concept-card {
+      padding: 0.75rem 0 0.75rem 1.25rem;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: border-color 0.15s ease;
+    }
+
+    .r-concept-card:hover {
+      border-left-color: var(--r-color-text-secondary);
+    }
+
+    .r-concept-card-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    .r-concept-card-id {
+      font-size: var(--r-size-xs);
+      color: var(--r-color-text-secondary);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .r-concept-card-title {
+      font-size: var(--r-size-base);
+      font-weight: 600;
+    }
+
+    /* ===== Reader View ===== */
+    .r-reader {
+      display: none;
+      min-height: 100dvh;
+      flex-direction: column;
+    }
+
+    .r-reader.active {
+      display: flex;
+    }
+
+    .r-reader-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem max(1.5rem, 5vw);
+      background-color: var(--r-color-bg);
+    }
+
+    .r-back-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      color: var(--r-color-text);
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .r-back-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .r-reader-meta {
+      font-size: var(--r-size-sm);
+      color: var(--r-color-text-secondary);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .r-reader-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .r-font-size-control {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      border: 1px solid var(--r-color-text-secondary);
+    }
+
+    .r-font-size-btn {
+      background: none;
+      border: none;
+      color: var(--r-color-text);
+      cursor: pointer;
+      padding: 0.35rem 0.5rem;
+      font-family: var(--r-font-body);
+      line-height: 1;
+      min-width: 36px;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .r-font-size-btn + .r-font-size-btn {
+      border-inline-start: 1px solid var(--r-color-text-secondary);
+    }
+
+    .r-font-size-btn.active {
+      background-color: var(--r-color-text);
+      color: var(--r-color-bg);
+    }
+
+    .r-font-size-btn:nth-child(1) { font-size: 0.7rem; }
+    .r-font-size-btn:nth-child(2) { font-size: 0.85rem; }
+    .r-font-size-btn:nth-child(3) { font-size: 1.05rem; }
+
+    /* ===== Story Content ===== */
+    .r-story-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 2vh max(1.5rem, 5vw) 8vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .r-story-content {
+      width: 100%;
+      max-width: var(--r-column);
+    }
+
+    .r-story-title {
+      font-size: var(--r-size-2xl);
+      font-weight: 600;
+      line-height: var(--r-lh-heading);
+      margin-block-end: 0.5em;
+    }
+
+    .r-story-subtitle {
+      font-size: var(--r-size-sm);
+      color: var(--r-color-text-secondary);
+      margin-block-end: 2em;
+    }
+
+    .r-story-body p + p {
+      margin-block-start: var(--r-paragraph-gap);
+    }
+
+    .r-story-body strong {
+      font-weight: 600;
+    }
+
+    /* ===== Article-specific body styles ===== */
+    .r-story-body h2 {
+      font-size: var(--r-size-xl);
+      font-weight: 600;
+      line-height: var(--r-lh-heading);
+      margin-block-start: 2em;
+      margin-block-end: 0.75em;
+    }
+
+    .r-story-body h3 {
+      font-size: var(--r-size-lg);
+      font-weight: 600;
+      line-height: var(--r-lh-heading);
+      margin-block-start: 1.5em;
+      margin-block-end: 0.5em;
+    }
+
+    .r-story-body ul, .r-story-body ol {
+      margin-block-start: 0.5em;
+      margin-block-end: var(--r-paragraph-gap);
+      padding-inline-start: 1.5em;
+    }
+
+    .r-story-body ul { list-style-type: disc; }
+    .r-story-body ol { list-style-type: decimal; }
+
+    .r-story-body li {
+      margin-block-end: 0.35em;
+    }
+
+    .r-story-body blockquote {
+      border-inline-start: 2px solid var(--r-color-text-secondary);
+      padding-inline-start: 1em;
+      margin-block: var(--r-paragraph-gap);
+      color: var(--r-color-text-secondary);
+      font-style: italic;
+    }
+
+    .r-story-body blockquote p {
+      margin: 0;
+    }
+
+    .r-story-body code {
+      background: var(--r-color-surface);
+      padding: 0.15em 0.4em;
+      font-size: 0.875em;
+      font-family: 'Source Code Pro', monospace;
+    }
+
+    .r-story-body hr {
+      border: none;
+      border-block-start: 1px solid var(--r-color-text-secondary);
+      margin-block: 2em;
+    }
+
+    .r-story-body img {
+      max-width: 100%;
+      height: auto;
+      margin-block: 1em;
+    }
+
+    .r-story-body a {
+      color: var(--r-color-text-secondary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .r-story-body a:hover {
+      color: var(--r-color-text);
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 480px) {
+      .r-reader-header { gap: 0.4rem; padding: 0.5rem max(1rem, 3vw); }
+      .r-font-size-btn { min-width: 32px; min-height: 32px; padding: 0.25rem 0.35rem; }
+    }
+
+    @media print {
+      .r-landing, .r-reader-header { display: none; }
+      .r-reader { display: flex; }
+      .r-story-scroll { overflow: visible; padding: 0; }
+    }
+  </style>
+
+  <div id="reader-app">
+    <!-- Landing View -->
+    <main class="r-landing" id="r-landing">
+      <p class="r-landing-title">Article Reader</p>
+      <p class="r-landing-count" id="r-landing-count"></p>
+      <ul class="r-category-list" id="r-category-list"></ul>
+    </main>
+
+    <!-- Reader View -->
+    <div class="r-reader" id="r-reader">
+      <header class="r-reader-header">
+        <button class="r-back-btn" id="r-back-btn" aria-label="Back to articles">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <span class="r-reader-meta" id="r-reader-meta"></span>
+        <div class="r-reader-controls">
+          <div class="r-font-size-control">
+            <button class="r-font-size-btn" aria-label="Small text">a</button>
+            <button class="r-font-size-btn" aria-label="Medium text">a</button>
+            <button class="r-font-size-btn" aria-label="Large text">A</button>
+          </div>
+        </div>
+      </header>
+      <div class="r-story-scroll" id="r-story-scroll">
+        <article class="r-story-content" id="r-story-content">
+          <h1 class="r-story-title" id="r-story-title"></h1>
+          <p class="r-story-subtitle" id="r-story-subtitle" style="display:none"></p>
+          <div class="r-story-body" id="r-story-body"></div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" id="article-data" set:html={JSON.stringify(articles)} />
+
+  <script is:inline>
+  (function(){
+    "use strict";
+
+    // ===== Data =====
+    var ARTICLES = JSON.parse(document.getElementById("article-data").textContent);
+    var currentArticle = null;
+
+    function $(id) { return document.getElementById(id); }
+
+    // ===== Font Size =====
+    var FS_SIZES = [1, 1.12, 1.25];
+    var fsIndex = parseInt(localStorage.getItem("reader-fs") || "0", 10);
+    if (fsIndex < 0 || fsIndex > 2) fsIndex = 0;
+
+    function applyFontSize(i) {
+      fsIndex = i;
+      document.documentElement.style.setProperty("--r-fs-scale", FS_SIZES[i]);
+      localStorage.setItem("reader-fs", String(i));
+      var btns = document.querySelectorAll(".r-font-size-btn");
+      btns.forEach(function(b, j) { b.classList.toggle("active", j === i); });
+    }
+
+    // ===== Inline Formatting =====
+    function inlineFormat(text) {
+      return text
+        .replace(/`(.+?)`/g, "<code>$1</code>")
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*(.+?)\*/g, "<em>$1</em>")
+        .replace(/!\[(.*?)\]\((.+?)\)/g, '<img src="$2" alt="$1" style="max-width:100%;height:auto;">')
+        .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" style="color:var(--r-color-text-secondary);text-decoration:underline;text-underline-offset:2px;">$1</a>')
+        .replace(/\[\[(.+?)\]\]/g, "$1");
+    }
+
+    // ===== Markdown to HTML =====
+    function mdToHtml(text) {
+      if (!text || !text.trim()) return "<p style='color:var(--r-color-text-secondary)'>No content yet.</p>";
+      var content = text.trim();
+      var lines = content.split("\n");
+      var html = [];
+      var i = 0;
+
+      while (i < lines.length) {
+        var line = lines[i];
+        var trimmed = line.trim();
+
+        // Skip empty lines
+        if (!trimmed) { i++; continue; }
+
+        // Horizontal rule
+        if (/^---+$/.test(trimmed)) {
+          html.push("<hr>");
+          i++; continue;
+        }
+
+        // Headings
+        if (/^### (.+)/.test(trimmed)) {
+          html.push("<h3>" + inlineFormat(trimmed.replace(/^### /, "")) + "</h3>");
+          i++; continue;
+        }
+        if (/^## (.+)/.test(trimmed)) {
+          html.push("<h2>" + inlineFormat(trimmed.replace(/^## /, "")) + "</h2>");
+          i++; continue;
+        }
+        if (/^# (.+)/.test(trimmed)) {
+          html.push("<h2>" + inlineFormat(trimmed.replace(/^# /, "")) + "</h2>");
+          i++; continue;
+        }
+
+        // Blockquote
+        if (/^> /.test(trimmed)) {
+          var bqLines = [];
+          while (i < lines.length && /^> /.test(lines[i].trim())) {
+            bqLines.push(lines[i].trim().replace(/^> /, ""));
+            i++;
+          }
+          html.push("<blockquote><p>" + inlineFormat(bqLines.join("<br>")) + "</p></blockquote>");
+          continue;
+        }
+
+        // Unordered list
+        if (/^[-*] /.test(trimmed)) {
+          var items = [];
+          while (i < lines.length && /^[-*] /.test(lines[i].trim())) {
+            items.push(lines[i].trim().replace(/^[-*] /, ""));
+            i++;
+          }
+          html.push("<ul>" + items.map(function(item) { return "<li>" + inlineFormat(item) + "</li>"; }).join("") + "</ul>");
+          continue;
+        }
+
+        // Ordered list
+        if (/^\d+\. /.test(trimmed)) {
+          var oitems = [];
+          while (i < lines.length && /^\d+\. /.test(lines[i].trim())) {
+            oitems.push(lines[i].trim().replace(/^\d+\. /, ""));
+            i++;
+          }
+          html.push("<ol>" + oitems.map(function(item) { return "<li>" + inlineFormat(item) + "</li>"; }).join("") + "</ol>");
+          continue;
+        }
+
+        // Image (standalone line)
+        if (/^!\[.*?\]\(.+?\)$/.test(trimmed)) {
+          var imgMatch = trimmed.match(/^!\[(.*?)\]\((.+?)\)$/);
+          if (imgMatch) {
+            html.push('<img src="' + imgMatch[2] + '" alt="' + imgMatch[1] + '" style="max-width:100%;height:auto;margin:1em 0;">');
+          }
+          i++; continue;
+        }
+
+        // Paragraph: collect consecutive non-empty, non-special lines
+        var pLines = [];
+        while (i < lines.length) {
+          var pl = lines[i].trim();
+          if (!pl || /^#{1,3} /.test(pl) || /^[-*] /.test(pl) || /^\d+\. /.test(pl) || /^> /.test(pl) || /^---+$/.test(pl) || /^!\[/.test(pl)) break;
+          pLines.push(pl);
+          i++;
+        }
+        if (pLines.length) {
+          html.push("<p>" + inlineFormat(pLines.join("<br>")) + "</p>");
+        }
+      }
+
+      return html.join("\n");
+    }
+
+    // ===== Build Landing =====
+    function buildLanding() {
+      var list = $("r-category-list");
+      list.innerHTML = "";
+      $("r-landing-count").textContent = ARTICLES.length + " articles";
+
+      ARTICLES.forEach(function(article) {
+        var li = document.createElement("li");
+        li.className = "r-concept-card";
+        li.style.borderTop = "1px solid var(--r-color-text-secondary)";
+
+        li.innerHTML =
+          '<div class="r-concept-card-header">' +
+            '<span class="r-concept-card-title">' + article.title + '</span>' +
+            (article.date ? '<span class="r-concept-card-id">' + article.date + '</span>' : '') +
+          '</div>';
+
+        li.addEventListener("click", function() {
+          openArticle(article);
+        });
+
+        list.appendChild(li);
+      });
+
+      // Bottom border on last item
+      if (list.lastChild) list.lastChild.style.borderBottom = "1px solid var(--r-color-text-secondary)";
+    }
+
+    // ===== Open Article =====
+    function openArticle(article) {
+      currentArticle = article;
+      history.pushState({ article: article.slug }, "", "#" + article.slug);
+
+      $("r-reader-meta").textContent = article.date || "";
+      $("r-story-title").textContent = article.title;
+      $("r-story-subtitle").textContent = "";
+      $("r-story-subtitle").style.display = "none";
+      $("r-story-body").innerHTML = mdToHtml(article.body);
+
+      $("r-landing").style.display = "none";
+      $("r-reader").classList.add("active");
+      $("r-story-scroll").scrollTop = 0;
+    }
+
+    // ===== Close Article =====
+    function closeArticle() {
+      currentArticle = null;
+      $("r-reader").classList.remove("active");
+      $("r-landing").style.display = "";
+      history.back();
+    }
+
+    // ===== Event Listeners =====
+    $("r-back-btn").addEventListener("click", closeArticle);
+
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && currentArticle) closeArticle();
+    });
+
+    // Swipe from left edge to go back (mobile)
+    var touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+    document.addEventListener("touchstart", function(e) {
+      if (!currentArticle) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    }, { passive: true });
+
+    document.addEventListener("touchend", function(e) {
+      if (!currentArticle) return;
+      var touch = e.changedTouches[0];
+      var dx = touch.clientX - touchStartX;
+      var dy = Math.abs(touch.clientY - touchStartY);
+      var dt = Date.now() - touchStartTime;
+      if (touchStartX < 30 && dx > 80 && Math.abs(dx) > dy && dt < 500) {
+        closeArticle();
+      }
+    }, { passive: true });
+
+    // Browser back/forward
+    window.addEventListener("popstate", function() {
+      var hash = window.location.hash.slice(1);
+      if (hash && ARTICLES.length) {
+        var found = ARTICLES.find(function(a) { return a.slug === hash; });
+        if (found) { openArticle(found); return; }
+      }
+      if (currentArticle) closeArticle();
+    });
+
+    // Font size button clicks
+    document.querySelectorAll(".r-font-size-btn").forEach(function(btn, i) {
+      btn.addEventListener("click", function() { applyFontSize(i); });
+    });
+
+    // ===== Init =====
+    applyFontSize(fsIndex);
+    buildLanding();
+
+    // Open article from URL hash on load
+    var hash = window.location.hash.slice(1);
+    if (hash) {
+      var found = ARTICLES.find(function(a) { return a.slug === hash; });
+      if (found) openArticle(found);
+    }
+  })();
+  </script>
+
+</BaseLayout>
