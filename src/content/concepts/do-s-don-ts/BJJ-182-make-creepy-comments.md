@@ -8,7 +8,7 @@ color: "#b26b2a"
 short_description: "Don't make creepy comments to anyone, ever.   Don't sexualize the girls and women who had the courage to step on the mats.\n\nKeep your banger crude jokes for another audience."
 tags: []
 related:
-  - "BJJ-173-learn-their-names" # social behavior (anti-pattern)
+  - "BJJ-173-learn-their-names"
 ---
 
 Don't make creepy comments to anyone, ever.   Don't sexualize the girls and women who had the courage to step on the mats.

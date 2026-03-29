@@ -8,10 +8,10 @@ color: "#b26b2a"
 short_description: "The interesting part of learning happened before you got stuck that deep into a submission that is not threatening your with injuries.\n\nThere absolutely *exists a place for training late escapes, but that is absolutely not as a beginner, and not during every roll, and only with training partners you trust and who've mastered the art to apply submissions in a fully controlled manner."
 tags: []
 related:
-  - "BJJ-041-always-protect-yourself" # self-protection
-  - "BJJ-251-fail-often"       # tapping is how you fail safely
-  - BJJ-177-crank-submissions # back-link from Crank submissions
-  - BJJ-178-respect-the-tap # back-link from Respect the Tap
+  - "BJJ-041-always-protect-yourself"
+  - "BJJ-251-fail-often"
+  - "BJJ-177-crank-submissions"
+  - "BJJ-178-respect-the-tap"
 ---
 
 The interesting part of learning happened before you got stuck that deep into a submission that is not threatening your with injuries.

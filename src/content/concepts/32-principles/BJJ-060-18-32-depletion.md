@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Mentally and physically deplete your opponent.  Wear down their energy and resolve to increase their likelihood of making mistakes."
 tags: []
 related:
-  - "BJJ-025-17-21-energy-management" # depletion is the opponent's energy problem
-  - "BJJ-129-suffocating-comfort"     # deplete them while staying comfortable
+  - "BJJ-025-17-21-energy-management"
+  - "BJJ-129-suffocating-comfort"
 ---
 
 Mentally and physically deplete your opponent.  Wear down their energy and resolve to increase their likelihood of making mistakes.

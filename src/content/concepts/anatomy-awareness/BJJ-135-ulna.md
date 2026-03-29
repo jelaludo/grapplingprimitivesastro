@@ -8,8 +8,8 @@ color: "#848a94"
 short_description: "Ulna and Radius.  The forearm bones.\n\nUse it to frame, or to drive your weight into the soft tissue of the neck.\n\nSlice it into their biceps as your elbow controls theirs.\n\n"
 tags: []
 related:
-  - "BJJ-002-collapse-frames" # ulna frames against the neck/chest
-  - "BJJ-084-wedges"          # forearm bone as a wedge tool
+  - "BJJ-002-collapse-frames"
+  - "BJJ-084-wedges"
 ---
 
 Ulna and Radius.  The forearm bones.

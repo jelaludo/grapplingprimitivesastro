@@ -8,7 +8,7 @@ color: "#4F8EF7"
 short_description: "vibe coding is not for the faint of heart; #AngerManagement"
 tags: []
 related:
-  - "BJJ-080-proprioception"    # internal awareness tool
+  - "BJJ-080-proprioception"
 ---
 
 vibe coding is not for the faint of heart; #AngerManagement

@@ -8,7 +8,7 @@ color: "#4f7e16"
 short_description: "a great YouTube Channel with dozens of videos from @BJJGBlobetrotters camps, typically 40m  (20m to 1h+) \n\nsome gems in there."
 tags: []
 related:
-  - "BJJ-125-bjjglobetrotters-com" # same org, different medium
+  - "BJJ-125-bjjglobetrotters-com"
 ---
 
 a great YouTube Channel with dozens of videos from @BJJGBlobetrotters camps, typically 40m  (20m to 1h+) 

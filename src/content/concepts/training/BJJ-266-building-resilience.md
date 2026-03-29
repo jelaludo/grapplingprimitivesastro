@@ -8,12 +8,12 @@ color: "#00CED1"
 short_description: Building defensive skill by voluntarily exposing yourself to bad positions at managed intensity, then gradually increasing resistance. The grappling equivalent of Mithridatism.
 tags: []
 related:
-  - "BJJ-251-fail-often"        # failure is the raw material for resilience
-  - "BJJ-272-end-game-training"  # end-game training builds finish confidence, a form of resilience
-  - "BJJ-263-intensity-drift"    # resilience training must manage intensity to avoid drift
-  - BJJ-183-offer-zero-resistance # back-link from offer zero resistance
-  - BJJ-228-position-sparring # back-link from Position Sparring
-  - BJJ-235-self-imposed-challenges # back-link from Self-imposed challenges
+  - "BJJ-251-fail-often"
+  - "BJJ-272-end-game-training"
+  - "BJJ-263-intensity-drift"
+  - "BJJ-183-offer-zero-resistance"
+  - "BJJ-228-position-sparring"
+  - "BJJ-235-self-imposed-challenges"
 ---
 
 King Mithridates VI built immunity to poison by taking small doses daily, gradually increasing the amount until lethal doses couldn't touch him. It is still a modern concept of medicine, within limits! (*The fundamental principle of controlled, gradual exposure is utilized in several areas of modern medicine, representing a scientifically controlled form of mithradatism*).

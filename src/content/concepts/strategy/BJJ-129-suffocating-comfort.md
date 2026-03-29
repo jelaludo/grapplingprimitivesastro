@@ -8,11 +8,11 @@ color: "#FF8C00"
 short_description: "You're chilling, they're dying.\n\nThe idea is to maintain a relaxed, energy-efficient position while forcing our opponent into a state of escalating discomfort and desperation. Rather than chasing submissions or transitions aggressively, the focus is on creating a biomechanical and psychological trap: the opponent feels pressure mounting, breathing restricted, and escape options dwindling.   All while the controlling grappler expends minimal effort. \n\nThis can occur from dominant pins, Dagestani Cuffs, tight bodylocks, spine-twists; any slow-cooking positional advantage. The essence of Suffocating Comfort is that asymmetry where one person suffers and scrambles, while the other remains calm, heavy, and opportunistic, waiting for fatigue or panic to create the opening.\n\n\nDead Weight.\n\"Make sure they're always uncomfortable\"\nPain maximization.\nRelaxed torture; your leisure is their torment."
 tags: []
 related:
-  - "BJJ-267-tension-economy"      # being comfortable while applying pressure = efficient tension
-  - "BJJ-200-overlapping-pressure" # suffocating comfort is overlapping pressure applied relaxedly
-  - BJJ-021-13-21-let-the-enemy-defeat-himself # back-link from #13/21 let the enemy defeat himself.
-  - BJJ-060-18-32-depletion # back-link from 18/32 Depletion
-  - BJJ-118-chill-veteran # back-link from Chill Veteran
+  - "BJJ-267-tension-economy"
+  - "BJJ-200-overlapping-pressure"
+  - "BJJ-021-13-21-let-the-enemy-defeat-himself"
+  - "BJJ-060-18-32-depletion"
+  - "BJJ-118-chill-veteran"
 ---
 
 You're chilling, they're dying.

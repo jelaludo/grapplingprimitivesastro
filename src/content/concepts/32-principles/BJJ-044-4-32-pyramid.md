@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Stable base, triangles everywhere, what's not to love about a pyramid analogy!?"
 tags: []
 related:
-  - "BJJ-203-base"            # pyramid = stable base
-  - "BJJ-057-16-32-posture"   # pyramid posture
+  - "BJJ-203-base"
+  - "BJJ-057-16-32-posture"
 ---
 
 Stable base, triangles everywhere, what's not to love about a pyramid analogy!?

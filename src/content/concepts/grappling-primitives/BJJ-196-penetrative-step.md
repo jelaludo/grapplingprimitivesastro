@@ -8,9 +8,9 @@ color: "#848a94"
 short_description: "From wrestling.  \n\nIt's about closing the distance and getting deep into enemy territory, not just reaching with your arms but crowding their space with your body, stepping through them with intent and base.\n\nIn judo it might an aspect of Tsukuri for some hip throws, deep step.\n\nIt’s not enough to \"reach\", you must enter with intent, putting your whole structure into the throw or takedown. \n\nShallow step leads to half-hearted shot or throw.\nDeep penetrative step leads to their CoG being disrupted.\n"
 tags: []
 related:
-  - "BJJ-102-distance-management" # penetration is explosive distance closure
-  - "BJJ-077-loading-unloading"   # the step loads weight into the opponent's space
-  - "BJJ-270-kinetic-chain"       # power comes from the ground through the legs into the step
+  - "BJJ-102-distance-management"
+  - "BJJ-077-loading-unloading"
+  - "BJJ-270-kinetic-chain"
 ---
 
 From wrestling.  

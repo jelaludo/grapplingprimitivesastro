@@ -8,9 +8,9 @@ color: "#888888"
 short_description: "Compressive or tensile force applied along the length of a limb or spine"
 tags: []
 related:
-  - "BJJ-140-ribcage-stacking" # stacking creates axial load on their spine
-  - "BJJ-205-leverage"         # axial load and leverage are complementary force types
-  - "BJJ-270-kinetic-chain"    # axial load travels along the chain
+  - "BJJ-140-ribcage-stacking"
+  - "BJJ-205-leverage"
+  - "BJJ-270-kinetic-chain"
 ---
 
 Axial load is force applied along the length of a bone or limb, like pushing straight down a pipe. When you stack someone in closed guard, driving their knees toward their face, you're compressing their spine axially. It makes them miserable and takes away their hip movement, which is exactly why it's such an effective passing concept.

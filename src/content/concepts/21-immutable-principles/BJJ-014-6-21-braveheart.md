@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Dive in, get rid of your fear of losing, especially during training.  #6/21 in Paulo Guillobel's 21 immutable principles of Jiu Jitsu."
 tags: []
 related:
-  - "BJJ-251-fail-often"        # bravery = willingness to fail
-  - "BJJ-265-explore-vs-exploit" # dive in = explore
+  - "BJJ-251-fail-often"
+  - "BJJ-265-explore-vs-exploit"
 ---
 
 Dive in, get rid of your fear of losing, especially during training.  #6/21 in Paulo Guillobel's 21 immutable principles of Jiu Jitsu.

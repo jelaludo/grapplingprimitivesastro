@@ -8,13 +8,13 @@ color: "#9370DB"
 short_description: "Training frequency multiplies the probability of breakthroughs. Each insight makes the next one more likely, creating a compounding skill gap over time."
 tags: []
 related:
-  - "BJJ-265-explore-vs-exploit"  # exploring multiplies insight probability
-  - "BJJ-088-sponge"              # sponge mindset maximizes accumulation
-  - "BJJ-033-real-time-learning"  # insights crystallize during real-time problem solving
-  - BJJ-145-1-21-persistence # back-link from #1/21 Persistence
-  - BJJ-073-32-32-grandmaster # back-link from 32/32 Grandmaster 
-  - BJJ-116-keep-learning # back-link from Keep Learning.
-  - BJJ-167-show-up-consistently # back-link from Show up Consistently
+  - "BJJ-265-explore-vs-exploit"
+  - "BJJ-088-sponge"
+  - "BJJ-033-real-time-learning"
+  - "BJJ-145-1-21-persistence"
+  - "BJJ-073-32-32-grandmaster"
+  - "BJJ-116-keep-learning"
+  - "BJJ-167-show-up-consistently"
 ---
 
 Insights, those moments where two unrelated techniques or concepts suddenly click into a connected system, cannot really be directly taught. They have to be self-discovered. But you can dramatically increase the odds.

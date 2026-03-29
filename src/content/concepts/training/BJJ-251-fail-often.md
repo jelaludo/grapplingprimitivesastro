@@ -8,10 +8,10 @@ color: "#00CED1"
 short_description: "Fail Often, Fail Early.\n\nAs long as you learn from your mistakes! it is crucial to let yourself fail often and early to get your of your mat time.  \n\nnot every roll has to be a measure of your manhood and battle to the death.\n\nrecognize the mistake that got you in a bad spot, tap, file your questions to ask at the end of class.\n\nFail often so you can multiply your chances of learning."
 tags: []
 related:
-  - "BJJ-266-building-resilience" # failing in controlled doses builds resilience
-  - "BJJ-265-explore-vs-exploit"  # failing is the cost of exploring
-  - BJJ-014-6-21-braveheart # back-link from #6/21 Braveheart
-  - BJJ-165-tap-early-tap-often # back-link from Tap Early, Tap Often
+  - "BJJ-266-building-resilience"
+  - "BJJ-265-explore-vs-exploit"
+  - "BJJ-014-6-21-braveheart"
+  - "BJJ-165-tap-early-tap-often"
 ---
 
 Fail Often, Fail Early.

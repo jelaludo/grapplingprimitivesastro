@@ -8,12 +8,12 @@ color: "#FFD700"
 short_description: "#1/21 one of the \"7P's\" in Paulo Guillobel's 21 immutable principles of Jiu Jitsu."
 tags: []
 related:
-  - "BJJ-267-tension-economy"  # patience is tension economy applied to time
-  - "BJJ-239-affordances"      # if there's nothing to take, don't take the bait
-  - "BJJ-036-bait-trap"        # patience resists baits
-  - "BJJ-017-9-21-overreaching" # patience prevents overreaching
-  - "BJJ-184-unforce-errors"   # patience lets the opponent make unforced errors
-  - BJJ-145-1-21-persistence # back-link from #1/21 Persistence
+  - "BJJ-267-tension-economy"
+  - "BJJ-239-affordances"
+  - "BJJ-036-bait-trap"
+  - "BJJ-017-9-21-overreaching"
+  - "BJJ-184-unforce-errors"
+  - "BJJ-145-1-21-persistence"
 ---
 
 #1/21 one of the "7P's" in Paulo Guillobel's 21 immutable principles of Jiu Jitsu.

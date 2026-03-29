@@ -8,11 +8,11 @@ color: "#8A2BE2"
 short_description: "Sometimes it can pay off to initiate a movement that looks like a mistake they want to capitalize on, but be ready with the full force of your strong posture and back-up plans.\n\ne.g. They want you to post your hand from closed guard so they can get a Kimura from bottom?  shift your weight, post your hand and make it heavy and straight, watch them open up elsewhere are they go for something that is not here.\n\n(Disclaimer : This can go either way, sometimes from a neutral position it is better to let *them make the first move.  Nothing is 100% of the time here.  Heuristics, Ideas, models which are wrong yet sometimes useful blablabla)\n\n"
 tags: []
 related:
-  - "BJJ-036-bait-trap"       # initiating movement can be a bait
-  - "BJJ-210-redirection"     # you initiate to create energy you can then redirect
-  - "BJJ-184-unforce-errors"  # initiated movement provokes unforced errors
-  - BJJ-019-11-21-action-reaction # back-link from #11/21 Action & Reaction
-  - BJJ-045-5-32-creation # back-link from 5/32 Creation
+  - "BJJ-036-bait-trap"
+  - "BJJ-210-redirection"
+  - "BJJ-184-unforce-errors"
+  - "BJJ-019-11-21-action-reaction"
+  - "BJJ-045-5-32-creation"
 ---
 
 Sometimes it can pay off to initiate a movement that looks like a mistake they want to capitalize on, but be ready with the full force of your strong posture and back-up plans.

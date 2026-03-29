@@ -8,7 +8,7 @@ color: "#FF6B35"
 short_description: "Coloured Belt younger folks will hunt your like you were a video game achievement: \"Tapped my first black belt!\".  And it is ok.\n\n\"A purple belt is a mini-black\", parts of their game might be sharper than yours."
 tags: []
 related:
-  - "BJJ-004-anticipation"     # anticipate being targeted
+  - "BJJ-004-anticipation"
 ---
 
 Coloured Belt younger folks will hunt your like you were a video game achievement: "Tapped my first black belt!".  And it is ok.

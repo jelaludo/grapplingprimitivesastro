@@ -8,9 +8,9 @@ color: "#FFD700"
 short_description: "it's part of the \"7 P's\"... hard to model on this axis ^^"
 tags: []
 related:
-  - "BJJ-009-patience-5-7"        # persistence and patience are siblings
-  - "BJJ-269-insight-accumulation" # persistence compounds into insights
-  - BJJ-167-show-up-consistently # back-link from Show up Consistently
+  - "BJJ-009-patience-5-7"
+  - "BJJ-269-insight-accumulation"
+  - "BJJ-167-show-up-consistently"
 ---
 
 it's part of the "7 P's"... hard to model on this axis ^^

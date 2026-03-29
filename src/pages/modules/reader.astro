@@ -19,6 +19,29 @@ const concepts = conceptEntries.map(e => ({
   related: e.data.related ?? [],
 }));
 
+// Compute bidirectional related links
+const slugToIndex = new Map(concepts.map((c, i) => [c.slug, i]));
+const idToSlug = new Map(concepts.map(c => [c.id, c.slug]));
+concepts.forEach(c => {
+  c.related.forEach(relSlug => {
+    const cleanSlug = relSlug.replace(/#.*$/, '').replace(/['"]/g, '').trim();
+    let targetIdx = slugToIndex.get(cleanSlug);
+    if (targetIdx === undefined) {
+      const prefix = cleanSlug.match(/^BJJ-\d+/);
+      if (prefix) {
+        const resolved = idToSlug.get(prefix[0]);
+        if (resolved) targetIdx = slugToIndex.get(resolved);
+      }
+    }
+    if (targetIdx !== undefined) {
+      const target = concepts[targetIdx];
+      if (!target.related.includes(c.slug) && !target.related.some(r => r.replace(/#.*$/, '').replace(/['"]/g, '').trim() === c.slug)) {
+        target.related.push(c.slug);
+      }
+    }
+  });
+});
+
 // Build categories array with counts
 const catCounts = new Map<string, number>();
 concepts.forEach(c => catCounts.set(c.category, (catCounts.get(c.category) ?? 0) + 1));

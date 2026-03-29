@@ -8,7 +8,7 @@ color: "#ff00d4"
 short_description: "Old School GOAT"
 tags: []
 related:
-  - "BJJ-022-14-21-basics-shiny" # known for perfected basics
+  - "BJJ-022-14-21-basics-shiny"
 ---
 
 Old School GOAT

@@ -8,8 +8,8 @@ color: "#8A2BE2"
 short_description: "Somehow likening Grappling to Chess can inflame passions and tribal rivalries.\n\nThe best argumenst for detractors are probably that 1) it is not *uniquely so, i.e. Rugby or Ping Pong could be said to have similarities to Chess as well.  And 2) that grappling is not turn-based.\n\nYet I offer for you consideration these principles from a man born in 1888, José Raúl Capablanca and his five principles for winning:\n\n1) Activate Everything, start with your least active pieces\n2) Keep everything connected, nothing hanging\n3) Always Ask : \"What does my opponent want?\"\n4) Attack pawns\n5) Endgames are won by passed pawns\n\nI'd replace pawns by joints and keep the rest.\n\nAnother gem by Capablanca : \"I see only one move ahead, but always the best move\".\n\nYou don't need to be 20 steps ahead in grappling, but constantly perceiving and denying what the opponent wants will make it feel like you are.\n"
 tags: []
 related:
-  - "BJJ-011-2-21-chess-analogy" # chess analogy in meme form
-  - "BJJ-039-puzzle-solving"     # strategic problem-solving game
+  - "BJJ-011-2-21-chess-analogy"
+  - "BJJ-039-puzzle-solving"
 ---
 
 Somehow likening Grappling to Chess can inflame passions and tribal rivalries.

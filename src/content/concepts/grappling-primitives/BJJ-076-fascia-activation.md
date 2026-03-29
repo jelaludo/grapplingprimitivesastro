@@ -8,10 +8,10 @@ color: "#848a94"
 short_description: "Fascia activation refers to the stimulation or engagement of the body’s connective tissue network (fascia) through movement, load, or specific exercises, prompting it to respond mechanically and metabolically to support posture, force transmission, and tissue health."
 tags: []
 related:
-  - "BJJ-080-proprioception"  # fascia is a proprioceptive feedback network
-  - "BJJ-270-kinetic-chain"   # fascia transmits force along the kinetic chain
-  - "BJJ-031-form-tension"    # fascia maintains form tension across the body
-  - "BJJ-267-tension-economy" # fascia enables efficient tension distribution
+  - "BJJ-080-proprioception"
+  - "BJJ-270-kinetic-chain"
+  - "BJJ-031-form-tension"
+  - "BJJ-267-tension-economy"
 ---
 
 Fascia activation refers to the stimulation or engagement of the body’s connective tissue network (fascia) through movement, load, or specific exercises, prompting it to respond mechanically and metabolically to support posture, force transmission, and tissue health.

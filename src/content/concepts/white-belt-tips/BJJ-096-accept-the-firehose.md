@@ -8,8 +8,8 @@ color: "#edeff2"
 short_description: "You'll be drinking from a firehose at first, even an empty cup will fill up fast, information overload... it's ok.  Just retain what you can and file the rest away somewhere in the recess of your brain.  Enjoy the constant discoveries."
 tags: []
 related:
-  - "BJJ-088-sponge"           # sponge mode = accepting the firehose
-  - "BJJ-271-shu-ha-ri"        # firehose is Shu phase
+  - "BJJ-088-sponge"
+  - "BJJ-271-shu-ha-ri"
 ---
 
 You'll be drinking from a firehose at first, even an empty cup will fill up fast, information overload... it's ok.  Just retain what you can and file the rest away somewhere in the recess of your brain.  Enjoy the constant discoveries.

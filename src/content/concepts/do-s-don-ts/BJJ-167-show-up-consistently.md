@@ -8,10 +8,10 @@ color: "#b26b2a"
 short_description: "it's difficult to progress meaningfully without consistency."
 tags: []
 related:
-  - "BJJ-269-insight-accumulation" # consistency compounds insights
-  - "BJJ-145-1-21-persistence"     # showing up is persistence
-  - BJJ-124-beltchecker-com # back-link from BeltChecker.com
-  - BJJ-159-routine-structure # back-link from Routine & Structure
+  - "BJJ-269-insight-accumulation"
+  - "BJJ-145-1-21-persistence"
+  - "BJJ-124-beltchecker-com"
+  - "BJJ-159-routine-structure"
 ---
 
 it's difficult to progress meaningfully without consistency.

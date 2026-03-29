@@ -8,7 +8,7 @@ color: "#8A2BE2"
 short_description: "\"BJJ is the Art & Science of Control Leading to Submission\".  Chris Haueter I believe.   I like this one, it's laconic an accurate."
 tags: []
 related:
-  - "BJJ-039-puzzle-solving"   # the puzzle-solving nature of the art/science
+  - "BJJ-039-puzzle-solving"
 ---
 
 "BJJ is the Art & Science of Control Leading to Submission".  Chris Haueter I believe.   I like this one, it's laconic an accurate.

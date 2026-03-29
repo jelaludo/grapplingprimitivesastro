@@ -8,7 +8,7 @@ color: "#8A2BE2"
 short_description: "see. Involutary Yoga, with a more r/iambadass vibe."
 tags: []
 related:
-  - "BJJ-001-involuntary-yoga" # yoga meme siblings
+  - "BJJ-001-involuntary-yoga"
 ---
 
 see. Involutary Yoga, with a more r/iambadass vibe.

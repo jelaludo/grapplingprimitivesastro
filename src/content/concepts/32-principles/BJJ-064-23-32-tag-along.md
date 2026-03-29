@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Tag Along (Connect, Sticky)\nMaintain constant attachment to your opponent, following their movement to prevent escapes or counters.   It's linked to the stickiness (Nian 黏) and listening (聽勁 Ting Jing skills) found in chinese arts."
 tags: []
 related:
-  - "BJJ-236-stay-connected" # tag along = stay connected to their movement
-  - "BJJ-081-alioception"    # following requires sensing
+  - "BJJ-236-stay-connected"
+  - "BJJ-081-alioception"
 ---
 
 Tag Along (Connect, Sticky)

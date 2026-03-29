@@ -8,10 +8,10 @@ color: "#848a94"
 short_description: "Maintaining continuous physical contact between your own hands (gripping your own wrist, palm-to-palm, finger lock, gable grip, S-grip, Neil 3-finger grip etc.) to create a closed kinetic chain. \n\nThis 100% reinforces structural strength, you can transmit core strength more effectively, and it stabilizes your control.\n\nSelf-grip, closed-chain grip, interlocking grip, hand clasp, \"Apes Together Strong\".\n\nThe benefits are numerous; Force Multiplication, structural integrity, control, leverage creation, it protects one limb from being isolated.\n\nPITFALS do exist; you're reducing your range of motion and giving a strong anchor or handle to your opponent.   You can have grip fatigue if you merely use it to resist rather than position yourself better.  It's an obvious commitment to a position, it gives the opponent fewer things to concentrate on."
 tags: []
 related:
-  - "BJJ-003-grip-fighting"  # hands connection is a grip configuration
-  - "BJJ-270-kinetic-chain"  # connecting your own hands closes the kinetic chain loop
-  - "BJJ-267-tension-economy" # connected hands distribute force more efficiently than isolated grips
-  - BJJ-132-thenar-muscles # back-link from Thenar Muscles
+  - "BJJ-003-grip-fighting"
+  - "BJJ-270-kinetic-chain"
+  - "BJJ-267-tension-economy"
+  - "BJJ-132-thenar-muscles"
 ---
 
 Maintaining continuous physical contact between your own hands (gripping your own wrist, palm-to-palm, finger lock, gable grip, S-grip, Neil 3-finger grip etc.) to create a closed kinetic chain. 

@@ -8,7 +8,7 @@ color: "#1b4b01"
 short_description: "more in it for the vibes? still chill, all good."
 tags: []
 related:
-  - "BJJ-162-social-media-identity" # social media identity
+  - "BJJ-162-social-media-identity"
 ---
 
 more in it for the vibes? still chill, all good.

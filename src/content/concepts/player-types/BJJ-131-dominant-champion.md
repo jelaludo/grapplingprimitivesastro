@@ -8,8 +8,8 @@ color: "#1b4b01"
 short_description: "So good they don't really need to be aggro.  Gordon Ryan's competition style stands out in this way."
 tags: []
 related:
-  - "BJJ-073-32-32-grandmaster" # grandmaster level
-  - "BJJ-271-shu-ha-ri"        # Ri stage
+  - "BJJ-073-32-32-grandmaster"
+  - "BJJ-271-shu-ha-ri"
 ---
 
 So good they don't really need to be aggro.  Gordon Ryan's competition style stands out in this way.

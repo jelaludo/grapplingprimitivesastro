@@ -7,8 +7,8 @@ axis_mental_physical: 0.46
 color: "#6b6d70"
 tags: []
 related:
-  - "BJJ-093-different-learning-patterns" # communication adapts to learning patterns
-  - BJJ-149-coaching-fullfilment # back-link from Coaching Fullfilment
+  - "BJJ-093-different-learning-patterns"
+  - "BJJ-149-coaching-fullfilment"
 ---
 
 _No description yet._

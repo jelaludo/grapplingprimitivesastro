@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Feign yielding to lure your opponent into overcommitting, creating openings for counters.   A trap by another name, with the added nuance that you make them believe something they just did worked, rather than passively waiting."
 tags: []
 related:
-  - "BJJ-036-bait-trap"          # false surrender is a bait
-  - "BJJ-061-20-32-sacrifice"    # sacrifice real or perceived position
+  - "BJJ-036-bait-trap"
+  - "BJJ-061-20-32-sacrifice"
 ---
 
 Feign yielding to lure your opponent into overcommitting, creating openings for counters.   A trap by another name, with the added nuance that you make them believe something they just did worked, rather than passively waiting.

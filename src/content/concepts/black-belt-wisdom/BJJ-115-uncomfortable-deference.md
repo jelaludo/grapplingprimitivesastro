@@ -8,7 +8,7 @@ color: "#FF6B35"
 short_description: "In some places you get uncomfortable deference for being a black belt, lining up in a special spot, people asking you for authorization to get on the mats.  Every gym is a bit different.  Don't let it get to your head."
 tags: []
 related:
-  - "BJJ-271-shu-ha-ri"        # Shu requires deference
+  - "BJJ-271-shu-ha-ri"
 ---
 
 In some places you get uncomfortable deference for being a black belt, lining up in a special spot, people asking you for authorization to get on the mats.  Every gym is a bit different.  Don't let it get to your head.

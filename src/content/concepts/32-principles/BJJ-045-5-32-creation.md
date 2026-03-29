@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Create opportunities, be proactive and not just reactive."
 tags: []
 related:
-  - "BJJ-238-initiate-movement" # create opportunities by initiating
-  - "BJJ-036-bait-trap"         # create traps
+  - "BJJ-238-initiate-movement"
+  - "BJJ-036-bait-trap"
 ---
 
 Create opportunities, be proactive and not just reactive.

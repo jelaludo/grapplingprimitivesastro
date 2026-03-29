@@ -8,7 +8,7 @@ color: "#6b6d70"
 short_description: "Free Trial, drop-in fee for beginner? no drop-in for black belts? be transparent on the website, it makes it easier to people to drop by and potentially join."
 tags: []
 related:
-  - "BJJ-188-scam-cults"       # transparency is the antidote to scam dojos
+  - "BJJ-188-scam-cults"
 ---
 
 Free Trial, drop-in fee for beginner? no drop-in for black belts? be transparent on the website, it makes it easier to people to drop by and potentially join.

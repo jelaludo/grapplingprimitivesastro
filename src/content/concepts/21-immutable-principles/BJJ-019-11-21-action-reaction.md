@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Create action to bait reaction, watch the opponent's head velocity and add to it.  Bait & Trap.  Beware of counter-productivity."
 tags: []
 related:
-  - "BJJ-036-bait-trap"        # action-reaction IS bait-trap
-  - "BJJ-238-initiate-movement" # initiate to provoke reaction
+  - "BJJ-036-bait-trap"
+  - "BJJ-238-initiate-movement"
 ---
 
 Create action to bait reaction, watch the opponent's head velocity and add to it.  Bait & Trap.  Beware of counter-productivity.

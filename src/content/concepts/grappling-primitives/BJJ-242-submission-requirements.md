@@ -8,12 +8,12 @@ color: "#848a94"
 short_description: "Each Submission has a checklist of what it requires to be effective.\n\nIsolating an arm\nPressing on the carotids\nEstablishing a lever\netc.\n\nit's zero-sum game.\n\nYou need to be aware of the requirements so you can both apply them for your own submissions, and deny them to escape their.\n\nmental checklist\nvisual cues\nperceptual cues\n\nyou need to know if it's \"ON\" or not.\ndo I have a \"bite\" on this sub or not?\n\nPilot and checklist for flying.\nGrappler and mental checklist for subs. requirements"
 tags: []
 related:
-  - "BJJ-085-joint-above"           # controlling the joint above is a submission requirement
-  - "BJJ-262-secondary-limb-control" # neutralizing the secondary limb is a submission requirement
-  - "BJJ-082-far-end-lever"         # proper lever placement is a submission requirement
-  - "BJJ-207-shear"                 # shear forces are part of virtually every submission mechanic
-  - BJJ-008-legal-strangulation # back-link from Legal Strangulation
-  - BJJ-272-end-game-training # back-link from End-Game Training
+  - "BJJ-085-joint-above"
+  - "BJJ-262-secondary-limb-control"
+  - "BJJ-082-far-end-lever"
+  - "BJJ-207-shear"
+  - "BJJ-008-legal-strangulation"
+  - "BJJ-272-end-game-training"
 ---
 
 Each Submission has a checklist of what it requires to be effective.

@@ -8,7 +8,7 @@ color: "#b26b2a"
 short_description: "during drills or sparring, it's a waste of time for your partner if there's just floppiness."
 tags: []
 related:
-  - "BJJ-266-building-resilience" # zero resistance prevents resilience building
+  - "BJJ-266-building-resilience"
 ---
 
 during drills or sparring, it's a waste of time for your partner if there's just floppiness.

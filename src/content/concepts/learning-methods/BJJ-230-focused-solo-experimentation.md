@@ -8,8 +8,8 @@ color: "#888888"
 short_description: "This month I'm doing Guillotines, or Kimura, or RDLR because I watched a cool Jason Rau series, or Buggy Choke because it's the fun fad of 2022, etc."
 tags: []
 related:
-  - "BJJ-231-deep-dive"         # solo experimentation feeds into deep dives
-  - "BJJ-265-explore-vs-exploit" # solo experimentation is pure exploration
+  - "BJJ-231-deep-dive"
+  - "BJJ-265-explore-vs-exploit"
 ---
 
 This month I'm doing Guillotines, or Kimura, or RDLR because I watched a cool Jason Rau series, or Buggy Choke because it's the fun fad of 2022, etc.

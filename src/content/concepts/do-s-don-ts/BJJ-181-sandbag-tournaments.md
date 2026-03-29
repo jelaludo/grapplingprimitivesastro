@@ -8,7 +8,7 @@ color: "#b26b2a"
 short_description: "why... go up to blue belt or purple belt already.\n\n\"winning without peril, one triumphs without glory\""
 tags: []
 related:
-  - "BJJ-120-unmoved-in-mind"  # competition integrity
+  - "BJJ-120-unmoved-in-mind"
 ---
 
 why... go up to blue belt or purple belt already.

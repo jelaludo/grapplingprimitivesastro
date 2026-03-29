@@ -8,8 +8,8 @@ color: "#1b4b01"
 short_description: "Something to prove.  Great and always ready to show it off, accumulating trophies, be it literal cheap ones from the IBJJF, or figurative ones like tapping the slightly out-of-shape hobbyist browns and blacks."
 tags: []
 related:
-  - "BJJ-265-explore-vs-exploit" # heavy exploit mode
-  - "BJJ-120-unmoved-in-mind"  # competition mindset
+  - "BJJ-265-explore-vs-exploit"
+  - "BJJ-120-unmoved-in-mind"
 ---
 
 Something to prove.  Great and always ready to show it off, accumulating trophies, be it literal cheap ones from the IBJJF, or figurative ones like tapping the slightly out-of-shape hobbyist browns and blacks.

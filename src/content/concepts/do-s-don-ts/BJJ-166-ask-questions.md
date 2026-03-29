@@ -8,8 +8,8 @@ color: "#b26b2a"
 short_description: "when confused, just ask questions"
 tags: []
 related:
-  - "BJJ-088-sponge"           # sponge mindset includes asking
-  - "BJJ-271-shu-ha-ri"        # questions are Shu behavior
+  - "BJJ-088-sponge"
+  - "BJJ-271-shu-ha-ri"
 ---
 
 when confused, just ask questions

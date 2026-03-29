@@ -8,12 +8,12 @@ color: "#848a94"
 short_description: "Similar to Pivot.\n\nAny rotation of the body around a fixed point (foot, knee, hip, hand, elbow) to escape of reorient your angle of attack without giving up base.\n\nThe pivot changes the relationship between your CoG and the opponent, creating new problems.\n\nTurn, Rotation, Axis Shift, Reorientation, Angular Adjustment.\n\nThe key is to distribute weight so the axis is stable during the rotation.\n\nArm Drag, Rolling Back Take, Back-Step.\n\nit's everywhere."
 tags: []
 related:
-  - "BJJ-261-rotational-control" # controlling rotation requires knowing the axis
-  - "BJJ-030-6dof"               # axes are the rotational dimensions within 6DoF
-  - "BJJ-268-diagonal-control"   # diagonal control works across two axes simultaneously
-  - BJJ-063-22-32-pivot # back-link from 22/32 Pivot
-  - BJJ-206-torque # back-link from Torque
-  - BJJ-209-centripetal-centrifugal # back-link from Centripetal/Centrifugal
+  - "BJJ-261-rotational-control"
+  - "BJJ-030-6dof"
+  - "BJJ-268-diagonal-control"
+  - "BJJ-063-22-32-pivot"
+  - "BJJ-206-torque"
+  - "BJJ-209-centripetal-centrifugal"
 ---
 
 Similar to Pivot.

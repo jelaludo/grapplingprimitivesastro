@@ -8,8 +8,8 @@ color: "#1b4b01"
 short_description: "Uncontrolled danger, the worst kind.\n\nExplodes, flails, muscles through everything, refuses to tap... *sigh*"
 tags: []
 related:
-  - "BJJ-263-intensity-drift"  # spazzing is uncontrolled intensity
-  - "BJJ-080-proprioception"    # poor proprioception
+  - "BJJ-263-intensity-drift"
+  - "BJJ-080-proprioception"
 ---
 
 Uncontrolled danger, the worst kind.

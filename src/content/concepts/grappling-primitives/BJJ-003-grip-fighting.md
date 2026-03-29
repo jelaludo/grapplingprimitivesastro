@@ -8,15 +8,15 @@ color: "#848a94"
 short_description: "Controlling and breaking grips to dominate exchanges."
 tags: []
 related:
-  - "BJJ-102-distance-management"    # grips define and enforce distance
-  - "BJJ-201-active-denial"          # grip fighting is active denial of their handles
-  - "BJJ-262-secondary-limb-control" # while one hand grips, the other hand decides the exchange
-  - "BJJ-078-cloth-tension"          # in gi, grips create cloth tension as a control channel
-  - BJJ-132-thenar-muscles # back-link from Thenar Muscles
-  - BJJ-241-hands-connection # back-link from Hands Connection
-  - BJJ-204-friction # back-link from Friction
-  - BJJ-089-negate-grips # back-link from Negate Grips
-  - BJJ-185-grip-decay # back-link from Grip θ Decay
+  - "BJJ-102-distance-management"
+  - "BJJ-201-active-denial"
+  - "BJJ-262-secondary-limb-control"
+  - "BJJ-078-cloth-tension"
+  - "BJJ-132-thenar-muscles"
+  - "BJJ-241-hands-connection"
+  - "BJJ-204-friction"
+  - "BJJ-089-negate-grips"
+  - "BJJ-185-grip-decay"
 ---
 
 Controlling and breaking grips to dominate exchanges.

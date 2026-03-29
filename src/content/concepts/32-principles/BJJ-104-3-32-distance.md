@@ -8,7 +8,7 @@ color: "#FFD700"
 short_description: "see distance management"
 tags: []
 related:
-  - "BJJ-102-distance-management" # same concept in primitives
+  - "BJJ-102-distance-management"
 ---
 
 see distance management

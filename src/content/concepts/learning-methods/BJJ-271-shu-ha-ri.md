@@ -8,19 +8,19 @@ color: "#9370DB"
 short_description: "Three stages of mastery: Shu (follow the rules), Ha (bend the rules), Ri (transcend the rules). A framework for understanding where you are in your learning journey."
 tags: []
 related:
-  - "BJJ-265-explore-vs-exploit"  # maps to the explore/exploit balance across stages
-  - "BJJ-088-sponge"              # Shu = sponge phase
-  - "BJJ-248-local-maximum"       # Ha = breaking through the local max
-  - BJJ-022-14-21-basics-shiny # back-link from #14/21 Basics > Shiny
-  - BJJ-073-32-32-grandmaster # back-link from 32/32 Grandmaster 
-  - BJJ-115-uncomfortable-deference # back-link from Uncomfortable Deference
-  - BJJ-166-ask-questions # back-link from Ask Questions
-  - BJJ-223-sergeant-drills # back-link from Sergeant Drills
-  - BJJ-233-copy-famout-athletes # back-link from Copy famout athletes
-  - BJJ-131-dominant-champion # back-link from Dominant Champion
-  - BJJ-121-private-lessons-w-champions # back-link from Private Lessons w/Champions
-  - BJJ-096-accept-the-firehose # back-link from Accept the Firehose
-  - BJJ-153-self-mastery # back-link from Self-Mastery
+  - "BJJ-265-explore-vs-exploit"
+  - "BJJ-088-sponge"
+  - "BJJ-248-local-maximum"
+  - "BJJ-022-14-21-basics-shiny"
+  - "BJJ-073-32-32-grandmaster"
+  - "BJJ-115-uncomfortable-deference"
+  - "BJJ-166-ask-questions"
+  - "BJJ-223-sergeant-drills"
+  - "BJJ-233-copy-famout-athletes"
+  - "BJJ-131-dominant-champion"
+  - "BJJ-121-private-lessons-w-champions"
+  - "BJJ-096-accept-the-firehose"
+  - "BJJ-153-self-mastery"
 ---
 
 Shu-Ha-Ri comes from Japanese martial arts tradition and maps perfectly onto how grappling skill develops.

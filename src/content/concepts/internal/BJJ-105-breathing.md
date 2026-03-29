@@ -8,8 +8,8 @@ color: "#4F8EF7"
 short_description: "Physiological control, panic, oxygenation and exhaustion, out of breath as a key indicator for the opponent, faking fatigue or calmness... so many elements to breath.\n\nManage panic during escapes\nOptimize frames under pressure\nConserve energy\nTime explosing movements\nMask fatigue\nCreate deception"
 tags: []
 related:
-  - "BJJ-144-diaphragm-breathing" # same concept, anatomy angle
-  - "BJJ-267-tension-economy"   # breathing manages tension
+  - "BJJ-144-diaphragm-breathing"
+  - "BJJ-267-tension-economy"
 ---
 
 Physiological control, panic, oxygenation and exhaustion, out of breath as a key indicator for the opponent, faking fatigue or calmness... so many elements to breath.

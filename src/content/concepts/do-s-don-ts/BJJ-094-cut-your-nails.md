@@ -8,9 +8,9 @@ color: "#b26b2a"
 short_description: "Scratchy scratch training partner no good.\ndangerous, unhygienic, may lead to divorces.\n\nYeah, toenails too."
 tags: []
 related:
-  - "BJJ-095-clean-feet"       # basic hygiene cluster
-  - BJJ-164-wash-your-gear # back-link from Wash your gear
-  - BJJ-171-brush-your-teeth # back-link from Brush your teeth
+  - "BJJ-095-clean-feet"
+  - "BJJ-164-wash-your-gear"
+  - "BJJ-171-brush-your-teeth"
 ---
 
 Scratchy scratch training partner no good.

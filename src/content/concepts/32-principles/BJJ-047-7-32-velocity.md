@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Control the speed, decelerate with weight and pressure or accelerate with disengagement, be on  your terms.  Keenan would call it Tempo."
 tags: []
 related:
-  - "BJJ-211-acceleration"       # velocity change = acceleration
-  - "BJJ-049-8-32-clock-timing"  # speed without timing is wasted
+  - "BJJ-211-acceleration"
+  - "BJJ-049-8-32-clock-timing"
 ---
 
 Control the speed, decelerate with weight and pressure or accelerate with disengagement, be on  your terms.  Keenan would call it Tempo.

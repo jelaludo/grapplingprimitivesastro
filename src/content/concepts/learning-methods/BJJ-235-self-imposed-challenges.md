@@ -8,8 +8,8 @@ color: "#888888"
 short_description: "e.g. a coach had a phase during which he rolled without grabbing anything, you can force it by holding a tennis ball.\n\nNever submit a white belt twice with the same submission.\n\nAlways start in a bad position.\n\nUse only your non-dominant side.\n\nPass Guard without the hands\n\nEyes closed (makes some partners uncomfortable, discuss before hand)\n\nGauntlet, fresh opponents every round."
 tags: []
 related:
-  - "BJJ-266-building-resilience" # challenges build resilience by forcing adaptation
-  - "BJJ-265-explore-vs-exploit"  # challenges force exploration of unfamiliar territory
+  - "BJJ-266-building-resilience"
+  - "BJJ-265-explore-vs-exploit"
 ---
 
 e.g. a coach had a phase during which he rolled without grabbing anything, you can force it by holding a tennis ball.

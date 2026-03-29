@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Make incremental, irreversible gains in position or control, never giving back ground once taken.  The famous Finger-Crawl from mount is one example, slowly gaining ground on a rear strangle is another."
 tags: []
 related:
-  - "BJJ-015-7-21-improve-position"  # ratchet = never give ground back
-  - "BJJ-200-overlapping-pressure"   # overlapping pressure ratchets position forward
+  - "BJJ-015-7-21-improve-position"
+  - "BJJ-200-overlapping-pressure"
 ---
 
 Make incremental, irreversible gains in position or control, never giving back ground once taken.  The famous Finger-Crawl from mount is one example, slowly gaining ground on a rear strangle is another.

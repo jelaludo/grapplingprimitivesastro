@@ -8,8 +8,8 @@ color: "#8A2BE2"
 short_description: "This comes from wrestling and matching level changes, yet applicable in BJJ when passing an opponent on the floor too.  If you don't, you leave your legs accessible for all sorts of wrestling up."
 tags: []
 related:
-  - "BJJ-203-base"              # head height relates to base stability
-  - "BJJ-102-distance-management" # level changes are distance management in the vertical axis
+  - "BJJ-203-base"
+  - "BJJ-102-distance-management"
 ---
 
 This comes from wrestling and matching level changes, yet applicable in BJJ when passing an opponent on the floor too.  If you don't, you leave your legs accessible for all sorts of wrestling up.

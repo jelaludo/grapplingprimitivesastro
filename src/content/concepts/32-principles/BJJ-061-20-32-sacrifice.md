@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Sacrifice something real or perceived, willingly give up position, grip, or apparent advantage to bait your opponent and gain a greater benefit.  Bait & Trap variations."
 tags: []
 related:
-  - "BJJ-058-17-32-false-surrender" # sacrifice pairs with false surrender
-  - "BJJ-036-bait-trap"             # sacrifice as bait
+  - "BJJ-058-17-32-false-surrender"
+  - "BJJ-036-bait-trap"
 ---
 
 Sacrifice something real or perceived, willingly give up position, grip, or apparent advantage to bait your opponent and gain a greater benefit.  Bait & Trap variations.

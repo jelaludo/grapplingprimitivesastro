@@ -8,7 +8,7 @@ color: "#4f7e16"
 short_description: "Great IG follow.  Concise and valuable tips."
 tags: []
 related:
-  - "BJJ-101-invisible-jiu-jitsu" # known for invisible JJ concepts
+  - "BJJ-101-invisible-jiu-jitsu"
 ---
 
 Great IG follow.  Concise and valuable tips.

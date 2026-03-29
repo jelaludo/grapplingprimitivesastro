@@ -8,7 +8,7 @@ color: "#6c9aea"
 short_description: "Maybe it's in the family, or your parents really think you should... Like the Williams Sisters from Tennis.  Not the most stable of motivations, but it can happen."
 tags: []
 related:
-  - "BJJ-025-17-21-energy-management" # external pressure drains energy
+  - "BJJ-025-17-21-energy-management"
 ---
 
 Maybe it's in the family, or your parents really think you should... Like the Williams Sisters from Tennis.  Not the most stable of motivations, but it can happen.

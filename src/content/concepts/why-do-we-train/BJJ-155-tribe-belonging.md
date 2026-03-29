@@ -8,9 +8,9 @@ color: "#6c9aea"
 short_description: "The need for belonging is 3rd in Maslow's pyramid (well, 4th if you consider Wifi access before physiological needs).\n\nOnce you join a grappling tribe, you know that wherever you travel you'll meet fellow members of that crazy tribe.  I'm sure it's true of Golfers and Bridge Players too.  For many, training fills a social gap: friendship, camaraderie, mutual struggle. You first show up for the techniques, then stay for the people."
 tags: []
 related:
-  - "BJJ-158-shared-practice-bonding" # tribe and bonding overlap
-  - BJJ-127-r-bjj # back-link from r/bjj
-  - BJJ-156-recognition # back-link from Recognition
+  - "BJJ-158-shared-practice-bonding"
+  - "BJJ-127-r-bjj"
+  - "BJJ-156-recognition"
 ---
 
 The need for belonging is 3rd in Maslow's pyramid (well, 4th if you consider Wifi access before physiological needs).

@@ -8,7 +8,7 @@ color: "#FF6B35"
 short_description: "\"A black belt only covers two inches of your ass. You have to cover the rest.\"  Royce Gracie"
 tags: []
 related:
-  - "BJJ-082-far-end-lever"    # small adjustments, big effects
+  - "BJJ-082-far-end-lever"
 ---
 
 "A black belt only covers two inches of your ass. You have to cover the rest."  Royce Gracie

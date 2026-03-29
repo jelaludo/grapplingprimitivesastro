@@ -8,7 +8,7 @@ color: "#6b6d70"
 short_description: "it's hard when there are loads of students, and that one reason why I like Japan where it's common for blue-belts to start embroidering their names on their belts.\n\nHumans appreciate when they're acknowledged.\nStudents and athletes are hopefully a bit more than just paying customers."
 tags: []
 related:
-  - "BJJ-173-learn-their-names" # same principle, student side
+  - "BJJ-173-learn-their-names"
 ---
 
 it's hard when there are loads of students, and that one reason why I like Japan where it's common for blue-belts to start embroidering their names on their belts.

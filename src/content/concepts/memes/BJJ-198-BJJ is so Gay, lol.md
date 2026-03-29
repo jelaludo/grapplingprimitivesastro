@@ -34,7 +34,7 @@ short_description: "edgy teenager humor that persists.
   is it implied homophobia if it's such a widespread and embraced line of jokes among the practitioners? ¯_(ツ)_/¯"
 tags: []
 related:
-  - "BJJ-236-stay-connected"   # humor about the close contact nature
+  - "BJJ-236-stay-connected"
 ---
 
 edgy teenager humor that persists. BJ-J. Blow Job Job?. hahaha "I enjoy rolling around with sweaty man" "it's not gay if you don't make eye contact while you choke them" Rainbows everywhere. Make Jiu Jitsu Gay Again. Keep Jiu Jitsu Gay. "Here's some Father's Milk from North-South" can be funny in moderation cringeworthy when incessant. "Never forget what you are. The rest of the world will not. Wear it like armor, and it can never be used to hurt you." Tyrion Lannister is it implied homophobia if it's such a widespread and embraced line of jokes among the practitioners? ¯_(ツ)_/¯

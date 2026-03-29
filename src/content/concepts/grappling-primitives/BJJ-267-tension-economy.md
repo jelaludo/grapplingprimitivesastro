@@ -8,32 +8,32 @@ color: "#848a94"
 short_description: "Using only the minimum muscular tension needed for the task. Parasitic tension wastes energy and reduces sensitivity; efficient tension concentrates force through the core."
 tags: []
 related:
-  - "BJJ-260-build-yourself"   # tension economy is the engine of "build yourself"
-  - "BJJ-031-form-tension"     # form tension is what you keep; parasitic tension is what you eliminate
-  - "BJJ-080-proprioception"   # sensing your own tension state
-  - "BJJ-270-kinetic-chain"    # efficient chain = efficient tension
-  - BJJ-009-patience-5-7 # back-link from Patience (5/7)
-  - BJJ-012-4-21-zen # back-link from #4/21 Zen
-  - BJJ-017-9-21-overreaching # back-link from #9/21 Overreaching
-  - BJJ-025-17-21-energy-management # back-link from #17/21 Energy Management
-  - BJJ-027-19-21-max-pressure # back-link from #19/21 Max Pressure
-  - BJJ-055-14-32-tension-apply-release # back-link from 14/32 Tension (Apply & Release)
-  - BJJ-144-diaphragm-breathing # back-link from Diaphragm Breathing
-  - BJJ-120-unmoved-in-mind # back-link from Unmoved in Mind
-  - BJJ-038-golden-mean # back-link from Golden Mean
-  - BJJ-076-fascia-activation # back-link from Fascia Activation
-  - BJJ-086-back-heeling # back-link from Back-Heeling
-  - BJJ-200-overlapping-pressure # back-link from Overlapping Pressure
-  - BJJ-236-stay-connected # back-link from Stay Connected
-  - BJJ-241-hands-connection # back-link from Hands Connection
-  - BJJ-101-invisible-jiu-jitsu # back-link from Invisible Jiu Jitsu
-  - BJJ-105-breathing # back-link from Breathing
-  - BJJ-118-chill-veteran # back-link from Chill Veteran
-  - BJJ-129-suffocating-comfort # back-link from Suffocating Comfort
-  - BJJ-185-grip-decay # back-link from Grip θ Decay
-  - BJJ-214-proximity-stability # back-link from Proximity = Stability
-  - BJJ-263-intensity-drift # back-link from Intensity Drift
-  - BJJ-217-active-meditation # back-link from Active Meditation
+  - "BJJ-260-build-yourself"
+  - "BJJ-031-form-tension"
+  - "BJJ-080-proprioception"
+  - "BJJ-270-kinetic-chain"
+  - "BJJ-009-patience-5-7"
+  - "BJJ-012-4-21-zen"
+  - "BJJ-017-9-21-overreaching"
+  - "BJJ-025-17-21-energy-management"
+  - "BJJ-027-19-21-max-pressure"
+  - "BJJ-055-14-32-tension-apply-release"
+  - "BJJ-144-diaphragm-breathing"
+  - "BJJ-120-unmoved-in-mind"
+  - "BJJ-038-golden-mean"
+  - "BJJ-076-fascia-activation"
+  - "BJJ-086-back-heeling"
+  - "BJJ-200-overlapping-pressure"
+  - "BJJ-236-stay-connected"
+  - "BJJ-241-hands-connection"
+  - "BJJ-101-invisible-jiu-jitsu"
+  - "BJJ-105-breathing"
+  - "BJJ-118-chill-veteran"
+  - "BJJ-129-suffocating-comfort"
+  - "BJJ-185-grip-decay"
+  - "BJJ-214-proximity-stability"
+  - "BJJ-263-intensity-drift"
+  - "BJJ-217-active-meditation"
 ---
 
 An experienced grappler feels heavy, connected, hard to move. A beginner doing the same technique feels stiff and easily movable. Part of the difference is 'tension economy', e.g. how the tension is distributed, how many unnecessary muscles is the beginner firing?

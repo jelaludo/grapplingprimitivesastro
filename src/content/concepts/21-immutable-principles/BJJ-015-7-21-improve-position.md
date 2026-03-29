@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Constantly improve your position. Ideally you never lose ground and go back, every advantage builds up and snowball into total control."
 tags: []
 related:
-  - "BJJ-264-positional-spectrum" # always move up the spectrum
-  - "BJJ-067-26-32-ratchet"      # never give ground back
+  - "BJJ-264-positional-spectrum"
+  - "BJJ-067-26-32-ratchet"
 ---
 
 Constantly improve your position. Ideally you never lose ground and go back, every advantage builds up and snowball into total control.

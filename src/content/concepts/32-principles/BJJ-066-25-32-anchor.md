@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Secure a stable point of connection to prevent your opponent’s movement and establish control.  Or hook yourself to the opponent so he can't move without having to bear your weight."
 tags: []
 related:
-  - "BJJ-236-stay-connected"       # anchor is a stable connection point
-  - "BJJ-200-overlapping-pressure" # anchor one point while moving to the next
+  - "BJJ-236-stay-connected"
+  - "BJJ-200-overlapping-pressure"
 ---
 
 Secure a stable point of connection to prevent your opponent’s movement and establish control.  Or hook yourself to the opponent so he can't move without having to bear your weight.

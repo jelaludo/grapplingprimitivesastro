@@ -8,12 +8,12 @@ color: "#8A2BE2"
 short_description: "OODA Loop: Observe, Orient, Decide, Act.\n\nIt’s a decision making model from fighter pilot John Boyd. You constantly cycle through those steps faster than your opponent to stay ahead.\n\nIn grappling, it’s basically what we're trying to do every roll:\n\nObserve: Where are their hands? Weight? Hips?\n\nOrient: Based on their game, intent, and your game, what are your options?\n\nDecide: Pick the next sequence.\n\nAct: Go for it.\n\nThe trick is: if you loop faster than your partner, you’re two steps ahead while they’re still figuring things out.\n\nFast OODA = dominate the pace. \nSlow OODA = get smeshed.\n\n\"win battles they don't know they're fighting\""
 tags: []
 related:
-  - "BJJ-033-real-time-learning"    # OODA is the cycle that drives real-time learning
-  - "BJJ-035-overload-their-system" # cycling faster than your opponent overloads their OODA
-  - "BJJ-004-anticipation"          # the "orient" phase is anticipation
-  - BJJ-011-2-21-chess-analogy # back-link from #2/21 Chess Analogy
-  - BJJ-042-last-battle # back-link from Last Battle
-  - BJJ-040-heuristics # back-link from Heuristics
+  - "BJJ-033-real-time-learning"
+  - "BJJ-035-overload-their-system"
+  - "BJJ-004-anticipation"
+  - "BJJ-011-2-21-chess-analogy"
+  - "BJJ-042-last-battle"
+  - "BJJ-040-heuristics"
 ---
 
 OODA Loop: Observe, Orient, Decide, Act.

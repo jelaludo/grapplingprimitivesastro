@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Key concept in all martial arts and more.  You can control the inside space, or push/drag a limb across the centerline.  "
 tags: []
 related:
-  - "BJJ-268-diagonal-control"   # centerline and diagonal are complementary control axes
-  - "BJJ-261-rotational-control" # centerline = the spinal axis
+  - "BJJ-268-diagonal-control"
+  - "BJJ-261-rotational-control"
 ---
 
 Key concept in all martial arts and more.  You can control the inside space, or push/drag a limb across the centerline.  

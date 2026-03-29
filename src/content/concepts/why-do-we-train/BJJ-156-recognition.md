@@ -8,7 +8,7 @@ color: "#6c9aea"
 short_description: "Achievements, recognition from your peers. \n\nBelts, medals, praise, social status perhaps.  These matter to some. Not always in a shallow way either, but as a way to mark progress. Grappling provides structure, milestones, and the validation of a hard-earned nod from those you respect."
 tags: []
 related:
-  - "BJJ-155-tribe-belonging"  # recognition within the tribe
+  - "BJJ-155-tribe-belonging"
 ---
 
 Achievements, recognition from your peers. 

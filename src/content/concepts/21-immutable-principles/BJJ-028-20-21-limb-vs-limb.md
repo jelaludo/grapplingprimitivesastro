@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "2-on-1, 3-on-1, be uneven in your favor. Overwhelm."
 tags: []
 related:
-  - "BJJ-065-24-32-overload"        # 2-on-1 is overloading
-  - "BJJ-262-secondary-limb-control" # controlling the secondary limb creates the numbers advantage
+  - "BJJ-065-24-32-overload"
+  - "BJJ-262-secondary-limb-control"
 ---
 
 2-on-1, 3-on-1, be uneven in your favor. Overwhelm.

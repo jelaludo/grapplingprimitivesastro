@@ -8,8 +8,8 @@ color: "#b26b2a"
 short_description: "Punches, kicks, elbows, knees, headbutts.  Grappling training is neither MMA nor Lethwei nor a vale tudo street fight.\n\nIt's important to set-aside some time for at least the awareness that someone might use these tools, and therefoe have a sense of control to prevent them.  But it's not something we can train full on without getting hurt."
 tags: []
 related:
-  - "BJJ-174-eye-gouge"       # dangerous behavior cluster
-  - BJJ-176-bending-digits # back-link from Bending Digits
+  - "BJJ-174-eye-gouge"
+  - "BJJ-176-bending-digits"
 ---
 
 Punches, kicks, elbows, knees, headbutts.  Grappling training is neither MMA nor Lethwei nor a vale tudo street fight.

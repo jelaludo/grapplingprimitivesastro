@@ -8,7 +8,7 @@ color: "#b26b2a"
 short_description: Dangers of uncontrolled weight in throws and jumps
 tags: []
 related:
-  - "BJJ-263-intensity-drift"  # uncontrolled weight is a form of intensity drift
+  - "BJJ-263-intensity-drift"
 ---
 
 Uncontrolled Weight

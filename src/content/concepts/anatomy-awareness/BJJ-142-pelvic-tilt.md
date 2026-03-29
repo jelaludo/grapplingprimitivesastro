@@ -8,11 +8,11 @@ color: "#848a94"
 short_description: "The sacrum's orientation can be 1) tucking (posterior tilt) or 2) arching (anterior tilt).\n\nThis influences pelvic posture and spinal mechanics. A neutral or slightly posterior tilt stabilizes the core, reinforces base in guard, and supports safe spinal stacking. Awareness of sacral tilt is foundational for resisting sweeps or generating hip motion.\n\nThere's a \"trick\" in close guard whereby engaging the pelvis can mostly negate attempts to break you forward with strong harmstring leg pulls."
 tags: []
 related:
-  - "BJJ-261-rotational-control" # pelvic tilt affects hip line position
-  - "BJJ-138-glute-dominance"    # pelvic tilt is controlled by glute/hip flexor balance
-  - "BJJ-203-base"               # pelvic tilt affects base stability
-  - "BJJ-140-ribcage-stacking"   # ribcage stacking and pelvic tilt are connected in the spinal chain
-  - BJJ-143-psoas # back-link from Psoas
+  - "BJJ-261-rotational-control"
+  - "BJJ-138-glute-dominance"
+  - "BJJ-203-base"
+  - "BJJ-140-ribcage-stacking"
+  - "BJJ-143-psoas"
 ---
 
 The sacrum's orientation can be 1) tucking (posterior tilt) or 2) arching (anterior tilt).

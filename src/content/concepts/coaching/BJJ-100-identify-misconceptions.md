@@ -8,7 +8,7 @@ color: "#6b6d70"
 short_description: "If a student is not getting something, reflect on what other building block they might be missing that they're not getting this."
 tags: []
 related:
-  - "BJJ-033-real-time-learning" # identifying misconceptions in real time
+  - "BJJ-033-real-time-learning"
 ---
 
 If a student is not getting something, reflect on what other building block they might be missing that they're not getting this.

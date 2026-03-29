@@ -8,9 +8,9 @@ color: "#FFD700"
 short_description: "#2/21 by Paulo Guillobel.\n\nThe Chess Analogy is certainly not *Uniquely* appropriate to grappling.  Football, soccer, or any sports involving positioning and decisions will have some chess analogies.   Pieces have values, controlling the center is advantageous, be 3 moves ahead, etc."
 tags: []
 related:
-  - "BJJ-039-puzzle-solving" # chess = sequential problem solving
-  - "BJJ-194-ooda-loop"     # chess = sequential decision cycles
-  - BJJ-237-kinetic-chess # back-link from Kinetic Chess
+  - "BJJ-039-puzzle-solving"
+  - "BJJ-194-ooda-loop"
+  - "BJJ-237-kinetic-chess"
 ---
 
 #2/21 by Paulo Guillobel.

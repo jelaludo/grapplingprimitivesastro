@@ -8,8 +8,8 @@ color: "#888888"
 short_description: "10x armbar / triangle combo from closed guard\n10x hip bump to kimura\n10x failed triangle to y-grip in armpit recovery\n\nthese have a place in the early stages to seed the idea of chaining moves"
 tags: []
 related:
-  - "BJJ-223-sergeant-drills"    # drill variant
-  - "BJJ-272-end-game-training"  # prescribed sequences can work end-game chains
+  - "BJJ-223-sergeant-drills"
+  - "BJJ-272-end-game-training"
 ---
 
 10x armbar / triangle combo from closed guard

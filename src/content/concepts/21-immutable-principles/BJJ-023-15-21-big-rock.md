@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Don't embrace the big rock (hugging someone on top of you), push it sideways, make your way under, etc."
 tags: []
 related:
-  - "BJJ-210-redirection" # don't oppose, redirect
-  - "BJJ-084-wedges"      # wedge sideways, don't push straight
+  - "BJJ-210-redirection"
+  - "BJJ-084-wedges"
 ---
 
 Don't embrace the big rock (hugging someone on top of you), push it sideways, make your way under, etc.

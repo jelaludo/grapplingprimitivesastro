@@ -8,8 +8,8 @@ color: "#848a94"
 short_description: "The bony tip of the elbow serves as a powerful wedge when inserted into tight spaces, such as under an armpit, against a hip, or into a neck fold. Its sharp structure allows for high pressure with minimal effort, creating space or immobilizing a limb when used in framing.\n\nOne direct use of the elbow point is to break an attempt to prevent the Kimura by holding one's belt."
 tags: []
 related:
-  - "BJJ-084-wedges"       # elbow point is a bony wedge
-  - "BJJ-082-far-end-lever" # elbow as a lever handle
+  - "BJJ-084-wedges"
+  - "BJJ-082-far-end-lever"
 ---
 
 The bony tip of the elbow serves as a powerful wedge when inserted into tight spaces, such as under an armpit, against a hip, or into a neck fold. Its sharp structure allows for high pressure with minimal effort, creating space or immobilizing a limb when used in framing.

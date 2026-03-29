@@ -8,7 +8,7 @@ color: "#958c09"
 short_description: "Couple of enthusiasts watching instagram and teaching themselves while smoking weed"
 tags: []
 related:
-  - "BJJ-189-professional-hobbyist-gym" # casual end of the spectrum
+  - "BJJ-189-professional-hobbyist-gym"
 ---
 
 Couple of enthusiasts watching instagram and teaching themselves while smoking weed

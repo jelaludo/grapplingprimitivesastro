@@ -8,7 +8,7 @@ color: "#6c9aea"
 short_description: "we have to do *something*! to stay active.  might as well also have all those other benefits."
 tags: []
 related:
-  - "BJJ-025-17-21-energy-management" # fitness is the energy management foundation
+  - "BJJ-025-17-21-energy-management"
 ---
 
 we have to do *something*! to stay active.  might as well also have all those other benefits.

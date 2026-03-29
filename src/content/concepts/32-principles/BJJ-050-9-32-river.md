@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "another way to say \"flow like water\". 流 The kanji for flow has a river element.  Or perhaps \"No man ever has the same roll twice\" Heraclitus 550BC.   Because it's not the same river and we're not the same athletes.  Flow around obstacles, fill that teacup.  Oh and water can crush too."
 tags: []
 related:
-  - "BJJ-013-5-21-flow-like-water" # same concept
-  - "BJJ-210-redirection"          # flow around obstacles = redirect
+  - "BJJ-013-5-21-flow-like-water"
+  - "BJJ-210-redirection"
 ---
 
 another way to say "flow like water". 流 The kanji for flow has a river element.  Or perhaps "No man ever has the same roll twice" Heraclitus 550BC.   Because it's not the same river and we're not the same athletes.  Flow around obstacles, fill that teacup.  Oh and water can crush too.

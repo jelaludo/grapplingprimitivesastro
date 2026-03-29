@@ -8,8 +8,8 @@ color: "#FF8C00"
 short_description: "Another 3 step model.\nChris Haueter, Rickson Gracie.\n\nhighlights the importance of the clinch, especially as a means to control punches and kicks and avoid eating strikes while taking it to the ground."
 tags: []
 related:
-  - "BJJ-102-distance-management"  # three ranges of distance
-  - "BJJ-110-kuzushi-tsukuri-kake" # each range has its own kuzushi-tsukuri-kake cycle
+  - "BJJ-102-distance-management"
+  - "BJJ-110-kuzushi-tsukuri-kake"
 ---
 
 Another 3 step model.

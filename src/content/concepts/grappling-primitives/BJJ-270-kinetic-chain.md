@@ -8,18 +8,18 @@ color: "#848a94"
 short_description: The kinetic chain is a biomechanical system where motion starts proximally (e.g., legs and core) and flows distally (e.g., arms or kicking foot) in a sequential pattern
 tags: []
 related:
-  - "BJJ-260-build-yourself"    # a built body has a connected kinetic chain
-  - "BJJ-031-form-tension"      # form tension travels along the chain
-  - "BJJ-076-fascia-activation" # fascia is the chain's connective tissue
-  - "BJJ-267-tension-economy"   # an efficient chain wastes no tension
-  - BJJ-138-glute-dominance # back-link from Glute Dominance
-  - BJJ-139-lats # back-link from Lats
-  - BJJ-140-ribcage-stacking # back-link from Ribcage Stacking
-  - BJJ-143-psoas # back-link from Psoas
-  - BJJ-196-penetrative-step # back-link from Penetrative Step
-  - BJJ-241-hands-connection # back-link from Hands Connection
-  - BJJ-203-base # back-link from Base
-  - BJJ-208-axial-load # back-link from Axial Load
+  - "BJJ-260-build-yourself"
+  - "BJJ-031-form-tension"
+  - "BJJ-076-fascia-activation"
+  - "BJJ-267-tension-economy"
+  - "BJJ-138-glute-dominance"
+  - "BJJ-139-lats"
+  - "BJJ-140-ribcage-stacking"
+  - "BJJ-143-psoas"
+  - "BJJ-196-penetrative-step"
+  - "BJJ-241-hands-connection"
+  - "BJJ-203-base"
+  - "BJJ-208-axial-load"
 ---
 
 '*Efficient kinetic chains boost sports output by optimizing energy transfer, such as in baseball pitching where lower-body force contributes up to 50% of throw power. Skilled athletes show greater trunk rotation and core stability, leading to higher ball velocity in soccer kicks or tennis serves. Disruptions reduce velocity and force at the endpoint*.'

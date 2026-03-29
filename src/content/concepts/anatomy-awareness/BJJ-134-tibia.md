@@ -8,8 +8,8 @@ color: "#848a94"
 short_description: "The Shin-Bone.\n\nFor knee-slices, knee-on-belly, leg-ride, shin-on-shin.\n\nThe ridge of the shin acts as a slicing or grinding tool When driven across the opponent’s body, it is sharp and creates discomfort and disrupts alignment.\n\nAlso key to angle it properly for calf-slicers."
 tags: []
 related:
-  - "BJJ-084-wedges"           # shin as a wedge in knee slice, knee-on-belly
-  - "BJJ-128-passing-definition" # tibia drives through in many passes
+  - "BJJ-084-wedges"
+  - "BJJ-128-passing-definition"
 ---
 
 The Shin-Bone.

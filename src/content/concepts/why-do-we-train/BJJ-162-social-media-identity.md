@@ -8,7 +8,7 @@ color: "#6c9aea"
 short_description: "Making content as a public persona, whether it’s as a coach or athlete, or lifestyle brand, or thirst trap.  It's meant to be consumed by others."
 tags: []
 related:
-  - "BJJ-119-white-blue-belt-ig-influencer" # social media player type
+  - "BJJ-119-white-blue-belt-ig-influencer"
 ---
 
 Making content as a public persona, whether it’s as a coach or athlete, or lifestyle brand, or thirst trap.  It's meant to be consumed by others.

@@ -8,10 +8,10 @@ color: "#8A2BE2"
 short_description: "Create positions where all choices are undesirable for the opponent.\n\n(etymology, greek, \"double proposition\")\n\nMount : Cross-collar Choke <> Armbar\nBack : RNC / Armbar / Rear Triangle, etc.\nGuard : Triangle/Armbar/Omoplata\nSide : Mouse trap (Americana/Straight/Kimura)\n\nCollar Tie + Wrist Control : disengage >> shoot, fight >> snapdown\n\nPressure : Stay and Suffer, or Escape and Expose\n\nUchimata > ankle pick/snap down/ko uchi\n\n\nChaining Attacks is the mechanism\nDilemma is the effect, they know you can chain something.\n\nMaybe chaining is the engine that produces dilemmas.\n\nyou can chain and try to overwhelm their ability to solve everything, or chain in a way that brings a Check Mate situation.\n\nChaining attacks is perhaps more about keeping momentum\n\nDilemma is a more of a controlled impossible choice.\n"
 tags: []
 related:
-  - "BJJ-035-overload-their-system"  # dilemmas are the mechanism of overloading
-  - "BJJ-036-bait-trap"              # a dilemma is two baits that both lead to traps
-  - "BJJ-262-secondary-limb-control" # "deal with this OR that limb" is a classic dilemma
-  - BJJ-056-15-32-fork # back-link from 15/32 Fork
+  - "BJJ-035-overload-their-system"
+  - "BJJ-036-bait-trap"
+  - "BJJ-262-secondary-limb-control"
+  - "BJJ-056-15-32-fork"
 ---
 
 Create positions where all choices are undesirable for the opponent.

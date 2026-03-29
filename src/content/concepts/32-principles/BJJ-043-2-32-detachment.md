@@ -7,8 +7,8 @@ axis_mental_physical: 0
 color: "#FFD700"
 tags: []
 related:
-  - "BJJ-046-6-32-acceptance"    # detachment and acceptance are complementary mental states
-  - "BJJ-103-1-32-connection"    # detachment can mean severing their connection to you
+  - "BJJ-046-6-32-acceptance"
+  - "BJJ-103-1-32-connection"
 ---
 
 Detachment, not always the emotional kind, although maybe perhaps a bit, but more the idea of severing their connection.

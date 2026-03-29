@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Sounds like Lu (履) in Taichi – Rolling/Deflecting Force (Yield & Redirect)\nIn biomechanics it would be rotational pivot around a central axis (like shoulder/hip/forearm), using circular redirection.\n\nApplication is to evades force by leading it off-center, like a door swinging, \"using their force against them\"."
 tags: []
 related:
-  - "BJJ-210-redirection"          # same concept in physics
-  - "BJJ-110-kuzushi-tsukuri-kake" # redirection is a kuzushi mechanism
+  - "BJJ-210-redirection"
+  - "BJJ-110-kuzushi-tsukuri-kake"
 ---
 
 Sounds like Lu (履) in Taichi – Rolling/Deflecting Force (Yield & Redirect)

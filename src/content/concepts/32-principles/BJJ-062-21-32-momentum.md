@@ -8,8 +8,8 @@ color: "#FFD700"
 short_description: "Harness and redirect your opponent’s movement to amplify your own techniques.  Similar to \"give them more than they bargained for\" or \"yielding so there's an empty step\".  Fluid momentum, force errors that they can't correct fast enough."
 tags: []
 related:
-  - "BJJ-213-momentum"    # same concept in physics
-  - "BJJ-210-redirection" # harness and redirect momentum
+  - "BJJ-213-momentum"
+  - "BJJ-210-redirection"
 ---
 
 Harness and redirect your opponent’s movement to amplify your own techniques.  Similar to "give them more than they bargained for" or "yielding so there's an empty step".  Fluid momentum, force errors that they can't correct fast enough.
