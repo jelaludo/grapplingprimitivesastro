@@ -1,11 +1,22 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <BaseLayout title="Breathing — Grappling Primitives" fullscreen>
   <link slot="head" rel="preconnect" href="https://fonts.googleapis.com" />
   <link slot="head" rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link slot="head" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=optional" rel="stylesheet" />
+
+  <!-- ── Toolbar ──────────────────────────────────────────────────────────────── -->
+  <div id="toolbar" style="position:fixed;top:0;left:0;right:0;height:36px;z-index:50;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #21262d;background:rgba(5,5,9,0.97);backdrop-filter:blur(8px);font-family:'Source Code Pro','Courier New',monospace;">
+    <a href={`${base}/`} style="font-size:12px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#6b7280'">← Home</a>
+    <span style="color:#21262d;">|</span>
+    <span style="font-size:12px;letter-spacing:0.2em;color:#6b7280;text-transform:uppercase;">Breathing</span>
+    <div style="flex:1;"></div>
+    <button id="btn-deeplink" style="font-family:inherit;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)';this.style.color='#00d4ff'" onmouseout="if(this.textContent==='Link'){this.style.borderColor='#21262d';this.style.color='#6b7280'}">Link</button>
+  </div>
+
   <canvas id="c"></canvas>
   <button id="notes-toggle" title="Accuracy notes">+</button>
   <div id="notes-panel">
@@ -92,6 +103,7 @@ The exhale is the universal key. It clears CO\u2082, engages the core, and signa
     ];
 
     const FONT = '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    const TOOLBAR_H = 36;
     const PADDING = 60;
     const BREATH_PERIOD = 4500;
     const MAX_SCALE_OFFSET = 0.2;
@@ -174,10 +186,11 @@ The exhale is the universal key. It clears CO\u2082, engages the core, and signa
       const lines = wrapText(TEXT, textWidth);
       const totalHeight = lines.length * LINE_HEIGHT;
       const startX = Math.floor((window.innerWidth - textWidth) / 2);
-      // If content fits in viewport, center it; otherwise start with top padding
-      const startY = totalHeight <= window.innerHeight
-        ? Math.floor((window.innerHeight - totalHeight) / 2)
-        : PADDING;
+      // If content fits below toolbar, center it; otherwise start with top padding
+      const availH = window.innerHeight - TOOLBAR_H;
+      const startY = totalHeight <= availH
+        ? TOOLBAR_H + Math.floor((availH - totalHeight) / 2)
+        : TOOLBAR_H + PADDING;
 
       contentHeight = totalHeight + PADDING * 2;
       centerX = window.innerWidth / 2;
@@ -288,6 +301,23 @@ The exhale is the universal key. It clears CO\u2082, engages the core, and signa
       scrollY = touchScrollStart + dy;
       clampScroll();
     }, { passive: true });
+
+    // Deep link
+    const deepLinkBtn = document.getElementById('btn-deeplink');
+    if (deepLinkBtn) {
+      deepLinkBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(location.href).then(() => {
+          deepLinkBtn.textContent = 'Copied!';
+          deepLinkBtn.style.color = '#00d4ff';
+          deepLinkBtn.style.borderColor = '#00d4ff';
+          setTimeout(() => {
+            deepLinkBtn.textContent = 'Link';
+            deepLinkBtn.style.color = '#6b7280';
+            deepLinkBtn.style.borderColor = '#21262d';
+          }, 1500);
+        });
+      });
+    }
 
     window.addEventListener('resize', () => { resize(); clampScroll(); });
     document.fonts.ready.then(() => {
