@@ -1,8 +1,10 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ModuleCard from '@/components/ui/ModuleCard.astro';
+import { execSync } from 'child_process';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const commitHash = execSync('git rev-parse --short HEAD').toString().trim();
 const thumbBase = `${base}/images/thumbs`;
 
 const experiments = [
@@ -162,7 +164,7 @@ const purgatory = [
         Experiments
       </h1>
       <p class="text-sm text-text-muted max-w-xl leading-relaxed">
-        Side projects and explorations. Some useful, some just fun.
+        Side projects and explorations. Some useful, some just fun. <span class="text-text-dim">[{commitHash}]</span>
       </p>
     </div>
 
