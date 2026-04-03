@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import react from '@astrojs/react';
 import rehypeObsidianImages from './src/lib/remark-obsidian-images.mjs';
 import fs   from 'node:fs/promises';
 import path from 'node:path';
@@ -198,7 +199,7 @@ const kanriPlugin = {
 };
 
 export default defineConfig({
-  integrations: [tailwind()],
+  integrations: [tailwind(), react()],
   site: 'https://www.grapplingprimitives.com',
   markdown: {
     rehypePlugins: [rehypeObsidianImages],

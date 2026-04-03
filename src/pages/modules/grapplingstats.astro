@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GrapplingMeta from '../../components/grapplingstats/GrapplingMeta.jsx';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Grappling Meta — Grappling Primitives" description="Interactive visualization of competition statistics across BJJ, grappling, and MMA." fullscreen={true}>
+
+  <!-- Fixed toolbar -->
+  <div id="toolbar" style="position:fixed;top:0;left:0;right:0;z-index:50;height:44px;display:flex;align-items:center;gap:12px;padding:0 16px;background:#050509ee;border-bottom:1px solid #1C1F26;backdrop-filter:blur(8px);">
+    <a href={`${base}/`} style="font-size:var(--text-chrome);letter-spacing:2px;text-transform:uppercase;color:#9CA3AF;text-decoration:none;transition:color 0.2s;padding:8px 0;" onmouseover="this.style.color='#4C8DFF'" onmouseout="this.style.color='#9CA3AF'">
+      ← Home
+    </a>
+    <span style="color:#1C1F26;">|</span>
+    <a href={`${base}/experiments`} style="font-size:var(--text-chrome);letter-spacing:2px;text-transform:uppercase;color:#7B8290;text-decoration:none;transition:color 0.2s;padding:8px 0;" onmouseover="this.style.color='#4C8DFF'" onmouseout="this.style.color='#7B8290'">
+      Experiments
+    </a>
+    <span style="color:#1C1F26;">|</span>
+    <span style="font-family:'DS-Digital',monospace;font-size:clamp(14px, 1.5vw + 8px, 18px);color:#4C8DFF;letter-spacing:2px;">GRAPPLING META</span>
+    <div style="flex:1;"></div>
+    <button id="deeplink-btn" style="font-family:inherit;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;cursor:pointer;border:1px solid #21262d;background:transparent;color:#6b7280;transition:all 0.15s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)';this.style.color='#00d4ff'" onmouseout="if(this.textContent==='Link'){this.style.borderColor='#21262d';this.style.color='#6b7280'}">Link</button>
+  </div>
+
+  <div style="padding-top:44px;">
+    <GrapplingMeta client:load />
+  </div>
+
+  <script>
+    // Deep-link copy button
+    (function() {
+      const btn = document.getElementById('deeplink-btn');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(location.href).then(() => {
+          btn.textContent = 'Copied!';
+          btn.style.color = '#00d4ff';
+          btn.style.borderColor = 'rgba(0,212,255,0.4)';
+          setTimeout(() => {
+            btn.textContent = 'Link';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+          }, 1500);
+        });
+      });
+    })();
+  </script>
+
+</BaseLayout>
