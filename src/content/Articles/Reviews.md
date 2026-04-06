@@ -1,4 +1,5 @@
 ---
+title: "Reviews"
 ---
 There are hundreds of instructional videos out. The availability of quality material has really been accelerating over the last few years. One of my older coaches tells me how back in the late 90's they had to rewind old VHS tapes over and over to figure out what the hell Marcelo Garcia was doing hugging someone's thigh from the bottom, now it's all in the open. So much so that it can be overwhelming.  
   

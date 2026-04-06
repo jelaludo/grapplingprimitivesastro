@@ -2,7 +2,7 @@
 role: ux
 owner: Gerald
 status: active
-last-updated: 2026-03-24
+last-updated: 2026-04-06
 ---
 
 # User Experience
@@ -22,6 +22,11 @@ Readability, interaction design, responsive behavior, visual hierarchy, and info
 | 2026-03-23 | Hero module card order: Build Yourself → Ideal Partner → QuadTree | Matches the "three things" priority order in the principles section. Previously was Ideal Partner → QuadTree → Build Yourself. | [[pm]] |
 | 2026-03-23 | TLDRs placed at top of page (above hero), collapsed by default | Reader sees the option immediately without scrolling. Collapsible `<details>` so it doesn't compete with the hero. Alternative rejected: TLDR inside hero section (buried below the visual centerpiece). | [[dev]] |
 | 2026-03-23 | Jibunwotsukure hero: "Build Yourself First" text repositioned to top-left of enso image | Occupies blank space above the brush circle. Previously overlaid left-center of the image. | [[dev]] |
+| 2026-04-06 | Articles-reader: split title at Latin→CJK boundary into headline + subhead | Fused titles ("Mithridatism毒の免疫を養う") destroyed hierarchy. Split gives proper reading cascade: headline → italic subhead → epigraph → lead. Matches mise-en-page semantic slot model. | [[dev]] |
+| 2026-04-06 | Articles-reader: prefix all `.r-story-body` CSS rules with `#reader-app` | The universal reset `#reader-app * { margin:0 }` (specificity 1,0,0) overrode all content spacing rules (specificity 0,1,x). Prefixing lifts content rules to (1,1,x). | [[dev]] |
+| 2026-04-06 | Articles-reader: drop cap excludes `.r-epigraph` and `.r-dateline` via `:not()` | `::first-letter` includes preceding punctuation — an epigraph starting with `"…t` rendered all three glyphs at 3.4em. Exclusion ensures drop cap only fires on the Lead paragraph. | [[dev]] |
+| 2026-04-06 | Articles-reader: auto-strip redundant first paragraph matching title | Some articles open with "Mithridatism:" which repeats the headline, wastes the drop cap, and pushes the epigraph to second-child position (losing its first-child spacing rule). Detected and removed in mdToHtml. | [[dev]] |
+| 2026-04-06 | Articles-reader: removed `fullscreen={true}` from BaseLayout | fullscreen hides site header/nav. Articles have no canvas — immersive mode was punitive, not functional. Restored back-to-home navigation. Related to P0 issue: `maximum-scale=1` audit. | [[dev]] |
 
 ## Dead Ends
 <!-- APPEND ONLY. Never delete. -->
@@ -40,6 +45,8 @@ Readability, interaction design, responsive behavior, visual hierarchy, and info
 | 2026-03-19 | CSS grid + JS-drawn SVG overlay (second attempt at hybrid) | Same root cause as above. getBoundingClientRect depends on rendered DOM; CLI cannot provide it. Edges drew from wrong positions. Resolved by switching to pure SVG with baked coordinates. |
 | 2026-03-19 | Animated border-width on Confidence node to show "confidence growing" | border-width changes cause layout reflow, making surrounding elements jitter unnaturally. User rejected immediately. |
 | 2026-03-19 | Global font scale with low clamp ceilings (max 16-18px) | Unreadable on 2560px+ monitors. Monospace needs larger sizes than sans-serif. Bumped to 16-24px range with vw+px formula. |
+| 2026-04-06 | Articles-reader: CSS specificity trap from `#reader-app *` reset | Universal reset with ID selector created a specificity ceiling (1,0,0) that silently overrode every content spacing rule. All paragraph gaps, list indentation, heading margins, epigraph separation collapsed to zero. Invisible in code review — only visible when rendered. |
+| 2026-04-06 | Articles-reader: `fullscreen={true}` on a non-canvas page | Hid site navigation for no functional reason. Articles are not immersive visualizations. Discovery: side-by-side comparison with mise-en-page reference output. |
 
 ## Lessons
 - When adapting a standalone HTML widget to a site, borrow the site's existing module palette (e.g. beyond-offense-defense colors) rather than inventing a new one or using the site's primary accent. The module needs to feel part of the family, not identical to the chrome. -- from dead end on 2026-03-24
@@ -52,6 +59,9 @@ Readability, interaction design, responsive behavior, visual hierarchy, and info
 - Never animate border-width or any box-model property that causes reflow. Use transforms, opacity, or box-shadow instead. — from dead end on 2026-03-19
 - Monospace fonts need 20-30% larger pixel sizes than sans-serif to achieve equivalent readability. Compare against real sites (claude.ai, submeta.io) not just "looks OK on my screen." — from dead end on 2026-03-19
 - Font size sweep is safe as batch replace_all when rules are clear (7→10, 8→11, 9→12). Toolbar chrome (tracking-heavy uppercase) is the exception — intentionally small at 10-11px. — from audit on 2026-03-23
+- CSS resets with ID selectors (`#id * { margin:0 }`) create a specificity trap: specificity (1,0,0) silently overrides class-based content rules (0,1,x). The bug is invisible in code review and only manifests in rendering. Use `:where()` for resets, or ensure all downstream rules carry the same ID prefix. — from dead end on 2026-04-06
+- `::first-letter` pseudo-element includes preceding punctuation (quotes, ellipsis). A drop cap on `"…the` renders all of `"…t` at display size. Always exclude elements whose content starts with non-letter characters, or use `:not()` to limit drop caps to known-safe semantic slots. — from dead end on 2026-04-06
+- "Classify before styling" (mise-en-page workflow) catches structural bugs that CSS inspection misses. The epigraph/drop-cap/spacing failures were all symptoms of one root cause: HTML elements not assigned to correct semantic slots. The CSS was fine; the classification was wrong. — from session on 2026-04-06
 
 ## Open Questions
 - [x] Mobile (iPhone) readability not yet tested. Simulation 5-column layout may need further work. — owner: Gerald — since: 2026-03-18 — **resolved 2026-03-24: full mobile audit completed, see Mobile-First Audit TODO below**
@@ -95,6 +105,7 @@ Feeds into: [[dev]], [[qa]]
 
 ## Session Log
 <!-- One line per session, newest first -->
+2026-04-06 (session 8) — Articles-reader mise-en-page audit. Side-by-side with pure mise-en-page skill output exposed 4 structural bugs: CSS specificity trap (reset overriding all content spacing), drop cap misfiring on epigraph, fused headline/subhead, redundant first paragraph stealing the lead. Also removed fullscreen={true} to restore site navigation. 5 decisions, 2 dead ends, 3 lessons.
 2026-03-24 (session 7) — Full mobile-first audit completed. 18 issues identified across 4 priority tiers. Font test page created at /modules/font-test with 7 candidates (3 monospace upgrades, 4 proportional hybrids). Assumption invalidated: desktop-primary. TODO list written.
 2026-03-24 (session 6) — Horseshoe module UX: 3 color scheme iterations (site blue rejected, beyond-offense-defense palette adopted). Quote display iterated 4 times: side zones -> inner 3-slot -> single centered. Auto/manual mode split. User dislikes emdashes. 5 dead ends recorded, 3 lessons extracted.
 2026-03-23 (session 5 audit) — Site-wide font size sweep completed: 13 modules fixed, zero remain with sub-10px readable text. Rules: 7-8→10-11 (labels), 9→12 (body), toolbar chrome stays 10-11px. Audit found 669 inline styles and 432 hardcoded colors across 17 modules — deferred to incremental cleanup.

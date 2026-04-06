@@ -1,4 +1,6 @@
 ---
+title: "Concepts"
+date: "2019/10/31"
 ---
 When I first started BJJ, I was immediately eager to learn everything about it on top of regular training sessions.  
   

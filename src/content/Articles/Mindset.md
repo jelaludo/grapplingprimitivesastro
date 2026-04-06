@@ -1,3 +1,6 @@
+---
+title: "Mindset"
+---
 The remarkable Garry Tonon [talks](https://youtu.be/4OT8NbEFF8A?t=1020) about switching his mindset from playful _(loose, screwing around, reactive)_ to winning for ADCC 2019, and he did get the fastest submission with his flying [kani-basami to heel hook](https://youtu.be/LodOX-29b6U).  
   
 Two broad approaches  

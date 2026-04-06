@@ -1,9 +1,12 @@
+---
+title: "Review: Danaher's Kimura System"
+---
 8 parts, 10 hours  
 Enter the System : Kimura  
   
 (Review TBD - testing link)  
   
---- Index ---  
+--- Index ---
 
 Kimura: Enter The System by John Danaher vol 1
 

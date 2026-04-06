@@ -1,4 +1,6 @@
 ---
+title: "'Years Trained' and Better Metrics"
+date: "2020/05/21"
 ---
 
 _"How many years have you been training?"  

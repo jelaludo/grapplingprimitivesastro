@@ -1,4 +1,5 @@
 ---
+title: "About Kuzushi.xyz"
 ---
 wordpress blog I started in 2019
 
@@ -28,7 +29,7 @@ Colored belt : just train._
   
 I'm a firm believer that not all training time and methodologies are equal. There are superior and inferior ways of structuring training sessions. Some drills are more productive than others, some training partners are more conducive to skill acquisition than others.
 
-すべてのトレーニング時間と練習方法が平等ではないと信じています。 練習の構成には、優れた方法と劣った方法があります。スキル獲得の「効率性」で考えば、もっと有益のドリルとパートナーが存在します。  
+すべてのトレーニング時間と練習方法が平等ではないと信じています。 練習の構成には、優れた方法と劣った方法があります。スキル獲得の「効率性」で考ば、もっと有益のドリルとパートナーが存在します。  
   
 Looking forward to sharing my thoughts on our passion, and hopefully someday roll with at least one person who'd have gotten something helpful out of my meanderings on kuzushi.xyz.
 

@@ -1,3 +1,6 @@
+---
+title: "Training Intensity, Benefits & Harms"
+---
 There are benefits to be gained from training at both low and high intensity, be mindful of what these are.
 
 **Always low intensity?** delusion of what works, bad habits, lack of challenge. You won't be ready for competition or real resistance.  

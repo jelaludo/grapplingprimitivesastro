@@ -1,3 +1,6 @@
+---
+title: "Game Analogies"
+---
 _"He has a pressure heavy game"_
 
 _"Her loose passing game is insane"  
@@ -6,7 +9,7 @@ _"Her loose passing game is insane"
 
   
   
-Submission Grappling as "Kinetic Chess" is a common analogy; planning several moves ahead, controlling the tempo, flipping the board over when nothing works, etc.  
+Submission Grappling as "Kinetic Chess" is a common analogy; planning several moves ahead, controlling the tempo, flipping the board over when nothing works, etc.
 _(_[_Josh Waitzkin_](https://www.joshwaitzkin.com/) _is a famous Marcelo Garcia Black Belt and International Master of Chess)_
 
 Poker analogies could fit somewhere, especially for the mind-games of hiding intent, and thinking in terms of **odds**.

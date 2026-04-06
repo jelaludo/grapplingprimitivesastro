@@ -57,7 +57,7 @@ const categories = categoryEntries
   .sort((a, b) => a.name.localeCompare(b.name));
 ---
 
-<BaseLayout title="Concept Reader — Grappling Primitives" fullscreen={true}>
+<BaseLayout title="Concept Reader — Grappling Primitives">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
@@ -115,7 +115,7 @@ const categories = categoryEntries
       background-color: var(--r-color-bg);
       font-optical-sizing: auto;
       -webkit-font-smoothing: antialiased;
-      min-height: 100dvh;
+      min-height: calc(100dvh - 2.5rem);
     }
 
     @media (max-width: 768px) {
@@ -124,7 +124,7 @@ const categories = categoryEntries
 
     /* ===== Landing Page ===== */
     .r-landing {
-      min-height: 100dvh;
+      min-height: calc(100dvh - 2.5rem);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -272,7 +272,7 @@ const categories = categoryEntries
     /* ===== Reader View ===== */
     .r-reader {
       display: none;
-      min-height: 100dvh;
+      min-height: calc(100dvh - 2.5rem);
       flex-direction: column;
     }
 
@@ -282,7 +282,7 @@ const categories = categoryEntries
 
     .r-reader-header {
       position: sticky;
-      top: 0;
+      top: 2.5rem;
       z-index: 10;
       display: flex;
       align-items: center;
@@ -628,9 +628,11 @@ const categories = categoryEntries
     }
 
     // ===== Open Concept =====
-    function openConcept(concept) {
+    function openConcept(concept, replace) {
       currentConcept = concept;
-      history.pushState({ concept: concept.slug }, "", "#" + concept.slug);
+      var url = "#" + concept.slug;
+      if (replace) history.replaceState({ concept: concept.slug }, "", url);
+      else history.pushState({ concept: concept.slug }, "", url);
 
       $("r-reader-meta").textContent = concept.category + " \u00b7 " + concept.id;
       $("r-story-title").textContent = concept.concept;
@@ -685,10 +687,15 @@ const categories = categoryEntries
 
     // ===== Close Concept =====
     function closeConcept() {
+      if (!currentConcept) return;
       currentConcept = null;
       $("r-reader").classList.remove("active");
       $("r-landing").style.display = "";
-      history.back();
+      if (window.history.state && window.history.state.concept) {
+        history.back();
+      } else {
+        history.replaceState(null, "", window.location.pathname);
+      }
     }
 
     // ===== Event Listeners =====
@@ -723,7 +730,7 @@ const categories = categoryEntries
       var hash = window.location.hash.slice(1);
       if (hash && CONCEPTS.length) {
         var found = CONCEPTS.find(function(c) { return c.slug === hash; });
-        if (found) { openConcept(found); return; }
+        if (found) { openConcept(found, true); return; }
       }
       if (currentConcept) closeConcept();
     });
@@ -741,7 +748,7 @@ const categories = categoryEntries
     var hash = window.location.hash.slice(1);
     if (hash) {
       var found = CONCEPTS.find(function(c) { return c.slug === hash; });
-      if (found) openConcept(found);
+      if (found) openConcept(found, true);
     }
   })();
   </script>

@@ -1,3 +1,7 @@
+---
+title: "Relax"
+subtitle: "リラックス"
+---
 **_What's the most important thing to focus on at each belt level?　
 各ベルトレベルで最もフォーカスすべきものは何ですか  
 _**  

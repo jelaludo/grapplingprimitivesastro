@@ -1,4 +1,5 @@
 ---
+title: "BJJ Resources"
 ---
 _"The tools for learning are ubiquitous, it's the desire and discipline to learn that are lacking"_  
   

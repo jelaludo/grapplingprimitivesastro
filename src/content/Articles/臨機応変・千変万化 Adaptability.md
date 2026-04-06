@@ -1,4 +1,7 @@
 ---
+title: "臨機応変・千変万化"
+subtitle: "Adaptability"
+date: "2019/12/01"
 ---
 Adaptability in a rapidly changing environment. This is one of these concepts that is true for Jiu Jitsu as well as many other aspects of life.
 
