@@ -1,4 +1,6 @@
 ---
+title: "Proprioception, 'Alioception'"
+date: "2020/01/02"
 ---
 Proprioception :  
 the sense of self-movement and body position.
@@ -7,15 +9,15 @@ Even with our eyes closed, we know where our limbs are situated, what load they 
 
 This self-awareness is obviously extremely important in jiu-jitsu.
 
-It is equally as important to constantly be aware of the opponent’s body, and as there are apparently no words for that yet, I hereby propose : Alioception.
+It is equally as important to constantly be aware of the opponent's body, and as there are apparently no words for that yet, I hereby propose : Alioception.
 
 **Proprioception** (n.)  
 1906, from proprioceptor, from Latin proprius "own" (see proper) + reception. Coined by English neurophysiologist C.S. Sherrington (1857-1952). Related: Proprioceptive; proprioceptor.  
-“the sense of self-movement and body position.”
+"the sense of self-movement and body position."
 
 **Alioception** (n.)  
-2020, from Latin alius “other” + reception. Coined by Jelaludo. Related: Alioceptive.  
-“The sense of another’s movements and body position upon touch.”
+2020, from Latin alius "other" + reception. Coined by Jelaludo. Related: Alioceptive.  
+"The sense of another's movements and body position upon touch."
 
 固有受容性感覚、自己受容性感覚、固有受容、自己受容
 

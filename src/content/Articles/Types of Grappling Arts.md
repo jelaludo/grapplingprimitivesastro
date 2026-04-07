@@ -1,4 +1,5 @@
 ---
+title: "Types of Grappling Arts"
 ---
 There's only one human body, default is  four limbs and one head.
 There are many variations on how to grab each other to control, submit or inflict pain.
@@ -8,7 +9,7 @@ One modern way to categorize might be
 - MMA / Vale Tudo (Rule sets + striking awareness)
 - Self-Defense (No rules + striking awareness)
 - LEO, Military (heigthened stakes up to death)
-- Art (intellectual and aesthetic pursuit via the body)
+- Art (intellectual and aesthetic pursuit via the body)
 
   
 Brazilian Jiu Jitsu
@@ -222,7 +223,7 @@ Founder: **Jigoro Kano**
 **Date:** ~1870s  
 **Region:** United Kingdom / USA
 
-- “Catch-as-catch-can”
+- "Catch-as-catch-can"
     
 - Known for **submission holds and leg locks**.
     

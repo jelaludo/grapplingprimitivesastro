@@ -1,4 +1,6 @@
 ---
+title: "Working on a BJJ-Themed Playing Card Set"
+date: "2023/12/25"
 ---
 
 ![[Pasted image 20260306101105.png]]

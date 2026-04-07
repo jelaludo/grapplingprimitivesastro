@@ -1,3 +1,7 @@
+---
+title: "守破離"
+subtitle: "Shu-Ha-Ri"
+---
 Another concept for stages of mastery.  
   
 Shu-ha-ri goes back to perhaps the 10th Century in Japan, starting with the tea ceremony and spreading to other arts. ([_wikipedia_](https://en.wikipedia.org/wiki/Shuhari))  

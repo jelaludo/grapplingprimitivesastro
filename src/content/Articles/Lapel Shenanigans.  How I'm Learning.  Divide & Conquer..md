@@ -1,4 +1,6 @@
 ---
+title: "Lapel Shenanigans: How I'm Learning. Divide & Conquer"
+date: "2020/03/02"
 ---
 This is a post about how I'm learning a brand new and complex set of techniques : The [Lapel Guard](https://lapelguard.com/?ref=12) by Keenan. At first it is perhaps as daunting to a beginner as entering the similarly deep world of leg entanglements. It comes with a new terminology and an internal logic as to how all the pieces fit together. Worm tails, worm holes and stirrups, here we go.
 
@@ -26,20 +28,20 @@ I'm in the camp that "just show up and learn" is only half the picture. We all n
 
 My general steps to learning something totally new and challenging:
 
-- _Identify high quality sources_ 
+- _Identify high quality sources_ 
 - _Map out the content (What, How much, how long)_
 - _Go through the list item by item_
 - _Identify specific sub-elements to drill_
 - _Identify what the key control points are_
 - _Extract a short footage (5 to 10 secs)_, _watch it over and over, study it when commuting._
-- _Deconstruct the move with a good training partner *_ 
+- _Deconstruct the move with a good training partner *_ 
 - _Try it at the gym with lower belts, gain confidence in the control mechanisms_
 - _Teach it**_
 - _Track and Score myself and move on to the next one._
 
-_*(I’m blessed with a great son who is also into Jiu Jitsu, and we built ourselves a 3meter x 3meter mini home dojo)_
+_*(I'm blessed with a great son who is also into Jiu Jitsu, and we built ourselves a 3meter x 3meter mini home dojo)_
 
-_**  (I’m lucky to be in charge of a few morning classes every month, and our old-school head coach is actually very enthusiastic about new information coming in, even from a Gaijin purple belt, and actively encouraging me to hold sessions to share my new findings)_
+_**  (I'm lucky to be in charge of a few morning classes every month, and our old-school head coach is actually very enthusiastic about new information coming in, even from a Gaijin purple belt, and actively encouraging me to hold sessions to share my new findings)_
 
 ![[Pasted image 20260306095747.png]]
 
@@ -52,7 +54,7 @@ _Sometimes no notes are needed_
 ![[Pasted image 20260306095814.png]]
 _Sometimes I overlay notes in the gif_
 
-The Lapel Guard Encyclopedia has 126 elements and counting, and there are some more from other sources _(.e.g. I loved Andis Brunosvkis's Lapel material in the Grappler’s Guide)_
+The Lapel Guard Encyclopedia has 126 elements and counting, and there are some more from other sources _(.e.g. I loved Andis Brunosvkis's Lapel material in the Grappler's Guide)_
 
 So I mapped them out by section
 
@@ -82,9 +84,9 @@ The feeling of a taut lapel wrapped behind your opponent's knee, while your othe
   
 To learn to defeat something in BJJ, first you must become proficient at it. I'm slowly becoming the resident lapel expert at my gym, and already as people around me pick it up, it's giving me feedback into both how to control the positions better, and also what to look for to deny the grips or prevent the situation from getting worse.
 
-“Why would you ignore 50% of the human body?” (Leg locks)
+"Why would you ignore 50% of the human body?" (Leg locks)
 
-“Why would you ignore 20% of the gi ? “ (Lapel Guards)
+"Why would you ignore 20% of the gi ? " (Lapel Guards)
 
 Learning takes discipline, and sometimes it's more than just the discipline of showing up. Have fun!
 

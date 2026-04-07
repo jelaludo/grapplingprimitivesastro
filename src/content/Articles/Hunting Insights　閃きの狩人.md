@@ -1,4 +1,7 @@
 ---
+title: "Hunting Insights"
+subtitle: "閃きの狩人"
+date: "2024/01/05"
 ---
 
 Let's say you get a 1% chance of getting a new insight for each training session you do. Here are the chances that you'll get an insight in a year by training 1,2,3,4 or 5x a week.

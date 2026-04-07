@@ -1,4 +1,7 @@
-崩し Kuzushi comes from the verb 崩す (Kuzusu) meaning…many things : _destroy, tear down, pull apart, sit at ease, lose one’s balance, write in cursive style, break a big bill in small bills, get sick._
+---
+title: "'Kuzushi-Tsukuri-Kake': The Doctrine and Purpose of Judo"
+---
+崩し Kuzushi comes from the verb 崩す (Kuzusu) meaning…many things : _destroy, tear down, pull apart, sit at ease, lose one's balance, write in cursive style, break a big bill in small bills, get sick._
 
 作る Tsukuru can mean : _Make, build, produce, establish, set-up, found, form, write, compose, etc._
 
@@ -29,11 +32,11 @@ From the Kodokan Judo [website](http://kodokanjudoinstitute.org/en/doctrine/purp
 
 _(_[_www.kuzushi.xyz_](http://www.kuzushi.xyz) _translation)_
 
-_The "optimal use of body and mind” is a foundational principle of Judo, which comes to life through the theories of Tsukuri (set-up) and Kake (performing the technique)._
+_The "optimal use of body and mind" is a foundational principle of Judo, which comes to life through the theories of Tsukuri (set-up) and Kake (performing the technique)._
 
-Tsukuri is made of both breaking the balance of the other (Kuzushi) and setting up one’s own body with the best position and posture (Jibun wo  tsukuru - Building oneself).
+Tsukuri is made of both breaking the balance of the other (Kuzushi) and setting up one's own body with the best position and posture (Jibun wo  tsukuru - Building oneself).
 
-Kake (perform) is what we call the culmination of that one instant which we set-up.   
+Kake (perform) is what we call the culmination of that one instant which we set-up.   
 
 We can call Tsukuri and Kake the technical principles that follow the basic principles of Judo.
 
@@ -56,6 +59,6 @@ There are three ways, traditionally, of making kuzushi happen:
 
 **direct action** (e.g. pulling or pushing while entering for a throw);
 
-**inducing opponent’s action** (e.g. a feint or combination attack);
+**inducing opponent's action** (e.g. a feint or combination attack);
 
 **direct action by opponent** (e.g. a counter throw).

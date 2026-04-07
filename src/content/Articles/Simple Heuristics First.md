@@ -1,8 +1,10 @@
 ---
+title: "Simple Heuristics First"
+date: "2020/03/07"
 ---
 "Heuristic" is a fancy term for "rule of thumb", but let's dig deeper.  
   
-A **heuristic** ( Ancient Greek _εὑρίσκω_, "_find_" or "_discover_") is an approach to problem solving through a **practical method** that is not guaranteed to be optimal, perfect or rational, but which is nevertheless **sufficient** for reaching short-term goals.  
+A **heuristic** ( Ancient Greek _εὑρίσκω_, "_find_" or "_discover_") is an approach to problem solving through a **practical method** that is not guaranteed to be optimal, perfect or rational, but which is nevertheless **sufficient** for reaching short-term goals.  
 Heuristics can be **mental shortcuts** that ease the cognitive load of decision making.
 
 A lady I know was told jokingly, when asking what she should do before her first sparring session :  
@@ -40,8 +42,8 @@ Sequences and systems are better than individual submissions
 Develop complementary moves  
 Switch before the point of no-return  
 Switch sides to force an overcommit  
-Disrupt the opponent’s head  
-What’s their way out?  
+Disrupt the opponent's head  
+What's their way out?  
 What do they want?
 
 Avoid submission tunnel-vision  
@@ -60,7 +62,7 @@ Eliminate the slack
 Placeholder System (R.Hall)  
 Rubber Band effect (Rener)  
 Baby hooks (Keenan)  
-Recognize Triggers, “_affordance_”, patterns.  
+Recognize Triggers, "_affordance_", patterns.  
 Best option from the energy given to you.  
 Fluid Momentum > Position > Submission (Karel Pravec)  
 Attack with a back-up plan (Karel Prance)  

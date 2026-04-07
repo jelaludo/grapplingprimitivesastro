@@ -1,4 +1,6 @@
 ---
+title: "9 Limbs or 27..."
+date: "2024/01/10"
 ---
 ![[Pasted image 20260306101314.png]]"The art of nine limbs" is one of the names of Lethwei, aka Burmese bareknuckle fighting, as they have 9 weapons in their arsenal; 2x Hands|Elbows|Feet|Knees = 8 + headbutt = 9.
 

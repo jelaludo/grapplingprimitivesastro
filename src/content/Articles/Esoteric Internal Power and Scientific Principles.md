@@ -1,4 +1,5 @@
 ---
+title: "Esoteric Internal Power and Scientific Principles"
 ---
 (Test directing Deep Search in ChatGPT to explore this topic)
 

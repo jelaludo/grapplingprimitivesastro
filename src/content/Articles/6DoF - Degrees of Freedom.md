@@ -1,4 +1,5 @@
 ---
+title: "6DoF: Degrees of Freedom"
 ---
 The six degrees of freedom:  
 forward/back 前後  

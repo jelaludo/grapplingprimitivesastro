@@ -1,4 +1,6 @@
 ---
+title: "Skills Acquisition"
+date: "2019/11/01"
 ---
 "_Just train more_" is only part of the solution.  
   
@@ -37,8 +39,8 @@ Kolb proposes this cycle :
 
 Let's take a typical first BJJ lesson :  
 1. Ok guys! Arm bar mechanics, fulcrum, lever, shoulder control  
-2. let’s drill it a bit  
-3. let’s try that in sparring!  
+2. let's drill it a bit  
+3. let's try that in sparring!  
 4. damn… how did he escape?  
 Rinse and repeat
 

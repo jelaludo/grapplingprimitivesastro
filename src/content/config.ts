@@ -37,6 +37,7 @@ const Articles = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string().optional(),
+    subtitle: z.string().optional(),
     date: z.string().optional(),
     tags: z.array(z.string()).default([]),
   }),

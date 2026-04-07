@@ -1,4 +1,6 @@
 ---
+title: "Naming Things to Master Them"
+date: "2020/05/20"
 ---
 Nomenclature and Taxonomy. Putting a specific and appropriate name to something helps us understand exactly what it is and where it fits compared to other "things".  
   

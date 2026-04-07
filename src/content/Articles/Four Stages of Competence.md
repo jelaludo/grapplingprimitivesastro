@@ -1,4 +1,7 @@
-riefly touched upon this on the skill acquisition section [here](https://www.kuzushi.xyz/skills-acquisition/).  
+---
+title: "Four Stages of Competence"
+---
+Briefly touched upon this on the skill acquisition section [here](https://www.kuzushi.xyz/skills-acquisition/).  
   
 Every practitioner should be able to relate to that first experience of rolling with someone more advanced and being overwhelmed, some have aptly used the image of [drowning](https://samharris.org/the-pleasures-of-drowning/), that would be stage one, or "wtf is going on?"
 

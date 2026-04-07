@@ -1,4 +1,6 @@
 ---
+title: "Control the Other Limb"
+date: "2019/11/30"
 ---
 This applies to so many situations that I think it's good contender for a general heuristic of Grappling / Jiu Jitsu.
 
